@@ -1,0 +1,15 @@
+<Ui>
+  <!-- Src -->
+  <Script file="src\_init.lua"/>
+
+  <Script file="src\events\events.lua"/>
+  <Script file="src\events\event-manager.lua"/>
+
+  <Script file="src\loot-watcher.lua"/>
+
+  <Script file="src\ui\widgets\_init.lua"/>
+  <Script file="src\ui\widgets\frame.lua"/>
+  <Script file="src\ui\widgets\notification.lua"/>
+
+  <Script file="src\ui\notification-manager.lua"/>
+</Ui>
