@@ -12,14 +12,15 @@ do -- Listen for `Wow.ChatMessageLoot` and fire `LootReceived`.
   local LOOT_QUANTITY_PATTERN = ".*x(%d+).*"
 
   EventManager:On(E.Wow.ChatMessageLoot, function(message, _, _, _, receiverName)
-    if receiverName ~= UnitName("Player") then return end
-    pcall(function()
-      local link = message:match(ITEM_LINK_PATTERN)
-      local quantity = tonumber(message:match(LOOT_QUANTITY_PATTERN) or 1)
-      if type(link) == "string" and type(quantity) == "number" then
-        EventManager:Fire(E.LootReceived, link, quantity)
-      end
-    end)
+    if receiverName and receiverName:find(Addon.PLAYER_NAME) then
+      pcall(function()
+        local link = message:match(ITEM_LINK_PATTERN)
+        local quantity = tonumber(message:match(LOOT_QUANTITY_PATTERN) or 1)
+        if type(link) == "string" and type(quantity) == "number" then
+          EventManager:Fire(E.LootReceived, link, quantity)
+        end
+      end)
+    end
   end)
 end
 
