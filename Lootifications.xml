@@ -6,6 +6,7 @@
   <Script file="src\events\event-manager.lua"/>
 
   <Script file="src\loot-watcher.lua"/>
+  <Script file="src\money-watcher.lua"/>
 
   <Script file="src\ui\widgets\_init.lua"/>
   <Script file="src\ui\widgets\frame.lua"/>
