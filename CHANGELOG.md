@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-- Added notifications for money when looted
+### Added
+
+- Notifications for money when looted
 
 ## [1.0.0] - 2023-12-24
 
