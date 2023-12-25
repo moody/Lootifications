@@ -11,7 +11,8 @@ do -- Listen for `Wow.ChatMessageLoot` and fire `LootReceived`.
   local ITEM_LINK_PATTERN = ".*(|c.+|r).*"
   local LOOT_QUANTITY_PATTERN = ".*x(%d+).*"
 
-  EventManager:On(E.Wow.ChatMessageLoot, function(message)
+  EventManager:On(E.Wow.ChatMessageLoot, function(message, _, _, _, receiverName)
+    if receiverName ~= UnitName("Player") then return end
     pcall(function()
       local link = message:match(ITEM_LINK_PATTERN)
       local quantity = tonumber(message:match(LOOT_QUANTITY_PATTERN) or 1)
