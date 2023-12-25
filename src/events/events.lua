@@ -7,6 +7,7 @@ local E = Addon:GetModule("Events")
 
 local events = {
   "LootReceived",
+  "MoneyReceived",
   "TexturedLootMessage"
 }
 
@@ -19,5 +20,6 @@ end
 -- ============================================================================
 
 E.Wow = {
-  ChatMessageLoot = "CHAT_MSG_LOOT"
+  ChatMessageLoot = "CHAT_MSG_LOOT",
+  ChatMessageMoney = "CHAT_MSG_MONEY"
 }
