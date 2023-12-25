@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Added notifications for money when looted
+
 ## [1.0.0] - 2023-12-24
 
 - Initial release
