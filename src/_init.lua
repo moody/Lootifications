@@ -1,4 +1,4 @@
-local _, Addon = ...
+local ADDON_NAME, Addon = ...
 
 -- ============================================================================
 -- Constants
@@ -29,4 +29,10 @@ end
 --- @param default any
 function Addon:IfKeyNil(t, key, default)
   if t[key] == nil then t[key] = default end
+end
+
+--- Prints values prefixed with addon's name.
+--- @param ... any
+function Addon:Print(...)
+  print(self:GetModule("Colors").Yellow("[" .. ADDON_NAME .. "]"), ...)
 end
