@@ -21,5 +21,7 @@ end
 
 E.Wow = {
   ChatMessageLoot = "CHAT_MSG_LOOT",
-  ChatMessageMoney = "CHAT_MSG_MONEY"
+  ChatMessageMoney = "CHAT_MSG_MONEY",
+  PlayerLogin = "PLAYER_LOGIN",
+  PlayerLogout = "PLAYER_LOGOUT"
 }

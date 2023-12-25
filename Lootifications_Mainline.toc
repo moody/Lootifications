@@ -4,5 +4,6 @@
 ## Author: https://github.com/moody
 ## IconTexture: Interface\AddOns\Lootifications\assets\icon
 ## Notes: Displays notifications for new loot.
+## SavedVariables: __LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__
 
 Lootifications.xml
