@@ -1,0 +1,8 @@
+## Interface: 100200
+## Title: Lootifications
+## Version: @project-version@
+## Author: https://github.com/moody
+## IconTexture: Interface\AddOns\Lootifications\assets\icon
+## Notes: Displays notifications for new loot.
+
+Lootifications.xml
