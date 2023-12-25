@@ -52,7 +52,7 @@ C_Timer.NewTicker(0.01, function()
     local notification = activeNotifications[i]
     notification:ClearAllPoints()
     if i == #activeNotifications then
-      notification:SetPoint("TOP", UIErrorsFrame, "BOTTOM", 0, 0)
+      notification:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
     else
       notification:SetPoint("TOP", activeNotifications[i + 1], "BOTTOM", 0, -Widgets:Padding(0.5))
     end
