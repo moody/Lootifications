@@ -61,9 +61,10 @@ print(f"{len(curseEntries)} entries retrieved.")
 unchangedEntries = [x for x in entries if x in curseEntries]
 
 # Upload unchanged entries, so that stale entries are deleted.
-print(f"Uploading {len(unchangedEntries)} unchanged entries...", end=" ")
-upload(unchangedEntries)
-print("Done.")
+if len(unchangedEntries) > 0:
+    print(f"Uploading {len(unchangedEntries)} unchanged entries...", end=" ")
+    upload(unchangedEntries)
+    print("Done.")
 
 # Upload all entries.
 print(f"Uploading {len(entries)} local entries:")
