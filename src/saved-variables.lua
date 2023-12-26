@@ -11,7 +11,7 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 
 local function globalDefaults()
   return {
-    moneyNotifications = false
+    moneyNotifications = true
   }
 end
 
