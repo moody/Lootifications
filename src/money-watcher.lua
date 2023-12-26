@@ -2,6 +2,7 @@ local _, Addon = ...
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local NotificationManager = Addon:GetModule("NotificationManager")
+local SavedVariables = Addon:GetModule("SavedVariables")
 
 -- ============================================================================
 -- Events
@@ -25,7 +26,8 @@ end
 
 -- Listen for `MoneyReceived` and display a notification.
 EventManager:On(E.MoneyReceived, function(amount)
-  if amount > 0 then
+  local sv = SavedVariables:Get()
+  if amount > 0 and sv.moneyNotifications then
     NotificationManager:Notify(GetCoinTextureString(amount))
   end
 end)

@@ -26,13 +26,12 @@ end
 
 do -- Listen for `LootReceived` and fire `TexturedLootMessage`.
   local QUANTITY_FORMAT = "|cFF9D9D9Dx|r%s"
-  local TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:2:14:2:14|t %s"
 
   EventManager:On(E.LootReceived, function(link, quantity)
     pcall(function()
       local texture = select(10, GetItemInfo(link))
       local quantityText = (quantity > 1) and QUANTITY_FORMAT:format(quantity) or ""
-      local message = TEXTURE_MESSAGE_FORMAT:format(texture, link .. quantityText)
+      local message = Addon.TEXTURE_MESSAGE_FORMAT:format(texture, link .. quantityText)
       EventManager:Fire(E.TexturedLootMessage, message)
     end)
   end)

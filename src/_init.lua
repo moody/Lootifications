@@ -4,7 +4,9 @@ local ADDON_NAME, Addon = ...
 -- Constants
 -- ============================================================================
 
+Addon.ICON = ("Interface\\AddOns\\%s\\assets\\icon"):format(ADDON_NAME)
 Addon.PLAYER_NAME = UnitName("Player")
+Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:2:14:2:14|t %s"
 
 -- ============================================================================
 -- Functions

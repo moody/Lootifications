@@ -1,12 +1,14 @@
 <Ui>
   <!-- Src -->
   <Script file="src\_init.lua"/>
+  <Script file="src\locale.lua"/>
   <Script file="src\colors.lua"/>
 
   <Script file="src\events\events.lua"/>
   <Script file="src\events\event-manager.lua"/>
 
   <Script file="src\saved-variables.lua"/>
+  <Script file="src\commands.lua"/>
 
   <Script file="src\loot-watcher.lua"/>
   <Script file="src\money-watcher.lua"/>
