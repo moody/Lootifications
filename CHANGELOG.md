@@ -5,6 +5,9 @@
 ### Added
 
 - Notifications for money when looted
+- Command: `/lootifications` to display a list of commands
+- Command: `/lootifications money` to toggle money notifications
+- Command: `/lootifications test` to test notifications
 
 ### Fixed
 
