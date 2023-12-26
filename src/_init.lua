@@ -1,4 +1,12 @@
-local _, Addon = ...
+local ADDON_NAME, Addon = ...
+
+-- ============================================================================
+-- Constants
+-- ============================================================================
+
+Addon.ICON = ("Interface\\AddOns\\%s\\assets\\icon"):format(ADDON_NAME)
+Addon.PLAYER_NAME = UnitName("Player")
+Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:2:14:2:14|t %s"
 
 -- ============================================================================
 -- Functions
@@ -23,4 +31,10 @@ end
 --- @param default any
 function Addon:IfKeyNil(t, key, default)
   if t[key] == nil then t[key] = default end
+end
+
+--- Prints values prefixed with addon's name.
+--- @param ... any
+function Addon:Print(...)
+  print(self:GetModule("Colors").Yellow("[" .. ADDON_NAME .. "]"), ...)
 end

@@ -2,9 +2,10 @@ local ADDON_NAME, Addon = ...
 local NotificationManager = Addon:GetModule("NotificationManager")
 local Widgets = Addon:GetModule("Widgets")
 
+local activeNotifications = {}
 local notificationCount = 0
 local notificationPool = {}
-local activeNotifications = {}
+local notificationQueue = {}
 
 -- ============================================================================
 -- Local Functions
@@ -37,11 +38,22 @@ end
 -- ============================================================================
 
 function NotificationManager:Notify(text)
-  local notification = getNotification()
-  notification:Notify(text)
-  notification:SetCallback(function() releaseNotification(notification) end)
-  activeNotifications[#activeNotifications + 1] = notification
+  table.insert(notificationQueue, 1, text)
 end
+
+-- ============================================================================
+-- Ticker to delay the display of queued notifications.
+-- ============================================================================
+
+C_Timer.NewTicker(0.1, function()
+  local text = strtrim(table.remove(notificationQueue) or "")
+  if text ~= "" then
+    local notification = getNotification()
+    notification:Notify(text)
+    notification:SetCallback(function() releaseNotification(notification) end)
+    activeNotifications[#activeNotifications + 1] = notification
+  end
+end)
 
 -- ============================================================================
 -- Ticker to dynamically position active notifications.
