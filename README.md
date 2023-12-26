@@ -7,7 +7,7 @@ A simple addon to display notifications when new loot is received.
 ## Chat Commands
 
 ```yaml
-# Display commands.
+# Display a list of commands.
 /lootifications
 
 # Toggle money notifications.
