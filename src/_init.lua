@@ -38,3 +38,25 @@ end
 function Addon:Print(...)
   print(self:GetModule("Colors").Yellow("[" .. ADDON_NAME .. "]"), ...)
 end
+
+do -- Addon:RegisterIntervalCallback()
+  local callbacks = {}
+
+  CreateFrame("Frame"):SetScript("OnUpdate", function(_, elapsed)
+    for _, callback in ipairs(callbacks) do callback(elapsed) end
+  end)
+
+  --- Registers a function to be called repeatedly at a specified interval (defined in seconds).
+  --- @param interval number
+  --- @param callback function
+  function Addon:RegisterIntervalCallback(interval, callback)
+    local timer = interval
+    callbacks[#callbacks + 1] = function(elapsed)
+      timer = timer + elapsed
+      if timer >= interval then
+        timer = 0
+        callback()
+      end
+    end
+  end
+end

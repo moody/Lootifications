@@ -42,10 +42,10 @@ function NotificationManager:Notify(text)
 end
 
 -- ============================================================================
--- Ticker to delay the display of queued notifications.
+-- Register callback to handle queued notifications.
 -- ============================================================================
 
-C_Timer.NewTicker(0.1, function()
+Addon:RegisterIntervalCallback(0.1, function()
   local text = strtrim(table.remove(notificationQueue) or "")
   if text ~= "" then
     local notification = getNotification()
@@ -56,10 +56,10 @@ C_Timer.NewTicker(0.1, function()
 end)
 
 -- ============================================================================
--- Ticker to dynamically position active notifications.
+-- Register callback to reposition active notifications.
 -- ============================================================================
 
-C_Timer.NewTicker(0.01, function()
+Addon:RegisterIntervalCallback(0.01, function()
   for i = #activeNotifications, 1, -1 do
     local notification = activeNotifications[i]
     notification:ClearAllPoints()

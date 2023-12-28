@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.1] - 2023-12-28
+
+### Changed
+
+- Modified code for performance improvements
+
 ## [1.1.0] - 2023-12-25
 
 ### Added
