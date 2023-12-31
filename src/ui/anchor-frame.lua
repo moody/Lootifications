@@ -56,6 +56,14 @@ function AnchorFrame:GetNotificationPoint()
   end
 end
 
+function AnchorFrame:Toggle()
+  if self.frame:IsShown() then
+    self.frame:Hide()
+  else
+    self.frame:Show()
+  end
+end
+
 -- ============================================================================
 -- Events
 -- ============================================================================

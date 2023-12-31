@@ -11,6 +11,7 @@ setmetatable(L, {
 -- English
 -- ============================================================================
 
+L["COMMAND_DESCRIPTION_ANCHOR"] = "Toggle the notifications anchor."
 L["COMMAND_DESCRIPTION_HELP"] = "Display a list of commands."
 L["COMMAND_DESCRIPTION_MAX"] = "Set the maximum number of displayed notifications (%s-%s)."
 L["COMMAND_DESCRIPTION_MONEY"] = "Toggle money notifications."

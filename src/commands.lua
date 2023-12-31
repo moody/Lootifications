@@ -1,4 +1,5 @@
 local ADDON_NAME, Addon = ...
+local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
@@ -33,10 +34,15 @@ end)
 function Commands.help()
   Addon:Print(L.COMMANDS .. ":")
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
+  print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
   print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
     Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+end
+
+function Commands.anchor()
+  AnchorFrame:Toggle()
 end
 
 function Commands.max(value)
