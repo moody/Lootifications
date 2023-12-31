@@ -4,6 +4,7 @@ local ADDON_NAME, Addon = ...
 -- Constants
 -- ============================================================================
 
+Addon.ANCHOR_POINT_DEFAULT = { "TOP", SubZoneTextString, "BOTTOM", 0, -8 }
 Addon.ICON = ("Interface\\AddOns\\%s\\assets\\icon"):format(ADDON_NAME)
 Addon.MAX_NOTIFICATIONS_DEFAULT = 10
 Addon.MAX_NOTIFICATIONS_MAX = 25

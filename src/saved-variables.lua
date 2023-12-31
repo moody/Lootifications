@@ -12,7 +12,8 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 local function globalDefaults()
   return {
     moneyNotifications = true,
-    maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT
+    maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
+    anchorPoint = {}
   }
 end
 
@@ -58,6 +59,8 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   function SavedVariables:Get()
     return global
   end
+
+  EventManager:Fire(E.SavedVariablesLoaded)
 end)
 
 -- Deinitialize.

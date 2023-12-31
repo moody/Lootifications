@@ -1,4 +1,5 @@
 local ADDON_NAME, Addon = ...
+local AnchorFrame = Addon:GetModule("AnchorFrame")
 local NotificationManager = Addon:GetModule("NotificationManager")
 local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
@@ -68,9 +69,9 @@ Addon:RegisterIntervalCallback(0.01, function()
     local notification = activeNotifications[i]
     notification:ClearAllPoints()
     if i == #activeNotifications then
-      notification:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
+      notification:SetPoint(AnchorFrame:GetNotificationPoint())
     else
-      notification:SetPoint("TOP", activeNotifications[i + 1], "BOTTOM", 0, -Widgets:Padding(0.5))
+      notification:SetPoint("TOP", activeNotifications[i + 1], "BOTTOM", 0, 0)
     end
   end
 end)
