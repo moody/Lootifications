@@ -6,6 +6,19 @@ local EventManager = Addon:GetModule("EventManager")
 local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
 
+local NOTIFICATION_POINTS = {
+  GROW_UP = {
+    LEFT = { point = "BOTTOMLEFT", relativePoint = "TOPLEFT" },
+    CENTER = { point = "BOTTOM", relativePoint = "TOP" },
+    RIGHT = { point = "BOTTOMRIGHT", relativePoint = "TOPRIGHT" }
+  },
+  GROW_DOWN = {
+    LEFT = { point = "TOPLEFT", relativePoint = "BOTTOMLEFT" },
+    CENTER = { point = "TOP", relativePoint = "BOTTOM" },
+    RIGHT = { point = "TOPRIGHT", relativePoint = "BOTTOMRIGHT" }
+  }
+}
+
 -- ============================================================================
 -- Create the frame.
 -- ============================================================================
@@ -16,9 +29,12 @@ AnchorFrame.frame = (function()
   frame:EnableMouse(true)
   frame:RegisterForDrag("LeftButton")
 
-  local text = Colors.Purple(("[%s Anchor]"):format(ADDON_NAME))
-  frame:Notify(Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text))
-  frame.animationGroup:Stop()
+  frame:HookScript("OnShow", function(self)
+    local text = Colors.Purple(("[%s Anchor]"):format(ADDON_NAME))
+    self.fontString:SetText(Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text))
+    self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
+    self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
+  end)
 
   frame:SetScript("OnDragStart", function(self)
     self:StartMoving()
@@ -44,16 +60,30 @@ end)()
 -- Functions
 -- ============================================================================
 
-function AnchorFrame:GetNotificationPoint()
-  if not self.frame then
-    return unpack(Addon.ANCHOR_POINT_DEFAULT)
+function AnchorFrame:GetNotificationPoints()
+  local SCREEN_WIDTH = GetScreenWidth() or 0
+  local SCREEN_HEIGHT = GetScreenHeight() or 0
+  local SCREEN_MID_X = SCREEN_WIDTH * 0.5
+  local SCREEN_MID_Y = SCREEN_HEIGHT * 0.5
+  local CENTER_THRESHOLD = SCREEN_WIDTH * 0.2
+
+  local anchorX, anchorY = self.frame:GetCenter()
+  anchorX = anchorX or 0
+  anchorY = anchorY or 0
+
+  -- Determine notification growth direction based on anchor position.
+  -- Y-axis: 0 at the bottom, increases upwards.
+  local isCloserToTop = anchorY >= SCREEN_MID_Y
+  local growthDirection = isCloserToTop and NOTIFICATION_POINTS.GROW_DOWN or NOTIFICATION_POINTS.GROW_UP
+
+  -- Return center points if within the treshold.
+  if anchorX >= SCREEN_MID_X - CENTER_THRESHOLD and anchorX <= SCREEN_MID_X + CENTER_THRESHOLD then
+    return growthDirection.CENTER
   end
 
-  if self.frame:IsShown() then
-    return "TOP", self.frame, "BOTTOM", 0, 0
-  else
-    return "TOP", self.frame
-  end
+  -- Return points based on if the anchor is to the left or right.
+  local isToTheLeft = anchorX <= SCREEN_MID_X
+  return isToTheLeft and growthDirection.LEFT or growthDirection.RIGHT
 end
 
 function AnchorFrame:Reset()
