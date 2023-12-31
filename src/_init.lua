@@ -36,7 +36,7 @@ end
 --- Prints values prefixed with addon's name.
 --- @param ... any
 function Addon:Print(...)
-  print(self:GetModule("Colors").Yellow("[" .. ADDON_NAME .. "]"), ...)
+  print(self:GetModule("Colors").Purple("[" .. ADDON_NAME .. "]"), ...)
 end
 
 do -- Addon:RegisterIntervalCallback()
