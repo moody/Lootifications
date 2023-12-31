@@ -16,6 +16,8 @@ function Widgets:Frame(options)
   -- Defaults.
   Addon:IfKeyNil(options, "frameType", "Frame")
   Addon:IfKeyNil(options, "parent", UIParent)
+  Addon:IfKeyNil(options, "width", 1)
+  Addon:IfKeyNil(options, "height", 1)
 
   -- Base frame.
   local frame = CreateFrame(options.frameType, options.name, options.parent)
@@ -28,8 +30,8 @@ function Widgets:Frame(options)
   frame:SetBackdropBorderColor(0, 0, 0, 1)
 
   -- Size.
-  if options.width then frame:SetWidth(options.width) end
-  if options.height then frame:SetHeight(options.height) end
+  frame:SetWidth(options.width)
+  frame:SetHeight(options.height)
 
   -- Points.
   if options.points then
