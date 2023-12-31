@@ -4,6 +4,7 @@
 
 ## Added
 
+- Command: `/lootifications anchor` to toggle the notifications anchor
 - Command: `/lootifications max <integer>` to set the maximum number of displayed notifications
 
 ## [1.1.1] - 2023-12-28
