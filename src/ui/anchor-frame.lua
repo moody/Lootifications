@@ -30,6 +30,12 @@ AnchorFrame.frame = (function()
     sv.anchorPoint = { self:GetPoint() }
   end)
 
+  frame:SetScript("OnMouseDown", function(self, button)
+    if button == "RightButton" then
+      self:Hide()
+    end
+  end)
+
   frame:Hide()
   return frame
 end)()
