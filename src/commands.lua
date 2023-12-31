@@ -33,7 +33,8 @@ end)
 function Commands.help()
   Addon:Print(L.COMMANDS .. ":")
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
-  print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX)
+  print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
+    Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
 end
@@ -51,7 +52,8 @@ function Commands.max(value)
     Addon:Print(L.COMMAND_SUCCESS_MAX:format(newMax))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
-    print(Colors.Gold("  /lootifications max"), Colors.Yellow(math.random(1, 20)))
+    print(Colors.Gold("  /lootifications max"), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications max"), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX), "-", L.MAXIMUM)
   end
 end
 

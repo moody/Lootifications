@@ -12,12 +12,14 @@ setmetatable(L, {
 -- ============================================================================
 
 L["COMMAND_DESCRIPTION_HELP"] = "Display a list of commands."
-L["COMMAND_DESCRIPTION_MAX"] = "Set the maximum number of displayed notifications."
+L["COMMAND_DESCRIPTION_MAX"] = "Set the maximum number of displayed notifications (%s-%s)."
 L["COMMAND_DESCRIPTION_MONEY"] = "Toggle money notifications."
 L["COMMAND_DESCRIPTION_TEST"] = "Test notifications."
 L["COMMAND_EXAMPLE_USAGE"] = "Example Usage"
 L["COMMAND_SUCCESS_MAX"] = "Maximum notifications set to %s."
 L["COMMANDS"] = "Commands"
+L["MAXIMUM"] = "Maximum"
+L["MINIMUM"] = "Minimum"
 L["MONEY_NOTIFICATIONS_DISABLED"] = "Money notifications disabled."
 L["MONEY_NOTIFICATIONS_ENABLED"] = "Money notifications enabled."
 
