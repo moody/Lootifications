@@ -45,7 +45,7 @@ function Commands.max(value)
     return num == math.floor(num) and num or error()
   end)
 
-  if success and newMax >= 1 and newMax <= 20 then
+  if success and newMax >= Addon.MAX_NOTIFICATIONS_MIN and newMax <= Addon.MAX_NOTIFICATIONS_MAX then
     local sv = SavedVariables:Get()
     sv.maxNotifications = newMax
     Addon:Print(L.COMMAND_SUCCESS_MAX:format(newMax))

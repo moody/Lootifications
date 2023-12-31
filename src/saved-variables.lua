@@ -12,7 +12,7 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 local function globalDefaults()
   return {
     moneyNotifications = true,
-    maxNotifications = 10
+    maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT
   }
 end
 
@@ -38,6 +38,10 @@ local function depopulate(t, defaults)
   end
 end
 
+local function clamp(value, minValue, maxValue)
+  return math.min(math.max(value, minValue), maxValue)
+end
+
 -- ============================================================================
 -- Events
 -- ============================================================================
@@ -47,6 +51,9 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   if type(_G[GLOBAL_SV]) ~= "table" then _G[GLOBAL_SV] = {} end
   populate(_G[GLOBAL_SV], globalDefaults())
   local global = _G[GLOBAL_SV]
+
+  -- Clamp `maxNotifications` between min and max values.
+  global.maxNotifications = clamp(global.maxNotifications, Addon.MAX_NOTIFICATIONS_MIN, Addon.MAX_NOTIFICATIONS_MAX)
 
   function SavedVariables:Get()
     return global

@@ -5,6 +5,9 @@ local ADDON_NAME, Addon = ...
 -- ============================================================================
 
 Addon.ICON = ("Interface\\AddOns\\%s\\assets\\icon"):format(ADDON_NAME)
+Addon.MAX_NOTIFICATIONS_DEFAULT = 10
+Addon.MAX_NOTIFICATIONS_MAX = 25
+Addon.MAX_NOTIFICATIONS_MIN = 1
 Addon.PLAYER_NAME = UnitName("Player")
 Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:1:15:1:15|t %s"
 
