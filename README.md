@@ -10,6 +10,9 @@ A simple addon to display notifications when new loot is received.
 # Display a list of commands.
 /lootifications
 
+# Set the maximum number of displayed notifications.
+/lootifications max <integer>
+
 # Toggle money notifications.
 /lootifications money
 
