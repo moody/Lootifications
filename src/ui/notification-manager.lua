@@ -1,5 +1,6 @@
 local ADDON_NAME, Addon = ...
 local NotificationManager = Addon:GetModule("NotificationManager")
+local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
 
 local activeNotifications = {}
@@ -46,6 +47,9 @@ end
 -- ============================================================================
 
 Addon:RegisterIntervalCallback(0.1, function()
+  local sv = SavedVariables:Get()
+  if #activeNotifications >= sv.maxNotifications then return end
+
   local text = strtrim(table.remove(notificationQueue) or "")
   if text ~= "" then
     local notification = getNotification()

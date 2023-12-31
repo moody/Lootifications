@@ -32,9 +32,27 @@ end)
 
 function Commands.help()
   Addon:Print(L.COMMANDS .. ":")
-  Addon:Print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
-  Addon:Print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
-  Addon:Print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+  print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
+  print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX)
+  print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
+  print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+end
+
+function Commands.max(value)
+  local success, newMax = pcall(function()
+    local num = tonumber(value)
+    --- @diagnostic disable-next-line: param-type-mismatch
+    return num == math.floor(num) and num or error()
+  end)
+
+  if success and newMax >= 1 and newMax <= 20 then
+    local sv = SavedVariables:Get()
+    sv.maxNotifications = newMax
+    Addon:Print(L.COMMAND_SUCCESS_MAX:format(newMax))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications max"), Colors.Yellow(math.random(1, 20)))
+  end
 end
 
 function Commands.money()
@@ -55,12 +73,13 @@ do -- Commands.test()
   }
 
   function Commands.test()
-    for i, colorCode in ipairs(COLOR_CODES) do
+    local sv = SavedVariables:Get()
+    for i = 1, sv.maxNotifications do
+      local colorIndex = ((i - 1) % #COLOR_CODES) + 1
+      local colorCode = COLOR_CODES[colorIndex]
       local text = WrapTextInColorCode(("[%s %s]"):format(ADDON_NAME, i), colorCode)
       local textureMessage = Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text)
       EventManager:Fire(E.TexturedLootMessage, textureMessage)
     end
-
-    EventManager:Fire(E.MoneyReceived, 42069)
   end
 end
