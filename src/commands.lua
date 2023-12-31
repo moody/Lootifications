@@ -38,6 +38,7 @@ function Commands.help()
   print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
     Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
+  print(Colors.Gold("  /lootifications reset"), "-", L.COMMAND_DESCRIPTION_RESET)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
 end
 
@@ -68,6 +69,10 @@ function Commands.money()
   sv.moneyNotifications = not sv.moneyNotifications
   local message = sv.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
   Addon:Print(message)
+end
+
+function Commands.reset()
+  AnchorFrame:Reset()
 end
 
 do -- Commands.test()

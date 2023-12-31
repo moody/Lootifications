@@ -56,6 +56,13 @@ function AnchorFrame:GetNotificationPoint()
   end
 end
 
+function AnchorFrame:Reset()
+  local sv = SavedVariables:Get()
+  sv.anchorPoint = Addon.ANCHOR_POINT_DEFAULT
+  self.frame:ClearAllPoints()
+  self.frame:SetPoint(unpack(Addon.ANCHOR_POINT_DEFAULT))
+end
+
 function AnchorFrame:Toggle()
   if self.frame:IsShown() then
     self.frame:Hide()
