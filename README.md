@@ -19,7 +19,7 @@ A simple addon to display notifications when new loot is received.
 # Toggle money notifications.
 /lootifications money
 
-# Reset the notifications anchor to the default position.
+# Reset the notifications anchor.
 /lootifications reset
 
 # Test notifications.
