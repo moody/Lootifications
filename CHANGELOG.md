@@ -5,6 +5,7 @@
 ## Added
 
 - Command: `/lootifications anchor` to toggle the notifications anchor
+- Command: `/lootifications delay <integer>` to set the delay time before notifications fade out
 - Command: `/lootifications max <integer>` to set the maximum number of displayed notifications
 - Command: `/lootifications reset` to reset the notifications anchor
 
