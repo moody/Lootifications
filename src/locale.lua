@@ -12,12 +12,12 @@ setmetatable(L, {
 -- ============================================================================
 
 L["ANCHOR"] = "Anchor"
+L["COMMAND_DESCRIPTION_ANCHOR_RESET"] = "Reset the notifications anchor."
 L["COMMAND_DESCRIPTION_ANCHOR"] = "Toggle the notifications anchor."
 L["COMMAND_DESCRIPTION_DELAY"] = "Set the delay time before notifications fade out (from %s to %s seconds)."
 L["COMMAND_DESCRIPTION_HELP"] = "Display a list of commands."
 L["COMMAND_DESCRIPTION_MAX"] = "Set the maximum number of displayed notifications (from %s to %s)."
 L["COMMAND_DESCRIPTION_MONEY"] = "Toggle money notifications."
-L["COMMAND_DESCRIPTION_RESET"] = "Reset the notifications anchor."
 L["COMMAND_DESCRIPTION_TEST"] = "Test notifications."
 L["COMMAND_EXAMPLE_USAGE"] = "Example Usage"
 L["COMMAND_SUCCESS_DELAY"] = "Notification fade-out delay set to %s seconds."

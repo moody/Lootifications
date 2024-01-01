@@ -51,17 +51,21 @@ function Commands.help()
   Addon:Print(L.COMMANDS .. ":")
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
   print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
+  print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
   print(Colors.Gold("  /lootifications delay"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_DELAY:format(
     Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MIN), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MAX)))
   print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
     Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
-  print(Colors.Gold("  /lootifications reset"), "-", L.COMMAND_DESCRIPTION_RESET)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
 end
 
-function Commands.anchor()
-  AnchorFrame:Toggle()
+function Commands.anchor(subcommand)
+  if subcommand == "reset" then
+    AnchorFrame:Reset()
+  else
+    AnchorFrame:Toggle()
+  end
 end
 
 function Commands.delay(value)
@@ -95,10 +99,6 @@ function Commands.money()
   sv.moneyNotifications = not sv.moneyNotifications
   local message = sv.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
   Addon:Print(message)
-end
-
-function Commands.reset()
-  AnchorFrame:Reset()
 end
 
 do -- Commands.test()
