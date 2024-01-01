@@ -13,6 +13,9 @@ A simple addon to display notifications when new loot is received.
 # Toggle the notifications anchor.
 /lootifications anchor
 
+# Reset the notifications anchor.
+/lootifications anchor reset
+
 # Set the delay time before notifications fade out.
 /lootifications delay <integer>
 
@@ -21,9 +24,6 @@ A simple addon to display notifications when new loot is received.
 
 # Toggle money notifications.
 /lootifications money
-
-# Reset the notifications anchor.
-/lootifications reset
 
 # Test notifications.
 /lootifications test
