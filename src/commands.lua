@@ -63,6 +63,7 @@ end
 function Commands.anchor(subcommand)
   if subcommand == "reset" then
     AnchorFrame:Reset()
+    Addon:Print(L.COMMAND_SUCCESS_ANCHOR_RESET)
   else
     AnchorFrame:Toggle()
   end

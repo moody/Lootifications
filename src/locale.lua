@@ -20,6 +20,7 @@ L["COMMAND_DESCRIPTION_MAX"] = "Set the maximum number of displayed notification
 L["COMMAND_DESCRIPTION_MONEY"] = "Toggle money notifications."
 L["COMMAND_DESCRIPTION_TEST"] = "Test notifications."
 L["COMMAND_EXAMPLE_USAGE"] = "Example Usage"
+L["COMMAND_SUCCESS_ANCHOR_RESET"] = "The notifications anchor has been reset."
 L["COMMAND_SUCCESS_DELAY"] = "Notification fade-out delay set to %s seconds."
 L["COMMAND_SUCCESS_MAX"] = "Maximum number of displayed notifications set to %s."
 L["MAXIMUM"] = "Maximum"
