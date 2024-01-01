@@ -25,12 +25,14 @@ local NOTIFICATION_POINTS = {
 
 AnchorFrame.frame = (function()
   local frame = Widgets:Notification({ name = ADDON_NAME .. "_AnchorFrame" })
+  frame:SetBackdropColor(0, 0, 0, 0.6)
+  frame:SetBackdropBorderColor(0, 0, 0, 0.6)
   frame:SetMovable(true)
   frame:EnableMouse(true)
   frame:RegisterForDrag("LeftButton")
 
   frame:HookScript("OnShow", function(self)
-    local text = Colors.Purple(("[%s Anchor]"):format(ADDON_NAME))
+    local text = Colors.Gold(("[%s Anchor]"):format(ADDON_NAME))
     self.fontString:SetText(Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text))
     self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
     self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
