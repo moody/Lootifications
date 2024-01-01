@@ -48,7 +48,7 @@ end
 -- ============================================================================
 
 function Commands.help()
-  Addon:Print(L.COMMANDS .. ":")
+  Addon:Print("|", Addon.VERSION)
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
   print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
   print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
