@@ -28,6 +28,22 @@ EventManager:Once(E.Wow.PlayerLogin, function()
 end)
 
 -- ============================================================================
+-- Local Functions
+-- ============================================================================
+
+--- Attempts to parse the given value as an integer.
+--- @param value string|number
+--- @return integer|nil
+local function tryParseInteger(value)
+  local integer = tonumber(value)
+  if integer and integer == math.floor(integer) then
+    return integer
+  else
+    return nil
+  end
+end
+
+-- ============================================================================
 -- Commands
 -- ============================================================================
 
@@ -35,6 +51,8 @@ function Commands.help()
   Addon:Print(L.COMMANDS .. ":")
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
   print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
+  print(Colors.Gold("  /lootifications delay"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_DELAY:format(
+    Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MIN), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MAX)))
   print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
     Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
@@ -46,17 +64,25 @@ function Commands.anchor()
   AnchorFrame:Toggle()
 end
 
-function Commands.max(value)
-  local success, newMax = pcall(function()
-    local num = tonumber(value)
-    --- @diagnostic disable-next-line: param-type-mismatch
-    return num == math.floor(num) and num or error()
-  end)
-
-  if success and newMax >= Addon.MAX_NOTIFICATIONS_MIN and newMax <= Addon.MAX_NOTIFICATIONS_MAX then
+function Commands.delay(value)
+  value = tryParseInteger(value)
+  if value and value >= Addon.NOTIFICATION_FADE_OUT_DELAY_MIN and value <= Addon.NOTIFICATION_FADE_OUT_DELAY_MAX then
     local sv = SavedVariables:Get()
-    sv.maxNotifications = newMax
-    Addon:Print(L.COMMAND_SUCCESS_MAX:format(newMax))
+    sv.notificationFadeOutDelay = value
+    Addon:Print(L.COMMAND_SUCCESS_DELAY:format(value))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications time"), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications time"), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MAX), "-", L.MAXIMUM)
+  end
+end
+
+function Commands.max(value)
+  value = tryParseInteger(value)
+  if value and value >= Addon.MAX_NOTIFICATIONS_MIN and value <= Addon.MAX_NOTIFICATIONS_MAX then
+    local sv = SavedVariables:Get()
+    sv.maxNotifications = value
+    Addon:Print(L.COMMAND_SUCCESS_MAX:format(value))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
     print(Colors.Gold("  /lootifications max"), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), "-", L.MINIMUM)

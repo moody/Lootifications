@@ -54,7 +54,7 @@ Addon:RegisterIntervalCallback(0.1, function()
   local text = strtrim(table.remove(notificationQueue) or "")
   if text ~= "" then
     local notification = getNotification()
-    notification:Notify(text)
+    notification:Notify(text, sv.notificationFadeOutDelay)
     notification:SetCallback(function() releaseNotification(notification) end)
     activeNotifications[#activeNotifications + 1] = notification
   end

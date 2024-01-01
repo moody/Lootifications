@@ -11,9 +11,10 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 
 local function globalDefaults()
   return {
-    moneyNotifications = true,
+    anchorPoint = {},
     maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
-    anchorPoint = {}
+    moneyNotifications = true,
+    notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT
   }
 end
 
@@ -55,6 +56,9 @@ EventManager:Once(E.Wow.PlayerLogin, function()
 
   -- Clamp `maxNotifications` between min and max values.
   global.maxNotifications = clamp(global.maxNotifications, Addon.MAX_NOTIFICATIONS_MIN, Addon.MAX_NOTIFICATIONS_MAX)
+  -- Clamp `notificationFadeOutDelay` between min and max values.
+  global.notificationFadeOutDelay = clamp(global.notificationFadeOutDelay, Addon.NOTIFICATION_FADE_OUT_DELAY_MIN,
+    Addon.NOTIFICATION_FADE_OUT_DELAY_MAX)
 
   function SavedVariables:Get()
     return global
