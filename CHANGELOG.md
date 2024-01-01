@@ -6,7 +6,7 @@
 
 - Command: `/lootifications anchor` to toggle the notifications anchor
 - Command: `/lootifications max <integer>` to set the maximum number of displayed notifications
-- Command: `/lootifications reset` to reset the notifications anchor to the default position
+- Command: `/lootifications reset` to reset the notifications anchor
 
 ## [1.1.1] - 2023-12-28
 
