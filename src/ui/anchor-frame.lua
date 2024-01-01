@@ -91,9 +91,9 @@ end
 
 function AnchorFrame:Reset()
   local sv = SavedVariables:Get()
-  sv.anchorPoint = Addon.ANCHOR_POINT_DEFAULT
   self.frame:ClearAllPoints()
-  self.frame:SetPoint(unpack(Addon.ANCHOR_POINT_DEFAULT))
+  self.frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
+  sv.anchorPoint = nil
 end
 
 function AnchorFrame:Toggle()
@@ -120,8 +120,6 @@ EventManager:Once(E.SavedVariablesLoaded, function()
 
   -- If the saved anchor point couldn't be set, revert to the default anchor point.
   if not isAnchorPointSet then
-    AnchorFrame.frame:ClearAllPoints()
-    AnchorFrame.frame:SetPoint(unpack(Addon.ANCHOR_POINT_DEFAULT))
-    sv.anchorPoint = Addon.ANCHOR_POINT_DEFAULT
+    AnchorFrame:Reset()
   end
 end)
