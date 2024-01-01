@@ -1,5 +1,7 @@
 local ADDON_NAME, Addon = ...
+local AnchorFrame = Addon:GetModule("AnchorFrame")
 local NotificationManager = Addon:GetModule("NotificationManager")
+local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
 
 local activeNotifications = {}
@@ -46,10 +48,13 @@ end
 -- ============================================================================
 
 Addon:RegisterIntervalCallback(0.1, function()
+  local sv = SavedVariables:Get()
+  if #activeNotifications >= sv.maxNotifications then return end
+
   local text = strtrim(table.remove(notificationQueue) or "")
   if text ~= "" then
     local notification = getNotification()
-    notification:Notify(text)
+    notification:Notify(text, sv.notificationFadeOutDelay)
     notification:SetCallback(function() releaseNotification(notification) end)
     activeNotifications[#activeNotifications + 1] = notification
   end
@@ -60,13 +65,15 @@ end)
 -- ============================================================================
 
 Addon:RegisterIntervalCallback(0.01, function()
+  local points = AnchorFrame:GetNotificationPoints()
   for i = #activeNotifications, 1, -1 do
     local notification = activeNotifications[i]
     notification:ClearAllPoints()
     if i == #activeNotifications then
-      notification:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
+      local relativePoint = AnchorFrame.frame:IsShown() and points.relativePoint or points.point
+      notification:SetPoint(points.point, AnchorFrame.frame, relativePoint, 0, 0)
     else
-      notification:SetPoint("TOP", activeNotifications[i + 1], "BOTTOM", 0, -Widgets:Padding(0.5))
+      notification:SetPoint(points.point, activeNotifications[i + 1], points.relativePoint, 0, 0)
     end
   end
 end)

@@ -37,8 +37,8 @@ function Widgets:Notification(options)
   frame.animationGroup.fadeOut = frame.animationGroup:CreateAnimation("Alpha")
   frame.animationGroup.fadeOut:SetFromAlpha(1)
   frame.animationGroup.fadeOut:SetToAlpha(0)
-  frame.animationGroup.fadeOut:SetDuration(1)
-  frame.animationGroup.fadeOut:SetStartDelay(4)
+  frame.animationGroup.fadeOut:SetDuration(0.25)
+  frame.animationGroup.fadeOut:SetStartDelay(0)
   frame.animationGroup.fadeOut:SetSmoothing("OUT")
 
   frame.animationGroup:HookScript("OnPlay", function()
@@ -52,12 +52,14 @@ function Widgets:Notification(options)
     end
   end)
 
-  --- Sets the notification's font string text and plays its animation.
+  --- Sets the notification's text and fade out delay, then plays its animation.
   --- @param text string
-  function frame:Notify(text)
+  --- @param fadeOutDelay number
+  function frame:Notify(text, fadeOutDelay)
     self.fontString:SetText(text)
     self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
     self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
+    self.animationGroup.fadeOut:SetStartDelay(fadeOutDelay)
     self.animationGroup:Play()
   end
 

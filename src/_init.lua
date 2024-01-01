@@ -5,8 +5,15 @@ local ADDON_NAME, Addon = ...
 -- ============================================================================
 
 Addon.ICON = ("Interface\\AddOns\\%s\\assets\\icon"):format(ADDON_NAME)
+Addon.MAX_NOTIFICATIONS_DEFAULT = 10
+Addon.MAX_NOTIFICATIONS_MAX = 25
+Addon.MAX_NOTIFICATIONS_MIN = 1
+Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT = 3
+Addon.NOTIFICATION_FADE_OUT_DELAY_MAX = 10
+Addon.NOTIFICATION_FADE_OUT_DELAY_MIN = 1
 Addon.PLAYER_NAME = UnitName("Player")
-Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:2:14:2:14|t %s"
+Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:1:15:1:15|t %s"
+Addon.VERSION = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
 
 -- ============================================================================
 -- Functions
@@ -36,7 +43,7 @@ end
 --- Prints values prefixed with addon's name.
 --- @param ... any
 function Addon:Print(...)
-  print(self:GetModule("Colors").Yellow("[" .. ADDON_NAME .. "]"), ...)
+  print(self:GetModule("Colors").Purple("[" .. ADDON_NAME .. "]"), ...)
 end
 
 do -- Addon:RegisterIntervalCallback()

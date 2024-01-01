@@ -1,4 +1,5 @@
 local ADDON_NAME, Addon = ...
+local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
@@ -27,14 +28,70 @@ EventManager:Once(E.Wow.PlayerLogin, function()
 end)
 
 -- ============================================================================
+-- Local Functions
+-- ============================================================================
+
+--- Attempts to parse the given value as an integer.
+--- @param value string|number
+--- @return integer|nil
+local function tryParseInteger(value)
+  local integer = tonumber(value)
+  if integer and integer == math.floor(integer) then
+    return integer
+  else
+    return nil
+  end
+end
+
+-- ============================================================================
 -- Commands
 -- ============================================================================
 
 function Commands.help()
-  Addon:Print(L.COMMANDS .. ":")
-  Addon:Print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
-  Addon:Print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
-  Addon:Print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+  Addon:Print("|", Addon.VERSION)
+  print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
+  print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
+  print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
+  print(Colors.Gold("  /lootifications delay"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_DELAY:format(
+    Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MIN), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MAX)))
+  print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
+    Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
+  print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
+  print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+end
+
+function Commands.anchor(subcommand)
+  if subcommand == "reset" then
+    AnchorFrame:Reset()
+  else
+    AnchorFrame:Toggle()
+  end
+end
+
+function Commands.delay(value)
+  value = tryParseInteger(value)
+  if value and value >= Addon.NOTIFICATION_FADE_OUT_DELAY_MIN and value <= Addon.NOTIFICATION_FADE_OUT_DELAY_MAX then
+    local sv = SavedVariables:Get()
+    sv.notificationFadeOutDelay = value
+    Addon:Print(L.COMMAND_SUCCESS_DELAY:format(Colors.Yellow(value)))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications delay"), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications delay"), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MAX), "-", L.MAXIMUM)
+  end
+end
+
+function Commands.max(value)
+  value = tryParseInteger(value)
+  if value and value >= Addon.MAX_NOTIFICATIONS_MIN and value <= Addon.MAX_NOTIFICATIONS_MAX then
+    local sv = SavedVariables:Get()
+    sv.maxNotifications = value
+    Addon:Print(L.COMMAND_SUCCESS_MAX:format(Colors.Yellow(value)))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications max"), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications max"), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX), "-", L.MAXIMUM)
+  end
 end
 
 function Commands.money()
@@ -55,12 +112,13 @@ do -- Commands.test()
   }
 
   function Commands.test()
-    for i, colorCode in ipairs(COLOR_CODES) do
+    local sv = SavedVariables:Get()
+    for i = 1, sv.maxNotifications do
+      local colorIndex = ((i - 1) % #COLOR_CODES) + 1
+      local colorCode = COLOR_CODES[colorIndex]
       local text = WrapTextInColorCode(("[%s %s]"):format(ADDON_NAME, i), colorCode)
       local textureMessage = Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text)
       EventManager:Fire(E.TexturedLootMessage, textureMessage)
     end
-
-    EventManager:Fire(E.MoneyReceived, 42069)
   end
 end
