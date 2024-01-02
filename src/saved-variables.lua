@@ -12,6 +12,7 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 local function globalDefaults()
   return {
     anchorPoint = {},
+    lootPrices = false,
     maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
     moneyNotifications = true,
     notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT

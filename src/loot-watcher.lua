@@ -1,7 +1,9 @@
 local _, Addon = ...
+local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local NotificationManager = Addon:GetModule("NotificationManager")
+local SavedVariables = Addon:GetModule("SavedVariables")
 
 -- ============================================================================
 -- Events
@@ -25,14 +27,27 @@ do -- Listen for `Wow.ChatMessageLoot` and fire `LootReceived`.
 end
 
 do -- Listen for `LootReceived` and fire `TexturedLootMessage`.
-  local QUANTITY_FORMAT = "|cFF9D9D9Dx|r%s"
+  local QUANTITY_FORMAT = Colors.Grey("x") .. "%s"
+  local PRICE_FORMAT = Colors.Grey("(") .. "%s" .. Colors.Grey(")")
+
+  local function getQuantityText(quantity)
+    return (quantity > 1) and QUANTITY_FORMAT:format(quantity) or ""
+  end
+
+  local function getPriceText(price)
+    local sv = SavedVariables:Get()
+    if sv.lootPrices and price and price > 0 then
+      return PRICE_FORMAT:format(GetCoinTextureString(price))
+    end
+    return ""
+  end
 
   EventManager:On(E.LootReceived, function(link, quantity)
     pcall(function()
-      local texture = select(10, GetItemInfo(link))
-      local quantityText = (quantity > 1) and QUANTITY_FORMAT:format(quantity) or ""
-      local message = Addon.TEXTURE_MESSAGE_FORMAT:format(texture, link .. quantityText)
-      EventManager:Fire(E.TexturedLootMessage, message)
+      local texture, price = select(10, GetItemInfo(link))
+      local message = Addon.TEXTURE_MESSAGE_FORMAT:format(texture,
+        ("%s%s %s"):format(link, getQuantityText(quantity), getPriceText(price)))
+      EventManager:Fire(E.TexturedLootMessage, message:trim())
     end)
   end)
 end
