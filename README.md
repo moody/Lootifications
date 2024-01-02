@@ -25,6 +25,9 @@ A simple addon to display notifications when new loot is received.
 # Toggle money notifications.
 /lootifications money
 
+# Toggle loot prices in notifications.
+/lootifications prices
+
 # Test notifications.
 /lootifications test
 ```
