@@ -46,7 +46,7 @@ do -- Listen for `LootReceived` and fire `TexturedLootMessage`.
     pcall(function()
       local texture, price = select(10, GetItemInfo(link))
       local message = Addon.TEXTURE_MESSAGE_FORMAT:format(texture,
-        ("%s%s %s"):format(link, getQuantityText(quantity), getPriceText(price)))
+        ("%s%s %s"):format(link, getQuantityText(quantity), getPriceText(price * quantity)))
       EventManager:Fire(E.TexturedLootMessage, message:trim())
     end)
   end)
