@@ -1,8 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Command: `/lootifications prices` to toggle loot prices in notifications
+
 ## [1.2.0] - 2023-12-31
 
-## Added
+### Added
 
 - Command: `/lootifications anchor` to toggle the notifications anchor
 - Command: `/lootifications anchor reset` to reset the notifications anchor
