@@ -19,11 +19,20 @@ A simple addon to display notifications when new loot is received.
 # Set the delay time before notifications fade out.
 /lootifications delay <integer>
 
+# Reset the delay time before notifications fade out.
+/lootifications delay reset
+
 # Set the maximum number of displayed notifications.
 /lootifications max <integer>
 
+# Reset the maximum number of displayed notifications.
+/lootifications max reset
+
 # Toggle money notifications.
 /lootifications money
+
+# Toggle loot prices in notifications.
+/lootifications prices
 
 # Test notifications.
 /lootifications test
