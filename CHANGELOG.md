@@ -5,6 +5,8 @@
 ### Added
 
 - Command: `/lootifications prices` to toggle loot prices in notifications
+- Command: `/lootifications delay reset` to reset the delay time before notifications fade out
+- Command: `/lootifications max reset` to reset the maximum number of displayed notifications
 
 ## [1.2.0] - 2023-12-31
 
