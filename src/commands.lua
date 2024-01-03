@@ -54,8 +54,10 @@ function Commands.help()
   print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
   print(Colors.Gold("  /lootifications delay"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_DELAY:format(
     Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MIN), Colors.Yellow(Addon.NOTIFICATION_FADE_OUT_DELAY_MAX)))
+  print(Colors.Gold("  /lootifications delay reset"), "-", L.COMMAND_DESCRIPTION_DELAY_RESET)
   print(Colors.Gold("  /lootifications max"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_MAX:format(
     Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
+  print(Colors.Gold("  /lootifications max reset"), "-", L.COMMAND_DESCRIPTION_MAX_RESET)
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
   print(Colors.Gold("  /lootifications prices"), "-", L.COMMAND_DESCRIPTION_PRICES)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
@@ -71,9 +73,16 @@ function Commands.anchor(subcommand)
 end
 
 function Commands.delay(value)
+  local sv = SavedVariables:Get()
+
+  if value == "reset" then
+    sv.notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT
+    Addon:Print(L.COMMAND_SUCCESS_DELAY_RESET)
+    return
+  end
+
   value = tryParseInteger(value)
   if value and value >= Addon.NOTIFICATION_FADE_OUT_DELAY_MIN and value <= Addon.NOTIFICATION_FADE_OUT_DELAY_MAX then
-    local sv = SavedVariables:Get()
     sv.notificationFadeOutDelay = value
     Addon:Print(L.COMMAND_SUCCESS_DELAY:format(Colors.Yellow(value)))
   else
@@ -84,9 +93,16 @@ function Commands.delay(value)
 end
 
 function Commands.max(value)
+  local sv = SavedVariables:Get()
+
+  if value == "reset" then
+    sv.maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT
+    Addon:Print(L.COMMAND_SUCCESS_MAX_RESET)
+    return
+  end
+
   value = tryParseInteger(value)
   if value and value >= Addon.MAX_NOTIFICATIONS_MIN and value <= Addon.MAX_NOTIFICATIONS_MAX then
-    local sv = SavedVariables:Get()
     sv.maxNotifications = value
     Addon:Print(L.COMMAND_SUCCESS_MAX:format(Colors.Yellow(value)))
   else
