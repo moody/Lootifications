@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- Refactored notification code
+
 ## [1.3.0] - 2024-01-03
 
 ### Added
