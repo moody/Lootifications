@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Command: `/lootifications space <integer>` to set the amount of spacing between displayed notifications
+- Command: `/lootifications space reset` to reset the amount of spacing between displayed notifications
+
 ### Changed
 
 - Refactored notification code
