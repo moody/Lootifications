@@ -43,6 +43,10 @@ function NotificationManager:Notify(text)
   table.insert(notificationQueue, 1, text)
 end
 
+function NotificationManager:NotifyWithIcon(icon, text)
+  self:Notify(Addon.TEXTURE_MESSAGE_FORMAT:format(icon, text))
+end
+
 -- ============================================================================
 -- Register callback to handle queued notifications.
 -- ============================================================================
