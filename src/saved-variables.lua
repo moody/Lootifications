@@ -15,7 +15,8 @@ local function globalDefaults()
     lootPrices = false,
     maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
     moneyNotifications = true,
-    notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT
+    notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT,
+    notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT
   }
 end
 
@@ -60,6 +61,9 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   -- Clamp `notificationFadeOutDelay` between min and max values.
   global.notificationFadeOutDelay = clamp(global.notificationFadeOutDelay, Addon.NOTIFICATION_FADE_OUT_DELAY_MIN,
     Addon.NOTIFICATION_FADE_OUT_DELAY_MAX)
+  -- Clamp `notificationSpacing` between min and max values.
+  global.notificationSpacing = clamp(global.notificationSpacing, Addon.NOTIFICATION_SPACING_MIN,
+    Addon.NOTIFICATION_SPACING_MAX)
 
   function SavedVariables:Get()
     return global

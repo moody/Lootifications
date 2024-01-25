@@ -61,6 +61,9 @@ function Commands.help()
   print(Colors.Gold("  /lootifications max reset"), "-", L.COMMAND_DESCRIPTION_MAX_RESET)
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
   print(Colors.Gold("  /lootifications prices"), "-", L.COMMAND_DESCRIPTION_PRICES)
+  print(Colors.Gold("  /lootifications space"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_SPACE:format(
+    Colors.Yellow(Addon.NOTIFICATION_SPACING_MIN), Colors.Yellow(Addon.NOTIFICATION_SPACING_MAX)))
+  print(Colors.Gold("  /lootifications space reset"), "-", L.COMMAND_DESCRIPTION_SPACE_RESET)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
 end
 
@@ -125,6 +128,26 @@ function Commands.prices()
   sv.lootPrices = not sv.lootPrices
   local message = sv.lootPrices and L.LOOT_PRICES_ENABLED or L.LOOT_PRICES_DISABLED
   Addon:Print(message)
+end
+
+function Commands.space(value)
+  local sv = SavedVariables:Get()
+
+  if value == "reset" then
+    sv.notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT
+    Addon:Print(L.COMMAND_SUCCESS_SPACE_RESET)
+    return
+  end
+
+  value = tryParseInteger(value)
+  if value and value >= Addon.NOTIFICATION_SPACING_MIN and value <= Addon.NOTIFICATION_SPACING_MAX then
+    sv.notificationSpacing = value
+    Addon:Print(L.COMMAND_SUCCESS_SPACE:format(Colors.Yellow(value)))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications space"), Colors.Yellow(Addon.NOTIFICATION_SPACING_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications space"), Colors.Yellow(Addon.NOTIFICATION_SPACING_MAX), "-", L.MAXIMUM)
+  end
 end
 
 do -- Commands.test()

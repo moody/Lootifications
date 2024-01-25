@@ -89,6 +89,17 @@ function AnchorFrame:GetNotificationPoints()
   return isToTheLeft and growthDirection.LEFT or growthDirection.RIGHT
 end
 
+function AnchorFrame:GetNotificationSpacing(points)
+  local sv = SavedVariables:Get()
+  local spacing = sv.notificationSpacing
+
+  for _, v in pairs(NOTIFICATION_POINTS.GROW_UP) do
+    if points == v then return spacing end
+  end
+
+  return -spacing
+end
+
 function AnchorFrame:Reset()
   local sv = SavedVariables:Get()
   self.frame:ClearAllPoints()
