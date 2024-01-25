@@ -5,6 +5,7 @@ local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
+local NotificationManager = Addon:GetModule("NotificationManager")
 local SavedVariables = Addon:GetModule("SavedVariables")
 
 -- ============================================================================
@@ -142,8 +143,7 @@ do -- Commands.test()
       local colorIndex = ((i - 1) % #COLOR_CODES) + 1
       local colorCode = COLOR_CODES[colorIndex]
       local text = WrapTextInColorCode(("[%s %s]"):format(ADDON_NAME, i), colorCode)
-      local textureMessage = Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text)
-      EventManager:Fire(E.TexturedLootMessage, textureMessage)
+      NotificationManager:NotifyWithIcon(Addon.ICON, text)
     end
   end
 end
