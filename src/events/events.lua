@@ -8,7 +8,6 @@ local E = Addon:GetModule("Events")
 local events = {
   "LootReceived",
   "MoneyReceived",
-  "SavedVariablesLoaded",
   "StoreInitialized"
 }
 

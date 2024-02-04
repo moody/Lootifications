@@ -10,7 +10,6 @@
   <Script file="src\events\events.lua"/>
   <Script file="src\events\event-manager.lua"/>
 
-  <Script file="src\saved-variables.lua"/>
   <Script file="src\store.lua"/>
   <Script file="src\commands.lua"/>
 
