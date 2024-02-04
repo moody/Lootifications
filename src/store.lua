@@ -4,7 +4,7 @@ local EventManager = Addon:GetModule("EventManager")
 --- @type Wux
 local Wux = Addon.Wux
 
-local GLOBAL_SV = "__LOOTIFICATIONS_STORE_TEST__"
+local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 
 -- ============================================================================
 -- Default State
