@@ -3,7 +3,6 @@ local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local NotificationManager = Addon:GetModule("NotificationManager")
-local SavedVariables = Addon:GetModule("SavedVariables")
 
 -- ============================================================================
 -- Events
@@ -35,8 +34,8 @@ do -- Listen for `LootReceived` and display a notification.
   end
 
   local function getPriceText(price)
-    local sv = SavedVariables:Get()
-    if sv.lootPrices and price and price > 0 then
+    local state = Addon:GetStore():GetState()
+    if state.lootPrices and price and price > 0 then
       return PRICE_FORMAT:format(GetCoinTextureString(price))
     end
     return ""

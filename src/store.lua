@@ -41,10 +41,8 @@ local rootReducer = Wux:CombineReducers({
   lootPrices = function(state, action)
     state = Wux:Coalesce(state, DEFAULT_STATE.lootPrices)
 
-    if action.type == "lootPrices/set" then
-      state = action.payload
-    elseif action.type == "lootPrices/reset" then
-      state = DEFAULT_STATE.lootPrices
+    if action.type == "lootPrices/toggle" then
+      state = not state
     end
 
     return state

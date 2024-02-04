@@ -120,9 +120,9 @@ function Commands.money()
 end
 
 function Commands.prices()
-  local sv = SavedVariables:Get()
-  sv.lootPrices = not sv.lootPrices
-  local message = sv.lootPrices and L.LOOT_PRICES_ENABLED or L.LOOT_PRICES_DISABLED
+  Addon:GetStore():Dispatch({ type = "lootPrices/toggle" })
+  local state = Addon:GetStore():GetState()
+  local message = state.lootPrices and L.LOOT_PRICES_ENABLED or L.LOOT_PRICES_DISABLED
   Addon:Print(message)
 end
 
