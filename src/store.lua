@@ -105,8 +105,9 @@ local rootReducer = Wux:CombineReducers({
 
 EventManager:Once(E.Wow.PlayerLogin, function()
   local Store = Wux:CreateStore(rootReducer, _G[GLOBAL_SV])
+  _G[GLOBAL_SV] = Store:GetState()
 
-  -- Update SavedVariables whenever state changes.
+  -- Update SavedVariables whenever the state changes.
   Store:Subscribe(function(state)
     _G[GLOBAL_SV] = state
   end)
