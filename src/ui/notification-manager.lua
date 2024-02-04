@@ -1,7 +1,6 @@
 local ADDON_NAME, Addon = ...
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local NotificationManager = Addon:GetModule("NotificationManager")
-local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
 
 local activeNotifications = {}
@@ -53,8 +52,7 @@ end
 
 Addon:RegisterIntervalCallback(0.1, function()
   local state = Addon:GetStore():GetState()
-  local sv = SavedVariables:Get()
-  if #activeNotifications >= sv.maxNotifications then return end
+  if #activeNotifications >= state.maxNotifications then return end
 
   local text = strtrim(table.remove(notificationQueue) or "")
   if text ~= "" then

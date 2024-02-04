@@ -95,17 +95,15 @@ function Commands.delay(value)
 end
 
 function Commands.max(value)
-  local sv = SavedVariables:Get()
-
   if value == "reset" then
-    sv.maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT
+    Addon:GetStore():Dispatch({ type = "maxNotifications/reset" })
     Addon:Print(L.COMMAND_SUCCESS_MAX_RESET)
     return
   end
 
   value = tryParseInteger(value)
   if value and value >= Addon.MAX_NOTIFICATIONS_MIN and value <= Addon.MAX_NOTIFICATIONS_MAX then
-    sv.maxNotifications = value
+    Addon:GetStore():Dispatch({ type = "maxNotifications/set", payload = value })
     Addon:Print(L.COMMAND_SUCCESS_MAX:format(Colors.Yellow(value)))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
@@ -159,8 +157,8 @@ do -- Commands.test()
   }
 
   function Commands.test()
-    local sv = SavedVariables:Get()
-    for i = 1, sv.maxNotifications do
+    local state = Addon:GetStore():GetState()
+    for i = 1, state.maxNotifications do
       local colorIndex = ((i - 1) % #COLOR_CODES) + 1
       local colorCode = COLOR_CODES[colorIndex]
       local text = WrapTextInColorCode(("[%s %s]"):format(ADDON_NAME, i), colorCode)
