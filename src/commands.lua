@@ -113,9 +113,9 @@ function Commands.max(value)
 end
 
 function Commands.money()
-  local sv = SavedVariables:Get()
-  sv.moneyNotifications = not sv.moneyNotifications
-  local message = sv.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
+  Addon:GetStore():Dispatch({ type = "moneyNotifications/toggle" })
+  local state = Addon:GetStore():GetState()
+  local message = state.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
   Addon:Print(message)
 end
 

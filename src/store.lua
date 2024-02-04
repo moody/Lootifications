@@ -67,10 +67,8 @@ local rootReducer = Wux:CombineReducers({
   moneyNotifications = function(state, action)
     state = Wux:Coalesce(state, DEFAULT_STATE.moneyNotifications)
 
-    if action.type == "moneyNotifications/set" then
-      state = action.payload
-    elseif action.type == "moneyNotifications/reset" then
-      state = DEFAULT_STATE.moneyNotifications
+    if action.type == "moneyNotifications/toggle" then
+      state = not state
     end
 
     return state
