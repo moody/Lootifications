@@ -127,17 +127,15 @@ function Commands.prices()
 end
 
 function Commands.space(value)
-  local sv = SavedVariables:Get()
-
   if value == "reset" then
-    sv.notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT
+    Addon:GetStore():Dispatch({ type = "notificationSpacing/reset" })
     Addon:Print(L.COMMAND_SUCCESS_SPACE_RESET)
     return
   end
 
   value = tryParseInteger(value)
   if value and value >= Addon.NOTIFICATION_SPACING_MIN and value <= Addon.NOTIFICATION_SPACING_MAX then
-    sv.notificationSpacing = value
+    Addon:GetStore():Dispatch({ type = "notificationSpacing/set", payload = value })
     Addon:Print(L.COMMAND_SUCCESS_SPACE:format(Colors.Yellow(value)))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")

@@ -4,7 +4,6 @@ local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
-local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
 
 local NOTIFICATION_POINTS = {
@@ -90,8 +89,8 @@ function AnchorFrame:GetNotificationPoints()
 end
 
 function AnchorFrame:GetNotificationSpacing(points)
-  local sv = SavedVariables:Get()
-  local spacing = sv.notificationSpacing
+  local state = Addon:GetStore():GetState()
+  local spacing = state.notificationSpacing
 
   for _, v in pairs(NOTIFICATION_POINTS.GROW_UP) do
     if points == v then return spacing end
