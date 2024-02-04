@@ -52,6 +52,7 @@ end
 -- ============================================================================
 
 Addon:RegisterIntervalCallback(0.1, function()
+  local state = Addon:GetStore():GetState()
   local sv = SavedVariables:Get()
   if #activeNotifications >= sv.maxNotifications then return end
 
@@ -59,7 +60,7 @@ Addon:RegisterIntervalCallback(0.1, function()
   if text ~= "" then
     local notification = getNotification()
     activeNotifications[#activeNotifications + 1] = notification
-    notification:Notify(text, sv.notificationFadeOutDelay, function()
+    notification:Notify(text, state.notificationFadeOutDelay, function()
       releaseNotification(notification)
     end)
   end

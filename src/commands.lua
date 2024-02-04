@@ -77,17 +77,15 @@ function Commands.anchor(subcommand)
 end
 
 function Commands.delay(value)
-  local sv = SavedVariables:Get()
-
   if value == "reset" then
-    sv.notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT
+    Addon:GetStore():Dispatch({ type = "notificationFadeOutDelay/reset" })
     Addon:Print(L.COMMAND_SUCCESS_DELAY_RESET)
     return
   end
 
   value = tryParseInteger(value)
   if value and value >= Addon.NOTIFICATION_FADE_OUT_DELAY_MIN and value <= Addon.NOTIFICATION_FADE_OUT_DELAY_MAX then
-    sv.notificationFadeOutDelay = value
+    Addon:GetStore():Dispatch({ type = "notificationFadeOutDelay/set", payload = value })
     Addon:Print(L.COMMAND_SUCCESS_DELAY:format(Colors.Yellow(value)))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
