@@ -118,4 +118,6 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   function Addon:GetStore()
     return Store
   end
+
+  EventManager:Fire(E.StoreInitialized, Store)
 end)
