@@ -4,6 +4,8 @@
 
 ### Added
 
+- Command: `/lootifications alpha <integer>` to set notification background transparency
+- Command: `/lootifications alpha reset` to reset notification background transparency
 - Command: `/lootifications space <integer>` to set the amount of spacing between displayed notifications
 - Command: `/lootifications space reset` to reset the amount of spacing between displayed notifications
 
