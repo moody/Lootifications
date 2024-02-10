@@ -10,6 +10,12 @@ A simple addon to display notifications when new loot is received.
 # Display a list of commands.
 /lootifications
 
+# Set notification background transparency.
+/lootifications alpha <integer>
+
+# Reset notification background transparency.
+/lootifications alpha reset
+
 # Toggle the notifications anchor.
 /lootifications anchor
 
