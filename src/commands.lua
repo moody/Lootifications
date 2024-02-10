@@ -50,6 +50,9 @@ end
 function Commands.help()
   Addon:Print("|", Addon.VERSION)
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
+  print(Colors.Gold("  /lootifications alpha"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_ALPHA:format(
+    Colors.Yellow(Addon.NOTIFICATION_ALPHA_MIN), Colors.Yellow(Addon.NOTIFICATION_ALPHA_MAX)))
+  print(Colors.Gold("  /lootifications alpha reset"), "-", L.COMMAND_DESCRIPTION_ALPHA_RESET)
   print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
   print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
   print(Colors.Gold("  /lootifications delay"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_DELAY:format(
@@ -64,6 +67,24 @@ function Commands.help()
     Colors.Yellow(Addon.NOTIFICATION_SPACING_MIN), Colors.Yellow(Addon.NOTIFICATION_SPACING_MAX)))
   print(Colors.Gold("  /lootifications space reset"), "-", L.COMMAND_DESCRIPTION_SPACE_RESET)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+end
+
+function Commands.alpha(value)
+  if value == "reset" then
+    Addon:GetStore():Dispatch({ type = "notificationAlpha/reset" })
+    Addon:Print(L.COMMAND_SUCCESS_ALPHA_RESET)
+    return
+  end
+
+  value = tryParseInteger(value)
+  if value and value >= Addon.NOTIFICATION_ALPHA_MIN and value <= Addon.NOTIFICATION_ALPHA_MAX then
+    Addon:GetStore():Dispatch({ type = "notificationAlpha/set", payload = value })
+    Addon:Print(L.COMMAND_SUCCESS_ALPHA:format(Colors.Yellow(value)))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications alpha"), Colors.Yellow(Addon.NOTIFICATION_ALPHA_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications alpha"), Colors.Yellow(Addon.NOTIFICATION_ALPHA_MAX), "-", L.MAXIMUM)
+  end
 end
 
 function Commands.anchor(subcommand)

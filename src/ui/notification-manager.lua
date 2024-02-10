@@ -58,9 +58,13 @@ Addon:RegisterIntervalCallback(0.1, function()
   if text ~= "" then
     local notification = getNotification()
     activeNotifications[#activeNotifications + 1] = notification
-    notification:Notify(text, state.notificationFadeOutDelay, function()
-      releaseNotification(notification)
-    end)
+    notification:Notify(
+      text,
+      state.notificationAlpha / Addon.NOTIFICATION_ALPHA_MAX,
+      state.notificationFadeOutDelay,
+      function()
+        releaseNotification(notification)
+      end)
   end
 end)
 

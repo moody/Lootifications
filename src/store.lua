@@ -15,6 +15,7 @@ local DEFAULT_STATE = {
   lootPrices = false,
   maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
   moneyNotifications = true,
+  notificationAlpha = Addon.NOTIFICATION_ALPHA_DEFAULT,
   notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT,
   notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT
 }
@@ -67,6 +68,19 @@ local rootReducer = Wux:CombineReducers({
 
     if action.type == "moneyNotifications/toggle" then
       state = not state
+    end
+
+    return state
+  end,
+
+  -- Notification alpha.
+  notificationAlpha = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.notificationAlpha)
+
+    if action.type == "notificationAlpha/set" then
+      state = action.payload
+    elseif action.type == "notificationAlpha/reset" then
+      state = DEFAULT_STATE.notificationAlpha
     end
 
     return state
