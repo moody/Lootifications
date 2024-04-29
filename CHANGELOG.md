@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.4.0] - 2024-04-29
+
+### Added
+
+- Command: `/lootifications alpha <integer>` to set notification background transparency
+- Command: `/lootifications alpha reset` to reset notification background transparency
+- Command: `/lootifications space <integer>` to set the amount of spacing between displayed notifications
+- Command: `/lootifications space reset` to reset the amount of spacing between displayed notifications
+
+### Changed
+
+- Refactored notification code
+
 ## [1.3.0] - 2024-01-03
 
 ### Added

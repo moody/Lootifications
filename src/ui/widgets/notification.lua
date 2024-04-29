@@ -46,27 +46,32 @@ function Widgets:Notification(options)
   end)
 
   frame.animationGroup:HookScript("OnFinished", function()
-    frame:Hide()
     if frame.animationGroup.callback then
       frame.animationGroup.callback()
+      frame.animationGroup.callback = nil
     end
+
+    frame:Hide()
   end)
 
-  --- Sets the notification's text and fade out delay, then plays its animation.
-  --- @param text string
-  --- @param fadeOutDelay number
-  function frame:Notify(text, fadeOutDelay)
+  --- Sets the notification's properties and plays its animation.
+  --- @param text string The text to be displayed by the notification.
+  --- @param backdropAlpha number The backdrop alpha of the notification.
+  --- @param fadeOutDelay number The amount of time before the notification fades out, in seconds.
+  --- @param callback? function The callback to be executed once the notification's animation finishes.
+  function frame:Notify(text, backdropAlpha, fadeOutDelay, callback)
     self.fontString:SetText(text)
+
     self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
     self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
-    self.animationGroup.fadeOut:SetStartDelay(fadeOutDelay)
-    self.animationGroup:Play()
-  end
 
-  --- Sets a callback to be executed once the notification's animation finishes.
-  --- @param callback function
-  function frame:SetCallback(callback)
-    frame.animationGroup.callback = callback
+    backdropAlpha = math.min(math.max(backdropAlpha, 0), 1)
+    self:SetBackdropColor(0, 0, 0, backdropAlpha)
+    self:SetBackdropBorderColor(0, 0, 0, backdropAlpha)
+
+    self.animationGroup.fadeOut:SetStartDelay(fadeOutDelay)
+    self.animationGroup.callback = callback
+    self.animationGroup:Play()
   end
 
   return frame

@@ -1,4 +1,4 @@
-## Interface: 11500
+## Interface: 11502
 ## Title: Lootifications
 ## Version: @project-version@
 ## Author: https://github.com/moody

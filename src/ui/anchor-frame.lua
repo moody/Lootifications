@@ -4,7 +4,6 @@ local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
-local SavedVariables = Addon:GetModule("SavedVariables")
 local Widgets = Addon:GetModule("Widgets")
 
 local NOTIFICATION_POINTS = {
@@ -45,8 +44,8 @@ AnchorFrame.frame = (function()
 
   frame:SetScript("OnDragStop", function(self)
     self:StopMovingOrSizing()
-    local sv = SavedVariables:Get()
-    sv.anchorPoint = { self:GetPoint() }
+    local anchorPoint = { self:GetPoint() }
+    Addon:GetStore():Dispatch({ type = "anchorPoint/set", payload = anchorPoint })
   end)
 
   frame:SetScript("OnMouseDown", function(self, button)
@@ -89,11 +88,21 @@ function AnchorFrame:GetNotificationPoints()
   return isToTheLeft and growthDirection.LEFT or growthDirection.RIGHT
 end
 
+function AnchorFrame:GetNotificationSpacing(points)
+  local state = Addon:GetStore():GetState()
+  local spacing = state.notificationSpacing
+
+  for _, v in pairs(NOTIFICATION_POINTS.GROW_UP) do
+    if points == v then return spacing end
+  end
+
+  return -spacing
+end
+
 function AnchorFrame:Reset()
-  local sv = SavedVariables:Get()
   self.frame:ClearAllPoints()
   self.frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
-  sv.anchorPoint = nil
+  Addon:GetStore():Dispatch({ type = "anchorPoint/reset" })
 end
 
 function AnchorFrame:Toggle()
@@ -108,14 +117,14 @@ end
 -- Events
 -- ============================================================================
 
--- Listen for `SavedVariablesLoaded` to create and position the frame.
-EventManager:Once(E.SavedVariablesLoaded, function()
-  local sv = SavedVariables:Get()
+-- Listen for `StoreInitialized` to create and position the frame.
+EventManager:Once(E.StoreInitialized, function(Store)
+  local state = Store:GetState()
 
   -- Attempt to set the saved anchor point.
   local isAnchorPointSet = pcall(function()
     AnchorFrame.frame:ClearAllPoints()
-    AnchorFrame.frame:SetPoint(unpack(sv.anchorPoint))
+    AnchorFrame.frame:SetPoint(unpack(state.anchorPoint))
   end)
 
   -- If the saved anchor point couldn't be set, revert to the default anchor point.

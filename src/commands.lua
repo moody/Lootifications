@@ -5,7 +5,7 @@ local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
-local SavedVariables = Addon:GetModule("SavedVariables")
+local NotificationManager = Addon:GetModule("NotificationManager")
 
 -- ============================================================================
 -- Events
@@ -50,6 +50,9 @@ end
 function Commands.help()
   Addon:Print("|", Addon.VERSION)
   print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
+  print(Colors.Gold("  /lootifications alpha"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_ALPHA:format(
+    Colors.Yellow(Addon.NOTIFICATION_ALPHA_MIN), Colors.Yellow(Addon.NOTIFICATION_ALPHA_MAX)))
+  print(Colors.Gold("  /lootifications alpha reset"), "-", L.COMMAND_DESCRIPTION_ALPHA_RESET)
   print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
   print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
   print(Colors.Gold("  /lootifications delay"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_DELAY:format(
@@ -60,7 +63,28 @@ function Commands.help()
   print(Colors.Gold("  /lootifications max reset"), "-", L.COMMAND_DESCRIPTION_MAX_RESET)
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
   print(Colors.Gold("  /lootifications prices"), "-", L.COMMAND_DESCRIPTION_PRICES)
+  print(Colors.Gold("  /lootifications space"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_SPACE:format(
+    Colors.Yellow(Addon.NOTIFICATION_SPACING_MIN), Colors.Yellow(Addon.NOTIFICATION_SPACING_MAX)))
+  print(Colors.Gold("  /lootifications space reset"), "-", L.COMMAND_DESCRIPTION_SPACE_RESET)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
+end
+
+function Commands.alpha(value)
+  if value == "reset" then
+    Addon:GetStore():Dispatch({ type = "notificationAlpha/reset" })
+    Addon:Print(L.COMMAND_SUCCESS_ALPHA_RESET)
+    return
+  end
+
+  value = tryParseInteger(value)
+  if value and value >= Addon.NOTIFICATION_ALPHA_MIN and value <= Addon.NOTIFICATION_ALPHA_MAX then
+    Addon:GetStore():Dispatch({ type = "notificationAlpha/set", payload = value })
+    Addon:Print(L.COMMAND_SUCCESS_ALPHA:format(Colors.Yellow(value)))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications alpha"), Colors.Yellow(Addon.NOTIFICATION_ALPHA_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications alpha"), Colors.Yellow(Addon.NOTIFICATION_ALPHA_MAX), "-", L.MAXIMUM)
+  end
 end
 
 function Commands.anchor(subcommand)
@@ -73,17 +97,15 @@ function Commands.anchor(subcommand)
 end
 
 function Commands.delay(value)
-  local sv = SavedVariables:Get()
-
   if value == "reset" then
-    sv.notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT
+    Addon:GetStore():Dispatch({ type = "notificationFadeOutDelay/reset" })
     Addon:Print(L.COMMAND_SUCCESS_DELAY_RESET)
     return
   end
 
   value = tryParseInteger(value)
   if value and value >= Addon.NOTIFICATION_FADE_OUT_DELAY_MIN and value <= Addon.NOTIFICATION_FADE_OUT_DELAY_MAX then
-    sv.notificationFadeOutDelay = value
+    Addon:GetStore():Dispatch({ type = "notificationFadeOutDelay/set", payload = value })
     Addon:Print(L.COMMAND_SUCCESS_DELAY:format(Colors.Yellow(value)))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
@@ -93,17 +115,15 @@ function Commands.delay(value)
 end
 
 function Commands.max(value)
-  local sv = SavedVariables:Get()
-
   if value == "reset" then
-    sv.maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT
+    Addon:GetStore():Dispatch({ type = "maxNotifications/reset" })
     Addon:Print(L.COMMAND_SUCCESS_MAX_RESET)
     return
   end
 
   value = tryParseInteger(value)
   if value and value >= Addon.MAX_NOTIFICATIONS_MIN and value <= Addon.MAX_NOTIFICATIONS_MAX then
-    sv.maxNotifications = value
+    Addon:GetStore():Dispatch({ type = "maxNotifications/set", payload = value })
     Addon:Print(L.COMMAND_SUCCESS_MAX:format(Colors.Yellow(value)))
   else
     Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
@@ -113,17 +133,35 @@ function Commands.max(value)
 end
 
 function Commands.money()
-  local sv = SavedVariables:Get()
-  sv.moneyNotifications = not sv.moneyNotifications
-  local message = sv.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
+  Addon:GetStore():Dispatch({ type = "moneyNotifications/toggle" })
+  local state = Addon:GetStore():GetState()
+  local message = state.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
   Addon:Print(message)
 end
 
 function Commands.prices()
-  local sv = SavedVariables:Get()
-  sv.lootPrices = not sv.lootPrices
-  local message = sv.lootPrices and L.LOOT_PRICES_ENABLED or L.LOOT_PRICES_DISABLED
+  Addon:GetStore():Dispatch({ type = "lootPrices/toggle" })
+  local state = Addon:GetStore():GetState()
+  local message = state.lootPrices and L.LOOT_PRICES_ENABLED or L.LOOT_PRICES_DISABLED
   Addon:Print(message)
+end
+
+function Commands.space(value)
+  if value == "reset" then
+    Addon:GetStore():Dispatch({ type = "notificationSpacing/reset" })
+    Addon:Print(L.COMMAND_SUCCESS_SPACE_RESET)
+    return
+  end
+
+  value = tryParseInteger(value)
+  if value and value >= Addon.NOTIFICATION_SPACING_MIN and value <= Addon.NOTIFICATION_SPACING_MAX then
+    Addon:GetStore():Dispatch({ type = "notificationSpacing/set", payload = value })
+    Addon:Print(L.COMMAND_SUCCESS_SPACE:format(Colors.Yellow(value)))
+  else
+    Addon:Print(L.COMMAND_EXAMPLE_USAGE .. ":")
+    print(Colors.Gold("  /lootifications space"), Colors.Yellow(Addon.NOTIFICATION_SPACING_MIN), "-", L.MINIMUM)
+    print(Colors.Gold("  /lootifications space"), Colors.Yellow(Addon.NOTIFICATION_SPACING_MAX), "-", L.MAXIMUM)
+  end
 end
 
 do -- Commands.test()
@@ -137,13 +175,12 @@ do -- Commands.test()
   }
 
   function Commands.test()
-    local sv = SavedVariables:Get()
-    for i = 1, sv.maxNotifications do
+    local state = Addon:GetStore():GetState()
+    for i = 1, state.maxNotifications do
       local colorIndex = ((i - 1) % #COLOR_CODES) + 1
       local colorCode = COLOR_CODES[colorIndex]
       local text = WrapTextInColorCode(("[%s %s]"):format(ADDON_NAME, i), colorCode)
-      local textureMessage = Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text)
-      EventManager:Fire(E.TexturedLootMessage, textureMessage)
+      NotificationManager:NotifyWithIcon(Addon.ICON, text)
     end
   end
 end

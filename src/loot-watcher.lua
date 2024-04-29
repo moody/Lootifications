@@ -2,8 +2,9 @@ local _, Addon = ...
 local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
+local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
 local NotificationManager = Addon:GetModule("NotificationManager")
-local SavedVariables = Addon:GetModule("SavedVariables")
 
 -- ============================================================================
 -- Events
@@ -26,7 +27,7 @@ do -- Listen for `Wow.ChatMessageLoot` and fire `LootReceived`.
   end)
 end
 
-do -- Listen for `LootReceived` and fire `TexturedLootMessage`.
+do -- Listen for `LootReceived` and display a notification.
   local QUANTITY_FORMAT = Colors.Grey("x") .. "%s"
   local PRICE_FORMAT = Colors.Grey("(") .. "%s" .. Colors.Grey(")")
 
@@ -35,8 +36,8 @@ do -- Listen for `LootReceived` and fire `TexturedLootMessage`.
   end
 
   local function getPriceText(price)
-    local sv = SavedVariables:Get()
-    if sv.lootPrices and price and price > 0 then
+    local state = Addon:GetStore():GetState()
+    if state.lootPrices and price and price > 0 then
       return PRICE_FORMAT:format(GetCoinTextureString(price))
     end
     return ""
@@ -45,14 +46,8 @@ do -- Listen for `LootReceived` and fire `TexturedLootMessage`.
   EventManager:On(E.LootReceived, function(link, quantity)
     pcall(function()
       local texture, price = select(10, GetItemInfo(link))
-      local message = Addon.TEXTURE_MESSAGE_FORMAT:format(texture,
-        ("%s%s %s"):format(link, getQuantityText(quantity), getPriceText(price * quantity)))
-      EventManager:Fire(E.TexturedLootMessage, message:trim())
+      local message = ("%s%s %s"):format(link, getQuantityText(quantity), getPriceText(price * quantity)):trim()
+      NotificationManager:NotifyWithIcon(texture, message)
     end)
   end)
 end
-
--- Listen for `TexturedLootMessage` and display a notification.
-EventManager:On(E.TexturedLootMessage, function(message)
-  NotificationManager:Notify(message)
-end)
