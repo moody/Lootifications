@@ -1,6 +1,7 @@
 local _, Addon = ...
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
+local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
 local NotificationManager = Addon:GetModule("NotificationManager")
 
 -- ============================================================================
