@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.1] - 2024-04-30
+
+- Updated for Cataclysm Classic
+
 ## [1.4.0] - 2024-04-29
 
 ### Added
