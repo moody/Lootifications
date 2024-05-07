@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.2] - 2024-05-07
+
+- Bumped retail version
+
 ## [1.4.1] - 2024-04-30
 
 - Updated for Cataclysm Classic
