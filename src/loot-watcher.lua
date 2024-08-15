@@ -33,10 +33,10 @@ do -- Listen for `LootReceived` and display a notification.
   local QUANTITY_FORMAT = Colors.Grey("x") .. "%s"
   local PARENTHESES_FORMAT = Colors.Grey("(") .. "%s" .. Colors.Grey(")")
 
-  local function getCountText(link)
+  local function getCountText(link, quantity)
     local state = Addon:GetState()
     if state.ownedItemCounts then
-      local itemCount = tonumber(GetItemCount(link) or 0) + 1
+      local itemCount = tonumber(GetItemCount(link) or 0) + quantity
       return PARENTHESES_FORMAT:format(itemCount)
     end
     return ""
@@ -63,7 +63,7 @@ do -- Listen for `LootReceived` and display a notification.
       -- Build message.
       messageBuilder:Reset()
       messageBuilder:Append(link .. getQuantityText(quantity))
-      messageBuilder:Append(getCountText(link))
+      messageBuilder:Append(getCountText(link, quantity))
       messageBuilder:Append(getPriceText(price * quantity))
 
       NotificationManager:NotifyWithIcon(texture, messageBuilder:Build())
