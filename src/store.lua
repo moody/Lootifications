@@ -1,7 +1,8 @@
-local _, Addon = ...
+--- @class Addon
+local Addon = select(2, ...)
+
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
---- @type Wux
 local Wux = Addon.Wux
 
 local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
@@ -10,6 +11,7 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 -- Default State
 -- ============================================================================
 
+--- @class AddonState
 local DEFAULT_STATE = {
   anchorPoint = {},
   lootPrices = false,
@@ -24,6 +26,7 @@ local DEFAULT_STATE = {
 -- Reducers
 -- ============================================================================
 
+--- @type WuxReducer<AddonState>
 local rootReducer = Wux:CombineReducers({
   -- Anchor point.
   anchorPoint = function(state, action)
@@ -126,8 +129,16 @@ EventManager:Once(E.Wow.PlayerLogin, function()
     _G[GLOBAL_SV] = state
   end)
 
+  --- Returns the underlying Wux store.
+  --- @return WuxStore
   function Addon:GetStore()
     return Store
+  end
+
+  --- Returns the current state. Equivalent to `Addon:GetStore():GetState()`.
+  --- @return AddonState
+  function Addon:GetState()
+    return Store:GetState()
   end
 
   EventManager:Fire(E.StoreInitialized, Store)
