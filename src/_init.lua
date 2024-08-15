@@ -1,4 +1,8 @@
-local ADDON_NAME, Addon = ...
+local ADDON_NAME = ... ---@type string
+
+--- @class Addon
+--- @field Wux Wux
+local Addon = select(2, ...)
 
 -- ============================================================================
 -- Constants
