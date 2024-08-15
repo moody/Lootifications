@@ -42,6 +42,16 @@ do -- Addon:GetModule()
   end
 end
 
+--- Returns `value` if it is not nil; otherwise, returns `default`.
+--- @generic T1, T2
+--- @param value? T1
+--- @param default T2
+--- @return T1|T2 value
+function Addon:IfNil(value, default)
+  if value == nil then return default end
+  return value
+end
+
 --- Sets a default value for the given table and key, if the current value is nil.
 --- @param t table
 --- @param key string
