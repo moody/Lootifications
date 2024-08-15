@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Added
+
+- Command: `/lootifications owned` to toggle owned item counts in notifications
+
 ## [1.4.2] - 2024-05-07
 
 - Bumped retail version
