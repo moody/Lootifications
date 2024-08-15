@@ -2,11 +2,13 @@ local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors") ---@type Colors
-local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale") ---@type Locale
 local NotificationManager = Addon:GetModule("NotificationManager")
+
+--- @class Commands
+local Commands = Addon:GetModule("Commands")
 
 -- ============================================================================
 -- Events

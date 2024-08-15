@@ -8,6 +8,7 @@
   <Script file="src\colors.lua"/>
   <Script file="src\message-builder.lua"/>
   <Script file="src\tooltip.lua"/>
+  <Script file="src\ticker-manager.lua"/>
 
   <Script file="src\events\events.lua"/>
   <Script file="src\events\event-manager.lua"/>
@@ -21,6 +22,14 @@
   <Script file="src\ui\widgets\_init.lua"/>
   <Script file="src\ui\widgets\frame.lua"/>
   <Script file="src\ui\widgets\notification.lua"/>
+  <Script file="src\ui\widgets\options-frame.lua"/>
+  <Script file="src\ui\widgets\scrollable-title-frame.lua"/>
+  <Script file="src\ui\widgets\slider.lua"/>
+  <Script file="src\ui\widgets\title-frame.lua"/>
+  <Script file="src\ui\widgets\window.lua"/>
+
+  <Script file="src\ui\main-window\options.lua"/>
+  <Script file="src\ui\main-window\main-window.lua"/>
 
   <Script file="src\ui\anchor-frame.lua"/>
   <Script file="src\ui\notification-manager.lua"/>

@@ -42,6 +42,13 @@ do -- Addon:GetModule()
   end
 end
 
+--- Returns the full path to a file in the `/assets` folder.
+--- @param fileName string
+--- @return string
+function Addon:GetAsset(fileName)
+  return ("Interface\\AddOns\\%s\\assets\\%s"):format(ADDON_NAME, fileName)
+end
+
 --- Returns `value` if it is not nil; otherwise, returns `default`.
 --- @generic T1, T2
 --- @param value? T1
