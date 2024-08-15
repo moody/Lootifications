@@ -6,6 +6,7 @@
   <Script file="src\_init.lua"/>
   <Script file="src\locale.lua"/>
   <Script file="src\colors.lua"/>
+  <Script file="src\message-builder.lua"/>
 
   <Script file="src\events\events.lua"/>
   <Script file="src\events\event-manager.lua"/>
