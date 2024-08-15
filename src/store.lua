@@ -14,13 +14,13 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 --- @class AddonState
 local DEFAULT_STATE = {
   anchorPoint = {},
-  itemCount = false,
   lootPrices = false,
   maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
   moneyNotifications = true,
   notificationAlpha = Addon.NOTIFICATION_ALPHA_DEFAULT,
   notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT,
-  notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT
+  notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT,
+  ownedItemCounts = false
 }
 
 -- ============================================================================
@@ -37,17 +37,6 @@ local rootReducer = Wux:CombineReducers({
       state = action.payload
     elseif action.type == "anchorPoint/reset" then
       state = DEFAULT_STATE.anchorPoint
-    end
-
-    return state
-  end,
-
-  -- Item count.
-  itemCount = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.itemCount)
-
-    if action.type == "itemCount/toggle" then
-      state = not state
     end
 
     return state
@@ -122,6 +111,17 @@ local rootReducer = Wux:CombineReducers({
       state = action.payload
     elseif action.type == "notificationSpacing/reset" then
       state = DEFAULT_STATE.notificationSpacing
+    end
+
+    return state
+  end,
+
+  -- Owned item counts.
+  ownedItemCounts = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.ownedItemCounts)
+
+    if action.type == "ownedItemCounts/toggle" then
+      state = not state
     end
 
     return state

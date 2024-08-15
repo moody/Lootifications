@@ -1,4 +1,6 @@
-local _, Addon = ...
+local Addon = select(2, ...) ---@type Addon
+
+--- @class Locale
 local L = Addon:GetModule("Locale")
 
 setmetatable(L, {
@@ -22,6 +24,7 @@ L["COMMAND_DESCRIPTION_HELP"] = "Display a list of commands."
 L["COMMAND_DESCRIPTION_MAX_RESET"] = "Reset the maximum number of displayed notifications."
 L["COMMAND_DESCRIPTION_MAX"] = "Set the maximum number of displayed notifications (from %s to %s)."
 L["COMMAND_DESCRIPTION_MONEY"] = "Toggle money notifications."
+L["COMMAND_DESCRIPTION_OWNED"] = "Toggle owned item counts in notifications."
 L["COMMAND_DESCRIPTION_PRICES"] = "Toggle loot prices in notifications."
 L["COMMAND_DESCRIPTION_SPACE_RESET"] = "Reset the amount of spacing between displayed notifications."
 L["COMMAND_DESCRIPTION_SPACE"] = "Set the amount of spacing between displayed notifications (from %s to %s)."
@@ -42,6 +45,8 @@ L["MAXIMUM"] = "Maximum"
 L["MINIMUM"] = "Minimum"
 L["MONEY_NOTIFICATIONS_DISABLED"] = "Money notifications disabled."
 L["MONEY_NOTIFICATIONS_ENABLED"] = "Money notifications enabled."
+L["OWNED_ITEM_COUNTS_DISABLED"] = "Owned item counts disabled."
+L["OWNED_ITEM_COUNTS_ENABLED"] = "Owned item counts enabled."
 
 -- ============================================================================
 -- Others

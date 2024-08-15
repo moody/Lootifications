@@ -35,7 +35,7 @@ do -- Listen for `LootReceived` and display a notification.
 
   local function getCountText(link)
     local state = Addon:GetState()
-    if state.itemCount then
+    if state.ownedItemCounts then
       local itemCount = tonumber(GetItemCount(link) or 0) + 1
       return PARENTHESES_FORMAT:format(itemCount)
     end

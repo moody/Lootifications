@@ -1,10 +1,11 @@
-local ADDON_NAME, Addon = ...
+local ADDON_NAME = ... ---@type string
+local Addon = select(2, ...) ---@type Addon
 local AnchorFrame = Addon:GetModule("AnchorFrame")
-local Colors = Addon:GetModule("Colors")
+local Colors = Addon:GetModule("Colors") ---@type Colors
 local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
-local L = Addon:GetModule("Locale")
+local L = Addon:GetModule("Locale") ---@type Locale
 local NotificationManager = Addon:GetModule("NotificationManager")
 
 -- ============================================================================
@@ -62,6 +63,7 @@ function Commands.help()
     Colors.Yellow(Addon.MAX_NOTIFICATIONS_MIN), Colors.Yellow(Addon.MAX_NOTIFICATIONS_MAX)))
   print(Colors.Gold("  /lootifications max reset"), "-", L.COMMAND_DESCRIPTION_MAX_RESET)
   print(Colors.Gold("  /lootifications money"), "-", L.COMMAND_DESCRIPTION_MONEY)
+  print(Colors.Gold("  /lootifications owned"), "-", L.COMMAND_DESCRIPTION_OWNED)
   print(Colors.Gold("  /lootifications prices"), "-", L.COMMAND_DESCRIPTION_PRICES)
   print(Colors.Gold("  /lootifications space"), Colors.Yellow("<integer>"), "-", L.COMMAND_DESCRIPTION_SPACE:format(
     Colors.Yellow(Addon.NOTIFICATION_SPACING_MIN), Colors.Yellow(Addon.NOTIFICATION_SPACING_MAX)))
@@ -134,14 +136,21 @@ end
 
 function Commands.money()
   Addon:GetStore():Dispatch({ type = "moneyNotifications/toggle" })
-  local state = Addon:GetStore():GetState()
+  local state = Addon:GetState()
   local message = state.moneyNotifications and L.MONEY_NOTIFICATIONS_ENABLED or L.MONEY_NOTIFICATIONS_DISABLED
+  Addon:Print(message)
+end
+
+function Commands.owned()
+  Addon:GetStore():Dispatch({ type = "ownedItemCounts/toggle" })
+  local state = Addon:GetState()
+  local message = state.ownedItemCounts and L.OWNED_ITEM_COUNTS_ENABLED or L.OWNED_ITEM_COUNTS_DISABLED
   Addon:Print(message)
 end
 
 function Commands.prices()
   Addon:GetStore():Dispatch({ type = "lootPrices/toggle" })
-  local state = Addon:GetStore():GetState()
+  local state = Addon:GetState()
   local message = state.lootPrices and L.LOOT_PRICES_ENABLED or L.LOOT_PRICES_DISABLED
   Addon:Print(message)
 end
@@ -175,7 +184,7 @@ do -- Commands.test()
   }
 
   function Commands.test()
-    local state = Addon:GetStore():GetState()
+    local state = Addon:GetState()
     for i = 1, state.maxNotifications do
       local colorIndex = ((i - 1) % #COLOR_CODES) + 1
       local colorCode = COLOR_CODES[colorIndex]
