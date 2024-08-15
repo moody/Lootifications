@@ -1,9 +1,11 @@
-local _, Addon = ...
-local Colors = Addon:GetModule("Colors")
+local Addon = select(2, ...) ---@type Addon
+local Colors = Addon:GetModule("Colors") ---@type Colors
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+local GetItemCount = C_Item.GetItemCount or GetItemCount
 local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local MessageBuilder = Addon:GetModule("MessageBuilder") ---@type MessageBuilder
 local NotificationManager = Addon:GetModule("NotificationManager")
 
 -- ============================================================================
@@ -29,25 +31,42 @@ end
 
 do -- Listen for `LootReceived` and display a notification.
   local QUANTITY_FORMAT = Colors.Grey("x") .. "%s"
-  local PRICE_FORMAT = Colors.Grey("(") .. "%s" .. Colors.Grey(")")
+  local PARENTHESES_FORMAT = Colors.Grey("(") .. "%s" .. Colors.Grey(")")
+
+  local function getCountText(link)
+    local state = Addon:GetState()
+    if state.itemCount then
+      local itemCount = tonumber(GetItemCount(link) or 0) + 1
+      return PARENTHESES_FORMAT:format(itemCount)
+    end
+    return ""
+  end
 
   local function getQuantityText(quantity)
     return (quantity > 1) and QUANTITY_FORMAT:format(quantity) or ""
   end
 
   local function getPriceText(price)
-    local state = Addon:GetStore():GetState()
+    local state = Addon:GetState()
     if state.lootPrices and price and price > 0 then
-      return PRICE_FORMAT:format(GetCoinTextureString(price))
+      return PARENTHESES_FORMAT:format(GetCoinTextureString(price))
     end
     return ""
   end
 
+  local messageBuilder = MessageBuilder:New()
+
   EventManager:On(E.LootReceived, function(link, quantity)
     pcall(function()
       local texture, price = select(10, GetItemInfo(link))
-      local message = ("%s%s %s"):format(link, getQuantityText(quantity), getPriceText(price * quantity)):trim()
-      NotificationManager:NotifyWithIcon(texture, message)
+
+      -- Build message.
+      messageBuilder:Reset()
+      messageBuilder:Append(link .. getQuantityText(quantity))
+      messageBuilder:Append(getCountText(link))
+      messageBuilder:Append(getPriceText(price * quantity))
+
+      NotificationManager:NotifyWithIcon(texture, messageBuilder:Build())
     end)
   end)
 end
