@@ -14,6 +14,7 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 --- @class AddonState
 local DEFAULT_STATE = {
   anchorPoint = {},
+  itemCount = false,
   lootPrices = false,
   maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
   moneyNotifications = true,
@@ -36,6 +37,17 @@ local rootReducer = Wux:CombineReducers({
       state = action.payload
     elseif action.type == "anchorPoint/reset" then
       state = DEFAULT_STATE.anchorPoint
+    end
+
+    return state
+  end,
+
+  -- Item count.
+  itemCount = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.itemCount)
+
+    if action.type == "itemCount/toggle" then
+      state = not state
     end
 
     return state
