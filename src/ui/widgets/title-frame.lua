@@ -80,6 +80,7 @@ function Widgets:TitleFrameIconButton(options)
   frame:SetBackdropColor(0, 0, 0, 0)
   frame:SetBackdropBorderColor(0, 0, 0, 0)
   frame:SetWidth(options.textureSize + self:Padding(4))
+  frame:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
   -- Texture.
   frame.texture = frame:CreateTexture("$parent_Texture", "ARTWORK")

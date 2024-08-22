@@ -39,14 +39,21 @@ L["COMMAND_SUCCESS_MAX_RESET"] = "The maximum number of displayed notifications 
 L["COMMAND_SUCCESS_MAX"] = "Maximum number of displayed notifications set to %s."
 L["COMMAND_SUCCESS_SPACE_RESET"] = "The amount of spacing between displayed notifications has been reset."
 L["COMMAND_SUCCESS_SPACE"] = "Notification spacing set to %s."
+L["LEFT_CLICK"] = "Left-Click"
 L["LOOT_PRICES_DISABLED"] = "Loot prices disabled."
 L["LOOT_PRICES_ENABLED"] = "Loot prices enabled."
 L["MAXIMUM"] = "Maximum"
 L["MINIMUM"] = "Minimum"
 L["MONEY_NOTIFICATIONS_DISABLED"] = "Money notifications disabled."
 L["MONEY_NOTIFICATIONS_ENABLED"] = "Money notifications enabled."
+L["OPTIONS_TEXT"] = "Options"
 L["OWNED_ITEM_COUNTS_DISABLED"] = "Owned item counts disabled."
 L["OWNED_ITEM_COUNTS_ENABLED"] = "Owned item counts enabled."
+L["RESET_ANCHOR"] = "Reset Anchor"
+L["RIGHT_CLICK"] = "Right-Click"
+L["SHIFT_KEY"] = "Shift"
+L["TEST_NOTIFICATIONS"] = "Test Notifications"
+L["TOGGLE_ANCHOR"] = "Toggle Anchor"
 
 -- ============================================================================
 -- Others

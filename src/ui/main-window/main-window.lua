@@ -37,8 +37,8 @@ MainWindow.frame = (function()
   --- @class MainWindowWidget : WindowWidget
   local frame = Widgets:Window({
     name = ADDON_NAME .. "_MainWindow",
-    width = 375,
-    height = 300,
+    width = 400,
+    height = 425,
     titleText = Colors.Purple(ADDON_NAME),
   })
 
@@ -48,9 +48,9 @@ MainWindow.frame = (function()
   frame.versionText:SetText(Colors.White(Addon.VERSION))
   frame.versionText:SetAlpha(0.5)
 
-  -- Test notifications button.
-  frame.keybindsButton = Widgets:TitleFrameIconButton({
-    name = "$parent_KeybindsButton",
+  -- Bell button.
+  frame.BellButton = Widgets:TitleFrameIconButton({
+    name = "$parent_BellButton",
     parent = frame.titleButton,
     points = {
       { "TOPRIGHT",    frame.closeButton, "TOPLEFT",    0, 0 },
@@ -59,9 +59,18 @@ MainWindow.frame = (function()
     texture = Addon:GetAsset("bell-icon"),
     textureSize = frame.title:GetStringHeight(),
     highlightColor = Colors.Purple,
-    onClick = Commands.test,
+    onClick = function(self, button)
+      if button == "LeftButton" then
+        Commands.anchor(IsShiftKeyDown() and "reset" or nil)
+      else
+        Commands.test()
+      end
+    end,
     onUpdateTooltip = function(self, tooltip)
-      tooltip:SetText(L.TEST_NOTIFICATIONS)
+      tooltip:SetText(Colors.Purple(ADDON_NAME))
+      tooltip:AddDoubleLine(L.LEFT_CLICK, L.TOGGLE_ANCHOR)
+      tooltip:AddDoubleLine(Addon:Concat("+", L.SHIFT_KEY, L.LEFT_CLICK), L.RESET_ANCHOR)
+      tooltip:AddDoubleLine(L.RIGHT_CLICK, L.TEST_NOTIFICATIONS)
     end
   })
 

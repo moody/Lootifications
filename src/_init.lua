@@ -49,6 +49,22 @@ function Addon:GetAsset(fileName)
   return ("Interface\\AddOns\\%s\\assets\\%s"):format(ADDON_NAME, fileName)
 end
 
+-- Addon:Concat()
+do
+  local Colors = Addon:GetModule("Colors")
+  local cache = {}
+
+  --- Concatenates arguments with a given separator.
+  --- @param sep string
+  --- @param ... string|number
+  --- @return string
+  function Addon:Concat(sep, ...)
+    for k in pairs(cache) do cache[k] = nil end
+    for i = 1, select("#", ...) do cache[#cache + 1] = select(i, ...) end
+    return table.concat(cache, Colors.Grey(sep))
+  end
+end
+
 --- Returns `value` if it is not nil; otherwise, returns `default`.
 --- @generic T1, T2
 --- @param value? T1

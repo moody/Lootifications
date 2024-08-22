@@ -33,5 +33,5 @@ end
 --- @param leftText string
 --- @param rightText string
 function Tooltip:AddDoubleLine(leftText, rightText)
-  GameTooltip:AddDoubleLine(Colors.Purple(leftText), Colors.White(rightText))
+  GameTooltip:AddDoubleLine(Colors.Yellow(leftText), Colors.White(rightText))
 end
