@@ -22,11 +22,15 @@
   <Script file="src\ui\widgets\_init.lua"/>
   <Script file="src\ui\widgets\frame.lua"/>
   <Script file="src\ui\widgets\notification.lua"/>
-  <Script file="src\ui\widgets\options-frame.lua"/>
   <Script file="src\ui\widgets\scrollable-title-frame.lua"/>
   <Script file="src\ui\widgets\slider.lua"/>
   <Script file="src\ui\widgets\title-frame.lua"/>
   <Script file="src\ui\widgets\window.lua"/>
+
+  <Script file="src\ui\widgets\options\option-button.lua"/>
+  <Script file="src\ui\widgets\options\option-heading.lua"/>
+  <Script file="src\ui\widgets\options\option-slider.lua"/>
+  <Script file="src\ui\widgets\options\options-frame.lua"/>
 
   <Script file="src\ui\main-window\options.lua"/>
   <Script file="src\ui\main-window\main-window.lua"/>
