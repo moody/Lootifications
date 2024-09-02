@@ -1,18 +1,15 @@
 local _, Addon = ...
-local EventManager = Addon:GetModule("EventManager")
+local EventManager = Addon:GetModule("EventManager") ---@class EventManager
 
-local handlers = {
-  -- ["EVENT_KEY"] = {
-  --  [func] = "ON" | "ONCE",
-  --  ...
-  -- },
-  -- ...
-}
+--- @alias EventType "ON" | "ONCE"
+
+--- @type table<string, table<function, EventType>>
+local handlers = {}
 
 --- Helper function to validate and register an event handler.
 --- @param event string
 --- @param func function
---- @param eventType "ON" | "ONCE"
+--- @param eventType EventType
 local function register(event, func, eventType)
   assert(type(event) == "string")
   assert(type(func) == "function")
@@ -28,8 +25,7 @@ function EventManager:On(event, func)
   register(event, func, "ON")
 end
 
---- Sets up a function to be called and removed the next time the specified event
---- is fired.
+--- Sets up a function to be called and removed the next time the specified event is fired.
 --- @param event string
 --- @param func function
 function EventManager:Once(event, func)
@@ -38,7 +34,7 @@ end
 
 --- Calls all registered handlers for a specified event.
 --- @param event string
---- @param ... any event handler arguments
+--- @vararg any event handler arguments
 function EventManager:Fire(event, ...)
   assert(type(event) == "string")
   if not handlers[event] then return end

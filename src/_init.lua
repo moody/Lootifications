@@ -29,13 +29,17 @@ Addon.VERSION = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
 -- Functions
 -- ============================================================================
 
-do -- Addon:GetModule()
+-- Addon:GetModule()
+do
+  --- @type table<string, table>
   local modules = {}
 
-  --- Returns a module using the given key.
-  --- @param key string
-  --- @return table
+  --- Gets or creates a module table for the given `key`.
+  --- @generic T
+  --- @param key `T`
+  --- @return T
   function Addon:GetModule(key)
+    --- @cast key +string
     key = key:upper()
     if type(modules[key]) ~= "table" then modules[key] = {} end
     return modules[key]
@@ -87,6 +91,14 @@ end
 --- @param ... any
 function Addon:Print(...)
   print(self:GetModule("Colors").Purple("[" .. ADDON_NAME .. "]"), ...)
+end
+
+--- Prints the given arguments with debug formatting.
+--- @param ... any
+function Addon:Debug(...)
+  --@debug@
+  print(date("%H:%M:%S"), self:GetModule("Colors").Red("[Debug]"), ...)
+  --@end-debug@
 end
 
 do -- Addon:RegisterIntervalCallback()

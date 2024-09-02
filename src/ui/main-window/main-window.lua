@@ -88,8 +88,3 @@ MainWindow.frame = (function()
 
   return frame
 end)()
-
---- DEBUG ONLY
-C_Timer.After(1, function()
-  MainWindow:Show()
-end)
