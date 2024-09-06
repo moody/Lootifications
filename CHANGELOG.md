@@ -4,7 +4,18 @@
 
 ### Added
 
-- Command: `/lootifications owned` to toggle owned item counts in notifications
+- User interface for modifying options
+- Command: `/lootifications` to toggle the user interface
+- Command: `/lootifications help` to display a list of commands
+
+### Removed
+
+- Command: `/lootifications alpha`
+- Command: `/lootifications delay`
+- Command: `/lootifications max`
+- Command: `/lootifications money`
+- Command: `/lootifications prices`
+- Command: `/lootifications space`
 
 ## [1.4.2] - 2024-05-07
 
