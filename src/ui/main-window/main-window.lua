@@ -1,10 +1,12 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
-local Colors = Addon:GetModule("Colors") ---@type Colors
-local Commands = Addon:GetModule("Commands") ---@type Commands
-local L = Addon:GetModule("Locale") ---@type Locale
-local MainWindowOptions = Addon:GetModule("MainWindowOptions") ---@type MainWindowOptions
-local Widgets = Addon:GetModule("Widgets") ---@type Widgets
+local AnchorFrame = Addon:GetModule("AnchorFrame")
+local Colors = Addon:GetModule("Colors")
+local Commands = Addon:GetModule("Commands")
+local L = Addon:GetModule("Locale")
+local MainWindowOptions = Addon:GetModule("MainWindowOptions")
+local Tester = Addon:GetModule("Tester")
+local Widgets = Addon:GetModule("Widgets")
 
 --- @class MainWindow
 local MainWindow = Addon:GetModule("MainWindow")
@@ -38,8 +40,8 @@ MainWindow.frame = (function()
   local frame = Widgets:Window({
     name = ADDON_NAME .. "_MainWindow",
     width = 400,
-    height = 335,
-    titleText = Colors.Purple(ADDON_NAME),
+    height = 375,
+    titleText = Colors.Purple(ADDON_NAME)
   })
 
   -- Version text.
@@ -53,7 +55,7 @@ MainWindow.frame = (function()
     name = "$parent_BellButton",
     parent = frame.titleButton,
     points = {
-      { "TOPRIGHT",    frame.closeButton, "TOPLEFT",    0, 0 },
+      { "TOPRIGHT", frame.closeButton, "TOPLEFT", 0, 0 },
       { "BOTTOMRIGHT", frame.closeButton, "BOTTOMLEFT", 0, 0 }
     },
     texture = Addon:GetAsset("bell-icon"),
@@ -74,17 +76,63 @@ MainWindow.frame = (function()
     end
   })
 
+  -- Anchor button.
+  frame.anchorButton = Widgets:Button({
+    name = "$parent_AnchorButton",
+    parent = frame,
+    points = {
+      { "BOTTOMLEFT", frame, Widgets:Padding(), Widgets:Padding() },
+      { "BOTTOMRIGHT", frame, "BOTTOM", -Widgets:Padding(0.25), Widgets:Padding() }
+    },
+    labelText = L.TOGGLE_ANCHOR,
+    labelColor = Colors.Yellow,
+    onUpdateTooltip = function(self, tooltip)
+      tooltip:AddDoubleLine(Addon:Concat("+", L.SHIFT_KEY, L.LEFT_CLICK), L.RESET_ANCHOR)
+    end,
+    onClick = function()
+      if IsShiftKeyDown() then
+        AnchorFrame:Reset()
+      else
+        AnchorFrame:Toggle()
+      end
+    end
+  })
+
+  -- Tester button.
+  frame.testerButton = Widgets:Button({
+    name = "$parent_TesterButton",
+    parent = frame,
+    points = {
+      { "BOTTOMRIGHT", frame, -Widgets:Padding(), Widgets:Padding() },
+      { "BOTTOMLEFT", frame, "BOTTOM", Widgets:Padding(0.25), Widgets:Padding() }
+    },
+    labelText = L.TEST_NOTIFICATIONS,
+    labelColor = Colors.Yellow,
+    onClick = function() Tester:Toggle() end
+  })
+
   -- Options frame.
   frame.optionsFrame = Widgets:OptionsFrame({
     name = "$parent_OptionsFrame",
     parent = frame,
     points = {
-      { "TOPLEFT",     frame.titleButton, "BOTTOMLEFT",  Widgets:Padding(),  0 },
-      { "BOTTOMRIGHT", frame,             "BOTTOMRIGHT", -Widgets:Padding(), Widgets:Padding() }
+      { "TOPLEFT", frame.titleButton, "BOTTOMLEFT", Widgets:Padding(), 0 },
+      { "BOTTOMRIGHT", frame.testerButton, "TOPRIGHT", 0, Widgets:Padding(0.5) }
     },
     titleText = L.OPTIONS_TEXT
   })
   MainWindowOptions:Initialize(frame.optionsFrame)
 
+  frame:HookScript("OnHide", function()
+    AnchorFrame:Hide()
+    Tester:Stop()
+  end)
+
   return frame
 end)()
+
+--@debug@
+C_Timer.After(1, function()
+  MainWindow:Show()
+end)
+--@end-debug@
