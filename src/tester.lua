@@ -13,13 +13,23 @@ local TEST_ITEMS = {
   3300,  -- Rabbit's Foot.
   3402,  -- Soft Patch of Fur.
   -- Common.
+  14047, -- Runecloth.
   17056, -- Light Feather.
-  16645, -- Shredder Operating Manual - Page 1.
-  13874, -- Heavy Crate.
+  8170,  -- Rugged Leather.
   -- Uncommon.
+  13926, -- Golden Pearl.
+  13468, -- Black Lotus.
+  12811, -- Righteous Orb.
   -- Rare.
+  14344, -- Large Brilliant Shard.
+  15410, -- Scale of Onyxia.
   -- Epic.
+  18562, -- Elementium Ore.
+  17203, -- Sulfuron Ingot.
+  20725, -- Nexus Crystal.
   -- Legendary.
+  17771, -- Elementium Bar.
+  17204, -- Eye of Sulfuras.
 }
 
 -- ============================================================================
@@ -41,7 +51,7 @@ function Tester:Start()
   self.isTesting = true
 
   if not self.ticker then
-    self.ticker = TickerManager:NewTicker(1, function()
+    self.ticker = TickerManager:NewTicker(0.5, function()
       local _, link, _, _, _, _, _, stackCount = GetItemInfo(TEST_ITEMS[math.random(#TEST_ITEMS)])
       local quantity = math.random(stackCount or 1)
       if link then
