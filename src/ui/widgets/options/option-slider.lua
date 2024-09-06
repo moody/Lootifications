@@ -34,8 +34,8 @@ function Widgets:OptionSlider(options)
   frame:SetBackdropBorderColor(Colors.White:GetRGBA(0.25))
 
   -- Slider text.
-  frame.sliderText = frame:CreateFontString("$parent_Label", "ARTWORK", "GameFontNormalLarge")
-  frame.sliderText:SetTextColor(Colors.Yellow:GetRGB())
+  frame.sliderText = frame:CreateFontString("$parent_Label", "ARTWORK", "NumberFont_Outline_Large")
+  frame.sliderText:SetTextColor(Colors.White:GetRGB())
   frame.sliderText:SetPoint("RIGHT", frame, -Widgets:Padding(), 0)
   frame.sliderText:SetWordWrap(false)
   frame.sliderText:SetJustifyH("RIGHT")
@@ -78,6 +78,16 @@ function Widgets:OptionSlider(options)
     end
   })
   frame.tooltipArea:SetBackdrop(nil)
+
+  frame.tooltipArea:HookScript("OnEnter", function()
+    frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.5))
+    frame:SetBackdropBorderColor(Colors.White:GetRGBA(0.5))
+  end)
+
+  frame.tooltipArea:HookScript("OnLeave", function()
+    frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.25))
+    frame:SetBackdropBorderColor(Colors.White:GetRGBA(0.25))
+  end)
 
   -- Set frame height.
   local labelHeight = frame.label:GetStringHeight()
