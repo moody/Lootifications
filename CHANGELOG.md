@@ -6,16 +6,17 @@
 
 - User interface for modifying options
 - Command: `/lootifications` to toggle the user interface
-- Command: `/lootifications help` to display a list of commands
 
 ### Removed
 
 - Command: `/lootifications alpha`
+- Command: `/lootifications anchor`
 - Command: `/lootifications delay`
 - Command: `/lootifications max`
 - Command: `/lootifications money`
 - Command: `/lootifications prices`
 - Command: `/lootifications space`
+- Command: `/lootifications test`
 
 ## [1.4.2] - 2024-05-07
 
