@@ -14,12 +14,6 @@ setmetatable(L, {
 -- ============================================================================
 
 L["ANCHOR"] = "Anchor"
-L["COMMAND_DESCRIPTION_ANCHOR_RESET"] = "Reset the notifications anchor."
-L["COMMAND_DESCRIPTION_ANCHOR"] = "Toggle the notifications anchor."
-L["COMMAND_DESCRIPTION_HELP"] = "Display a list of commands."
-L["COMMAND_DESCRIPTION_OPTIONS"] = "Toggle the user interface."
-L["COMMAND_DESCRIPTION_TEST"] = "Test notifications."
-L["COMMAND_SUCCESS_ANCHOR_RESET"] = "The notifications anchor has been reset."
 L["GENERAL"] = "General"
 L["LEFT_CLICK"] = "Left-Click"
 L["LOOT_PRICES_TEXT"] = "Loot Prices"
