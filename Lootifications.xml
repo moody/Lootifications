@@ -20,6 +20,7 @@
   <Script file="src\money-watcher.lua"/>
 
   <Script file="src\ui\widgets\_init.lua"/>
+  <Script file="src\ui\widgets\button.lua"/>
   <Script file="src\ui\widgets\frame.lua"/>
   <Script file="src\ui\widgets\notification.lua"/>
   <Script file="src\ui\widgets\scrollable-title-frame.lua"/>
