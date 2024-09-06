@@ -38,7 +38,7 @@ MainWindow.frame = (function()
   local frame = Widgets:Window({
     name = ADDON_NAME .. "_MainWindow",
     width = 400,
-    height = 425,
+    height = 360,
     titleText = Colors.Purple(ADDON_NAME),
   })
 
