@@ -43,7 +43,8 @@ end
 --- Prints a list of commands.
 function Commands.help()
   Addon:Print("|", Addon.VERSION)
-  print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_HELP)
+  print(Colors.Gold("  /lootifications"), "-", L.COMMAND_DESCRIPTION_OPTIONS)
+  print(Colors.Gold("  /lootifications help"), "-", L.COMMAND_DESCRIPTION_HELP)
   print(Colors.Gold("  /lootifications anchor"), "-", L.COMMAND_DESCRIPTION_ANCHOR)
   print(Colors.Gold("  /lootifications anchor reset"), "-", L.COMMAND_DESCRIPTION_ANCHOR_RESET)
   print(Colors.Gold("  /lootifications test"), "-", L.COMMAND_DESCRIPTION_TEST)
