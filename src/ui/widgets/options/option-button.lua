@@ -72,7 +72,7 @@ function Widgets:OptionButton(options)
   frame:SetScript("OnUpdate", function(self)
     if options.get() then
       self:SetAlpha(1)
-      self.checkBox:SetColorTexture(Colors.Blue:GetRGBA(0.75))
+      self.checkBox:SetColorTexture(Colors.Purple:GetRGBA())
     else
       self:SetAlpha(0.5)
       self.checkBox:SetColorTexture(Colors.White:GetRGBA(0.25))
