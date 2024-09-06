@@ -1,5 +1,4 @@
 local Addon = select(2, ...) ---@type Addon
-local Colors = Addon:GetModule("Colors") ---@type Colors
 local L = Addon:GetModule("Locale") ---@type Locale
 local Widgets = Addon:GetModule("Widgets") ---@type Widgets
 
@@ -16,12 +15,28 @@ function MainWindowOptions:Initialize(optionsFrame)
   -- General heading.
   optionsFrame:AddChild(Widgets:OptionHeading({ headingText = L.GENERAL }))
 
+  -- Loot prices.
+  optionsFrame:AddChild(Widgets:OptionButton({
+    labelText = L.LOOT_PRICES_TEXT,
+    tooltipText = L.LOOT_PRICES_TOOLTIP,
+    get = function() return Addon:GetState().lootPrices end,
+    set = function() Addon:GetStore():Dispatch({ type = "lootPrices/toggle" }) end
+  }))
+
   -- Money notifications.
   optionsFrame:AddChild(Widgets:OptionButton({
     labelText = L.MONEY_NOTIFICATIONS_TEXT,
     tooltipText = L.MONEY_NOTIFICATIONS_TOOLTIP,
     get = function() return Addon:GetState().moneyNotifications end,
-    set = function(value) Addon:GetStore():Dispatch({ type = "moneyNotifications/toggle" }) end
+    set = function() Addon:GetStore():Dispatch({ type = "moneyNotifications/toggle" }) end
+  }))
+
+  -- Owned item counts.
+  optionsFrame:AddChild(Widgets:OptionButton({
+    labelText = L.OWNED_ITEM_COUNTS_TEXT,
+    tooltipText = L.OWNED_ITEM_COUNTS_TOOLTIP,
+    get = function() return Addon:GetState().ownedItemCounts end,
+    set = function() Addon:GetStore():Dispatch({ type = "ownedItemCounts/toggle" }) end
   }))
 
   -- Notification alpha.
