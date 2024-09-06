@@ -13,15 +13,7 @@ function MainWindowOptions:Initialize(optionsFrame)
   -- ============================================================================
 
   -- General heading.
-  optionsFrame:AddChild(Widgets:OptionHeading({ headingText = L.GENERAL }))
-
-  -- Loot prices.
-  optionsFrame:AddChild(Widgets:OptionButton({
-    labelText = L.LOOT_PRICES_TEXT,
-    tooltipText = L.LOOT_PRICES_TOOLTIP,
-    get = function() return Addon:GetState().lootPrices end,
-    set = function() Addon:GetStore():Dispatch({ type = "lootPrices/toggle" }) end
-  }))
+  -- optionsFrame:AddChild(Widgets:OptionHeading({ headingText = L.GENERAL }))
 
   -- Money notifications.
   optionsFrame:AddChild(Widgets:OptionButton({
@@ -31,12 +23,30 @@ function MainWindowOptions:Initialize(optionsFrame)
     set = function() Addon:GetStore():Dispatch({ type = "moneyNotifications/toggle" }) end
   }))
 
+  -- Loot prices.
+  optionsFrame:AddChild(Widgets:OptionButton({
+    labelText = L.LOOT_PRICES_TEXT,
+    tooltipText = L.LOOT_PRICES_TOOLTIP,
+    get = function() return Addon:GetState().lootPrices end,
+    set = function() Addon:GetStore():Dispatch({ type = "lootPrices/toggle" }) end
+  }))
+
   -- Owned item counts.
   optionsFrame:AddChild(Widgets:OptionButton({
     labelText = L.OWNED_ITEM_COUNTS_TEXT,
     tooltipText = L.OWNED_ITEM_COUNTS_TOOLTIP,
     get = function() return Addon:GetState().ownedItemCounts end,
     set = function() Addon:GetStore():Dispatch({ type = "ownedItemCounts/toggle" }) end
+  }))
+
+  -- Max notifications.
+  optionsFrame:AddChild(Widgets:OptionSlider({
+    labelText = L.MAX_NOTIFICATIONS_TEXT,
+    tooltipText = L.MAX_NOTIFICATIONS_TOOLTIP,
+    minValue = Addon.MAX_NOTIFICATIONS_MIN,
+    maxValue = Addon.MAX_NOTIFICATIONS_MAX,
+    get = function() return Addon:GetState().maxNotifications end,
+    set = function(value) Addon:GetStore():Dispatch({ type = "maxNotifications/set", payload = value }) end
   }))
 
   -- Notification alpha.
@@ -58,16 +68,6 @@ function MainWindowOptions:Initialize(optionsFrame)
     maxValue = Addon.NOTIFICATION_FADE_OUT_DELAY_MAX,
     get = function() return Addon:GetState().notificationFadeOutDelay end,
     set = function(value) Addon:GetStore():Dispatch({ type = "notificationFadeOutDelay/set", payload = value }) end
-  }))
-
-  -- Max notifications.
-  optionsFrame:AddChild(Widgets:OptionSlider({
-    labelText = L.MAX_NOTIFICATIONS_TEXT,
-    tooltipText = L.MAX_NOTIFICATIONS_TOOLTIP,
-    minValue = Addon.MAX_NOTIFICATIONS_MIN,
-    maxValue = Addon.MAX_NOTIFICATIONS_MAX,
-    get = function() return Addon:GetState().maxNotifications end,
-    set = function(value) Addon:GetStore():Dispatch({ type = "maxNotifications/set", payload = value }) end
   }))
 
   -- Notification spacing.
