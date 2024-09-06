@@ -1,4 +1,4 @@
-local ADDON_NAME ---@type string
+local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
 local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
