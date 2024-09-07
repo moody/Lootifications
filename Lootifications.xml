@@ -37,6 +37,7 @@
   <Script file="src\ui\main-window\options.lua"/>
   <Script file="src\ui\main-window\main-window.lua"/>
 
+  <Script file="src\ui\addon-compartment.lua"/>
   <Script file="src\ui\anchor-frame.lua"/>
   <Script file="src\ui\notification-manager.lua"/>
 </Ui>
