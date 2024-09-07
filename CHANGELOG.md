@@ -4,9 +4,13 @@
 
 ### Added
 
-- User interface for modifying options
-- Command: `/lootifications` to toggle the user interface
 - Addon compartment support
+- User interface for modifying options
+- Option: `Owned Item Counts` to display the owned count of items in loot notifications ([#10](https://github.com/moody/Lootifications/issues/10))
+
+### Changed
+
+- Command: `/lootifications` to toggle the user interface
 
 ### Removed
 
