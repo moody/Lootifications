@@ -2,6 +2,7 @@ local Addon = select(2, ...) ---@type Addon
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local NotificationManager = Addon:GetModule("NotificationManager")
 local TickerManager = Addon:GetModule("TickerManager")
 
 --- @class Tester
@@ -51,7 +52,7 @@ function Tester:Start()
   self.isTesting = true
 
   if not self.ticker then
-    self.ticker = TickerManager:NewTicker(0.5, function()
+    self.ticker = TickerManager:NewTicker(0.25, function()
       local _, link, _, _, _, _, _, stackCount = GetItemInfo(TEST_ITEMS[math.random(#TEST_ITEMS)])
       local quantity = math.random(stackCount or 1)
       if link then
@@ -67,4 +68,15 @@ end
 function Tester:Stop()
   self.isTesting = false
   if self.ticker then self.ticker:Cancel() end
+  NotificationManager:Clear()
 end
+
+-- ============================================================================
+-- Events
+-- ============================================================================
+
+EventManager:On(E.StateUpdated, function()
+  if Tester.isTesting then
+    NotificationManager:Clear()
+  end
+end)
