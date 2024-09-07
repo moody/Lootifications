@@ -2,7 +2,6 @@ local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
-local Commands = Addon:GetModule("Commands")
 local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 local Tester = Addon:GetModule("Tester")
@@ -49,32 +48,6 @@ MainWindow.frame = (function()
   frame.versionText:SetPoint("CENTER")
   frame.versionText:SetText(Colors.White(Addon.VERSION))
   frame.versionText:SetAlpha(0.5)
-
-  -- Bell button.
-  frame.BellButton = Widgets:TitleFrameIconButton({
-    name = "$parent_BellButton",
-    parent = frame.titleButton,
-    points = {
-      { "TOPRIGHT", frame.closeButton, "TOPLEFT", 0, 0 },
-      { "BOTTOMRIGHT", frame.closeButton, "BOTTOMLEFT", 0, 0 }
-    },
-    texture = Addon:GetAsset("bell-icon"),
-    textureSize = frame.title:GetStringHeight(),
-    highlightColor = Colors.Purple,
-    onClick = function(self, button)
-      if button == "LeftButton" then
-        Commands.anchor(IsShiftKeyDown() and "reset" or nil)
-      else
-        Commands.test()
-      end
-    end,
-    onUpdateTooltip = function(self, tooltip)
-      tooltip:SetText(Colors.Purple(ADDON_NAME))
-      tooltip:AddDoubleLine(L.LEFT_CLICK, L.TOGGLE_ANCHOR)
-      tooltip:AddDoubleLine(Addon:Concat("+", L.SHIFT_KEY, L.LEFT_CLICK), L.RESET_ANCHOR)
-      tooltip:AddDoubleLine(L.RIGHT_CLICK, L.TEST_NOTIFICATIONS)
-    end
-  })
 
   -- Anchor button.
   frame.anchorButton = Widgets:Button({
