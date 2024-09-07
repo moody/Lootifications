@@ -98,6 +98,11 @@ function Widgets:OptionSlider(options)
     local value = options.get()
     frame.slider:SetValue(value)
     frame.sliderText:SetText(tostring(value))
+
+    -- Stupid hack to try fixing a bug where the slider will not show up when first logging in.
+    -- Only mousing over the invisible slider, or hiding and showing it again, seems to fix it.
+    frame.slider:Hide()
+    C_Timer.After(0.01, function() frame.slider:Show() end)
   end)
 
   return frame
