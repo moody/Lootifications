@@ -1,7 +1,8 @@
-local _, Addon = ...
+--- @class Addon
+local Addon = select(2, ...)
+
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
---- @type Wux
 local Wux = Addon.Wux
 
 local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
@@ -10,6 +11,7 @@ local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
 -- Default State
 -- ============================================================================
 
+--- @class AddonState
 local DEFAULT_STATE = {
   anchorPoint = {},
   lootPrices = false,
@@ -17,13 +19,15 @@ local DEFAULT_STATE = {
   moneyNotifications = true,
   notificationAlpha = Addon.NOTIFICATION_ALPHA_DEFAULT,
   notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT,
-  notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT
+  notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT,
+  ownedItemCounts = false
 }
 
 -- ============================================================================
 -- Reducers
 -- ============================================================================
 
+--- @type WuxReducer<AddonState>
 local rootReducer = Wux:CombineReducers({
   -- Anchor point.
   anchorPoint = function(state, action)
@@ -111,6 +115,17 @@ local rootReducer = Wux:CombineReducers({
 
     return state
   end,
+
+  -- Owned item counts.
+  ownedItemCounts = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.ownedItemCounts)
+
+    if action.type == "ownedItemCounts/toggle" then
+      state = not state
+    end
+
+    return state
+  end,
 })
 
 -- ============================================================================
@@ -124,11 +139,21 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   -- Update SavedVariables whenever the state changes.
   Store:Subscribe(function(state)
     _G[GLOBAL_SV] = state
+    EventManager:Fire(E.StateUpdated, state)
   end)
 
+  --- Returns the underlying Wux store.
+  --- @return WuxStore
   function Addon:GetStore()
     return Store
   end
 
+  --- Returns the current state. Equivalent to `Addon:GetStore():GetState()`.
+  --- @return AddonState
+  function Addon:GetState()
+    return Store:GetState()
+  end
+
   EventManager:Fire(E.StoreInitialized, Store)
+  EventManager:Fire(E.StateUpdated, Store:GetState())
 end)

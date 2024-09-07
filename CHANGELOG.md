@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.5.0] - 2024-09-07
+
+### Added
+
+- Addon compartment support
+- User interface for modifying options
+- Option: `Owned Item Counts` to display the owned count of items in loot notifications ([#10](https://github.com/moody/Lootifications/issues/10))
+
+### Changed
+
+- Command: `/lootifications` to toggle the user interface
+
+### Removed
+
+- Command: `/lootifications alpha`
+- Command: `/lootifications anchor`
+- Command: `/lootifications delay`
+- Command: `/lootifications max`
+- Command: `/lootifications money`
+- Command: `/lootifications prices`
+- Command: `/lootifications space`
+- Command: `/lootifications test`
+
 ## [1.4.2] - 2024-05-07
 
 - Bumped retail version

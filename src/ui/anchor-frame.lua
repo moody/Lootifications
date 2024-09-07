@@ -1,10 +1,13 @@
-local ADDON_NAME, Addon = ...
-local AnchorFrame = Addon:GetModule("AnchorFrame")
+local ADDON_NAME = ... ---@type string
+local Addon = select(2, ...) ---@type Addon
 local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
 local Widgets = Addon:GetModule("Widgets")
+
+--- @class AnchorFrame
+local AnchorFrame = Addon:GetModule("AnchorFrame")
 
 local NOTIFICATION_POINTS = {
   GROW_UP = {
@@ -25,8 +28,8 @@ local NOTIFICATION_POINTS = {
 
 AnchorFrame.frame = (function()
   local frame = Widgets:Notification({ name = ADDON_NAME .. "_AnchorFrame" })
-  frame:SetBackdropColor(0, 0, 0, 0.6)
-  frame:SetBackdropBorderColor(0, 0, 0, 0.6)
+  frame:SetBackdropColor(0, 0, 0, 1)
+  frame:SetBackdropBorderColor(Colors.Gold:GetRGBA())
   frame:SetMovable(true)
   frame:EnableMouse(true)
   frame:RegisterForDrag("LeftButton")
@@ -34,8 +37,8 @@ AnchorFrame.frame = (function()
   frame:HookScript("OnShow", function(self)
     local text = Colors.Gold(("[%s %s]"):format(ADDON_NAME, L.ANCHOR))
     self.fontString:SetText(Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text))
-    self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
-    self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
+    self:SetWidth(self.fontString:GetWidth() + Widgets:Padding(1.5))
+    self:SetHeight(self.fontString:GetHeight() + Widgets:Padding(1.5))
   end)
 
   frame:SetScript("OnDragStart", function(self)
@@ -103,6 +106,14 @@ function AnchorFrame:Reset()
   self.frame:ClearAllPoints()
   self.frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
   Addon:GetStore():Dispatch({ type = "anchorPoint/reset" })
+end
+
+function AnchorFrame:Show()
+  self.frame:Show()
+end
+
+function AnchorFrame:Hide()
+  self.frame:Hide()
 end
 
 function AnchorFrame:Toggle()

@@ -1,11 +1,20 @@
-local ADDON_NAME, Addon = ...
+local ADDON_NAME = ... ---@type string
+local Addon = select(2, ...) ---@type Addon
 local AnchorFrame = Addon:GetModule("AnchorFrame")
-local NotificationManager = Addon:GetModule("NotificationManager")
 local Widgets = Addon:GetModule("Widgets")
 
-local activeNotifications = {}
+--- @class NotificationManager
+local NotificationManager = Addon:GetModule("NotificationManager")
+
 local notificationCount = 0
+
+--- @type NotificationWidget[]
+local activeNotifications = {}
+
+--- @type table<NotificationWidget, boolean>
 local notificationPool = {}
+
+--- @type string[]
 local notificationQueue = {}
 
 -- ============================================================================
@@ -46,6 +55,16 @@ function NotificationManager:NotifyWithIcon(icon, text)
   self:Notify(Addon.TEXTURE_MESSAGE_FORMAT:format(icon, text))
 end
 
+--- Stops all active and pending notifications.
+function NotificationManager:Clear()
+  for k in pairs(notificationQueue) do notificationQueue[k] = nil end
+  for i = #activeNotifications, 1, -1 do
+    local notification = table.remove(activeNotifications, i)
+    notificationPool[notification] = true
+    notification:Kill()
+  end
+end
+
 -- ============================================================================
 -- Register callback to handle queued notifications.
 -- ============================================================================
@@ -80,7 +99,8 @@ Addon:RegisterIntervalCallback(0.01, function()
     notification:ClearAllPoints()
     if i == #activeNotifications then
       local relativePoint = AnchorFrame.frame:IsShown() and points.relativePoint or points.point
-      notification:SetPoint(points.point, AnchorFrame.frame, relativePoint, 0, spacing)
+      local anchorSpacing = AnchorFrame.frame:IsShown() and spacing or 0
+      notification:SetPoint(points.point, AnchorFrame.frame, relativePoint, 0, anchorSpacing)
     else
       notification:SetPoint(points.point, activeNotifications[i + 1], points.relativePoint, 0, spacing)
     end

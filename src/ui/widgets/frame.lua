@@ -1,32 +1,44 @@
-local _, Addon = ...
+local Addon = select(2, ...) ---@type Addon
+local Tooltip = Addon:GetModule("Tooltip")
+
+--- @class Widgets
 local Widgets = Addon:GetModule("Widgets")
 
---- @class FrameOptions
+-- =============================================================================
+-- LuaCATS Annotations
+-- =============================================================================
+
+--- @class FrameWidgetOptions
 --- @field name? string
 --- @field frameType? string
 --- @field parent? table
 --- @field points? table[]
---- @field width? number
---- @field height? number
+--- @field width? integer
+--- @field height? integer
+--- @field onUpdateTooltip? fun(self: FrameWidget, tooltip: Tooltip)
+
+-- =============================================================================
+-- Widgets - Frame
+-- =============================================================================
 
 --- Creates a basic frame with a backdrop.
----@param options FrameOptions
----@return table frame
+--- @param options FrameWidgetOptions
+--- @return FrameWidget frame
 function Widgets:Frame(options)
   -- Defaults.
-  Addon:IfKeyNil(options, "frameType", "Frame")
-  Addon:IfKeyNil(options, "parent", UIParent)
-  Addon:IfKeyNil(options, "width", 1)
-  Addon:IfKeyNil(options, "height", 1)
+  options.frameType = Addon:IfNil(options.frameType, "Frame")
+  options.parent = Addon:IfNil(options.parent, UIParent)
+  options.width = Addon:IfNil(options.width, 1)
+  options.height = Addon:IfNil(options.height, 1)
 
-  -- Base frame.
+  --- @class FrameWidget : Frame, BackdropTemplate
   local frame = CreateFrame(options.frameType, options.name, options.parent)
   frame:SetClipsChildren(true)
 
   -- Backdrop.
   Mixin(frame, BackdropTemplateMixin)
   frame:SetBackdrop(self.BORDER_BACKDROP)
-  frame:SetBackdropColor(0, 0, 0, 0.75)
+  frame:SetBackdropColor(0.05, 0.05, 0.05, 0.95)
   frame:SetBackdropBorderColor(0, 0, 0, 1)
 
   -- Size.
@@ -38,6 +50,19 @@ function Widgets:Frame(options)
     for _, point in ipairs(options.points) do
       frame:SetPoint(SafeUnpack(point))
     end
+  end
+
+  -- Tooltip.
+  if options.onUpdateTooltip then
+    -- GameTooltip's `OnUpdate` script will call this function every 0.2 seconds.
+    function frame:UpdateTooltip()
+      Tooltip:SetOwner(self, "ANCHOR_TOP")
+      options.onUpdateTooltip(self, Tooltip)
+      Tooltip:Show()
+    end
+
+    frame:SetScript("OnEnter", frame.UpdateTooltip)
+    frame:SetScript("OnLeave", function() Tooltip:Hide() end)
   end
 
   return frame

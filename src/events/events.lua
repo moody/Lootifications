@@ -1,19 +1,14 @@
-local AddonName, Addon = ...
-local E = Addon:GetModule("Events")
+local _, Addon = ...
+local E = Addon:GetModule("Events") ---@class Events
 
 -- ============================================================================
 -- Addon Events
 -- ============================================================================
 
-local events = {
-  "LootReceived",
-  "MoneyReceived",
-  "StoreInitialized"
-}
-
-for _, event in pairs(events) do
-  E[event] = ("%s_%s"):format(AddonName, event)
-end
+E.LootReceived = "Lootifications_LootReceived"
+E.MoneyReceived = "Lootifications_MoneyReceived"
+E.StateUpdated = "Lootifications_StateUpdate"
+E.StoreInitialized = "Lootifications_StoreInitialized"
 
 -- ============================================================================
 -- WoW Events

@@ -1,20 +1,30 @@
-local _, Addon = ...
+local Addon = select(2, ...) ---@type Addon
+
+--- @class Widgets
 local Widgets = Addon:GetModule("Widgets")
 
---- @class NotificationOptions : FrameOptions
+-- =============================================================================
+-- LuaCATS Annotations
+-- =============================================================================
+
+--- @class NotificationWidgetOptions : FrameWidgetOptions
 --- @field fontLayer? string
 --- @field fontTemplate? string
 
+-- =============================================================================
+-- Widgets - Notification
+-- =============================================================================
+
 --- Creates a frame with a font string and animations for displaying notifications.
---- @param options NotificationOptions
---- @return table frame
+--- @param options NotificationWidgetOptions
+--- @return NotificationWidget
 function Widgets:Notification(options)
   -- Defaults.
   options.frameType = "Frame"
   Addon:IfKeyNil(options, "fontLayer", "OVERLAY")
   Addon:IfKeyNil(options, "fontTemplate", "ErrorFont")
 
-  -- Base frame.
+  --- @class NotificationWidget : FrameWidget
   local frame = self:Frame(options)
   frame:SetBackdropColor(0, 0, 0, 0.3)
   frame:SetBackdropBorderColor(0, 0, 0, 0.3)
@@ -24,7 +34,7 @@ function Widgets:Notification(options)
   frame.fontString:SetTextColor(1, 1, 1)
   frame.fontString:SetPoint("CENTER")
 
-  -- Animations.
+  --- @class NotificationAnimationGroup : AnimationGroup
   frame.animationGroup = frame:CreateAnimationGroup()
 
   frame.animationGroup.fadeIn = frame.animationGroup:CreateAnimation("Alpha")
@@ -72,6 +82,13 @@ function Widgets:Notification(options)
     self.animationGroup.fadeOut:SetStartDelay(fadeOutDelay)
     self.animationGroup.callback = callback
     self.animationGroup:Play()
+  end
+
+  --- Stops the notification's animation and hides it.
+  function frame:Kill()
+    self.animationGroup.callback = nil
+    self.animationGroup:Stop()
+    self:Hide()
   end
 
   return frame

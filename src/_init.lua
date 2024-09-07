@@ -1,4 +1,8 @@
-local ADDON_NAME, Addon = ...
+local ADDON_NAME = ... ---@type string
+
+--- @class Addon
+--- @field Wux Wux
+local Addon = select(2, ...)
 
 -- ============================================================================
 -- Constants
@@ -25,17 +29,54 @@ Addon.VERSION = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
 -- Functions
 -- ============================================================================
 
-do -- Addon:GetModule()
+-- Addon:GetModule()
+do
+  --- @type table<string, table>
   local modules = {}
 
-  --- Returns a module using the given key.
-  --- @param key string
-  --- @return table
+  --- Gets or creates a module table for the given `key`.
+  --- @generic T
+  --- @param key `T`
+  --- @return T
   function Addon:GetModule(key)
+    --- @cast key +string
     key = key:upper()
     if type(modules[key]) ~= "table" then modules[key] = {} end
     return modules[key]
   end
+end
+
+--- Returns the full path to a file in the `/assets` folder.
+--- @param fileName string
+--- @return string
+function Addon:GetAsset(fileName)
+  return ("Interface\\AddOns\\%s\\assets\\%s"):format(ADDON_NAME, fileName)
+end
+
+-- Addon:Concat()
+do
+  local Colors = Addon:GetModule("Colors")
+  local cache = {}
+
+  --- Concatenates arguments with a given separator.
+  --- @param sep string
+  --- @param ... string|number
+  --- @return string
+  function Addon:Concat(sep, ...)
+    for k in pairs(cache) do cache[k] = nil end
+    for i = 1, select("#", ...) do cache[#cache + 1] = select(i, ...) end
+    return table.concat(cache, Colors.Grey(sep))
+  end
+end
+
+--- Returns `value` if it is not nil; otherwise, returns `default`.
+--- @generic T1, T2
+--- @param value? T1
+--- @param default T2
+--- @return T1|T2 value
+function Addon:IfNil(value, default)
+  if value == nil then return default end
+  return value
 end
 
 --- Sets a default value for the given table and key, if the current value is nil.
@@ -50,6 +91,14 @@ end
 --- @param ... any
 function Addon:Print(...)
   print(self:GetModule("Colors").Purple("[" .. ADDON_NAME .. "]"), ...)
+end
+
+--- Prints the given arguments with debug formatting.
+--- @param ... any
+function Addon:Debug(...)
+  --@debug@
+  print(date("%H:%M:%S"), self:GetModule("Colors").Red("[Debug]"), ...)
+  --@end-debug@
 end
 
 do -- Addon:RegisterIntervalCallback()
