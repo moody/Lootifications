@@ -80,7 +80,7 @@ MainWindow.frame = (function()
       { "BOTTOMLEFT", frame, "BOTTOM", Widgets:Padding(0.25), Widgets:Padding() }
     },
     labelText = L.TEST_NOTIFICATIONS,
-    labelColor = Colors.Yellow,
+    labelColor = Colors.Green,
     onClick = function() Tester:Toggle() end
   })
 
