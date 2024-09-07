@@ -139,6 +139,7 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   -- Update SavedVariables whenever the state changes.
   Store:Subscribe(function(state)
     _G[GLOBAL_SV] = state
+    EventManager:Fire(E.StateUpdated, state)
   end)
 
   --- Returns the underlying Wux store.
@@ -154,4 +155,5 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   end
 
   EventManager:Fire(E.StoreInitialized, Store)
+  EventManager:Fire(E.StateUpdated, Store:GetState())
 end)
