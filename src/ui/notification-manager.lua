@@ -99,7 +99,8 @@ Addon:RegisterIntervalCallback(0.01, function()
     notification:ClearAllPoints()
     if i == #activeNotifications then
       local relativePoint = AnchorFrame.frame:IsShown() and points.relativePoint or points.point
-      notification:SetPoint(points.point, AnchorFrame.frame, relativePoint, 0, spacing)
+      local anchorSpacing = AnchorFrame.frame:IsShown() and spacing or 0
+      notification:SetPoint(points.point, AnchorFrame.frame, relativePoint, 0, anchorSpacing)
     else
       notification:SetPoint(points.point, activeNotifications[i + 1], points.relativePoint, 0, spacing)
     end
