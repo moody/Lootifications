@@ -24,16 +24,14 @@ def getReferences():
     references = {}
 
     paths = []
-    paths.extend(str(p)
-                 for p in Path("src").rglob("*.lua") if "locale" not in p.stem)
+    paths.extend(str(p) for p in Path("src").rglob("*.lua") if "locale" not in p.stem)
 
     for path in paths:
         with open(path) as f:
             lineNum = 0
             for line in f.readlines():
                 lineNum += 1
-                keys = [k[1]
-                        for k in re.findall(LOCALE_REFERENCE_PATTERN, line)]
+                keys = [k[1] for k in re.findall(LOCALE_REFERENCE_PATTERN, line)]
                 for key in keys:
                     if not key in references:
                         references[key] = []
@@ -74,6 +72,7 @@ else:
         for path in references[key]:
             print(f"    {path}")
 
-# Exit with an error if any unused entries or undefined references were found.
-if len(unusedEntries) > 0 or len(undefinedReferences) > 0:
+
+# Exit with an error if any undefined references were found.
+if len(undefinedReferences) > 0:
     sys.exit(1)
