@@ -6,6 +6,7 @@
 
 - User interface for modifying options
 - Command: `/lootifications` to toggle the user interface
+- Addon compartment support
 
 ### Removed
 
