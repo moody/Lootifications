@@ -84,5 +84,12 @@ function Widgets:Notification(options)
     self.animationGroup:Play()
   end
 
+  --- Stops the notification's animation and hides it.
+  function frame:Kill()
+    self.animationGroup.callback = nil
+    self.animationGroup:Stop()
+    self:Hide()
+  end
+
   return frame
 end
