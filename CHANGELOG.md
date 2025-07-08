@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.2] - 2025-07-08
+
+- Updated TOC versions
+
 ## [1.5.1] - 2025-03-01
 
 - Updated TOC versions
