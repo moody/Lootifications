@@ -1,8 +1,0 @@
-## Interface: 11506
-## Title: Lootifications
-## Version: @project-version@
-## Author: https://github.com/moody
-## Notes: Displays notifications for new loot.
-## SavedVariables: __LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__
-
-Lootifications.xml
