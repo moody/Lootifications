@@ -28,6 +28,8 @@ end
 EventManager:On(E.MoneyReceived, function(amount)
   local state = Addon:GetStore():GetState()
   if amount > 0 and state.moneyNotifications then
-    NotificationManager:Notify(GetCoinTextureString(amount))
+    NotificationManager:Notify(function()
+      return GetCoinTextureString(amount)
+    end)
   end
 end)

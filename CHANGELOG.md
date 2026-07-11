@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.6.0] - 2026-07-10
+
+### Fixed
+
+- Owned Item Count can be inaccurate [#15](https://github.com/moody/Lootifications/issues/15)
+
 ## [1.5.2] - 2025-07-08
 
 - Updated TOC versions

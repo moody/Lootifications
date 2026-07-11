@@ -61,14 +61,13 @@ do -- Listen for `LootReceived` and display a notification.
   EventManager:On(E.LootReceived, function(link, quantity)
     pcall(function()
       local texture, price = select(10, GetItemInfo(link))
-
-      -- Build message.
-      messageBuilder:Reset()
-      messageBuilder:Append(link .. getQuantityText(quantity))
-      messageBuilder:Append(getCountText(link, quantity))
-      messageBuilder:Append(getPriceText(price * quantity))
-
-      NotificationManager:NotifyWithIcon(texture, messageBuilder:Build())
+      NotificationManager:Notify(function()
+        messageBuilder:Reset()
+        messageBuilder:Append(link .. getQuantityText(quantity))
+        messageBuilder:Append(getCountText(link, quantity))
+        messageBuilder:Append(getPriceText(price * quantity))
+        return Addon.TEXTURE_MESSAGE_FORMAT:format(texture, messageBuilder:Build())
+      end)
     end)
   end)
 end

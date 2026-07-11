@@ -14,7 +14,7 @@ local activeNotifications = {}
 --- @type table<NotificationWidget, boolean>
 local notificationPool = {}
 
---- @type string[]
+--- @type table<integer, fun():string>
 local notificationQueue = {}
 
 -- ============================================================================
@@ -47,12 +47,9 @@ end
 -- Functions
 -- ============================================================================
 
-function NotificationManager:Notify(text)
-  table.insert(notificationQueue, 1, text)
-end
-
-function NotificationManager:NotifyWithIcon(icon, text)
-  self:Notify(Addon.TEXTURE_MESSAGE_FORMAT:format(icon, text))
+--- @param getText fun(): string
+function NotificationManager:Notify(getText)
+  table.insert(notificationQueue, 1, getText)
 end
 
 --- Stops all active and pending notifications.
@@ -73,12 +70,12 @@ Addon:RegisterIntervalCallback(0.1, function()
   local state = Addon:GetStore():GetState()
   if #activeNotifications >= state.maxNotifications then return end
 
-  local text = strtrim(table.remove(notificationQueue) or "")
-  if text ~= "" then
+  local getText = table.remove(notificationQueue)
+  if type(getText) == "function" then
     local notification = getNotification()
     activeNotifications[#activeNotifications + 1] = notification
     notification:Notify(
-      text,
+      getText,
       state.notificationAlpha / Addon.NOTIFICATION_ALPHA_MAX,
       state.notificationFadeOutDelay,
       function()

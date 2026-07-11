@@ -65,15 +65,21 @@ function Widgets:Notification(options)
   end)
 
   --- Sets the notification's properties and plays its animation.
-  --- @param text string The text to be displayed by the notification.
+  --- @param getText fun(): string Returns the text to be displayed by the notification.
   --- @param backdropAlpha number The backdrop alpha of the notification.
   --- @param fadeOutDelay number The amount of time before the notification fades out, in seconds.
   --- @param callback? function The callback to be executed once the notification's animation finishes.
-  function frame:Notify(text, backdropAlpha, fadeOutDelay, callback)
-    self.fontString:SetText(text)
-
-    self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
-    self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
+  function frame:Notify(getText, backdropAlpha, fadeOutDelay, callback)
+    self.timer = 0.01
+    self:SetScript("OnUpdate", function(_, elapsed)
+      self.timer = self.timer + elapsed
+      if self.timer >= 0.01 then
+        self.timer = 0
+        self.fontString:SetText(getText())
+        self:SetWidth(self.fontString:GetWidth() + Widgets:Padding())
+        self:SetHeight(self.fontString:GetHeight() + Widgets:Padding())
+      end
+    end)
 
     backdropAlpha = math.min(math.max(backdropAlpha, 0), 1)
     self:SetBackdropColor(0, 0, 0, backdropAlpha)
