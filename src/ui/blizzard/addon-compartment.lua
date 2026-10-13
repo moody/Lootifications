@@ -1,12 +1,5 @@
-local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
-local MainWindow = Addon:GetModule("MainWindow")
+local Commands = Addon:GetModule("Commands")
 
-if AddonCompartmentFrame then
-  AddonCompartmentFrame:RegisterAddon({
-    text = ADDON_NAME,
-    icon = Addon:GetAsset("icon"),
-    notCheckable = true,
-    func = function() MainWindow:Toggle() end
-  })
-end
+--- Referenced via `AddonCompartmentFunc` in the TOC.
+Lootifications_OnAddonCompartmentClick = Commands.options
