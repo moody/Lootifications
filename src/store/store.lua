@@ -27,7 +27,7 @@ local DEFAULT_STATE = {
 -- Reducers
 -- ============================================================================
 
---- @type WuxReducer<AddonState>
+--- @type WuxReducer<AddonState, any>
 local rootReducer = Wux:CombineReducers({
   -- Anchor point.
   anchorPoint = function(state, action)
