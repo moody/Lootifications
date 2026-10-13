@@ -53,11 +53,14 @@ end
 -- Colors
 -- =============================================================================
 
+Colors.Backdrop = createColor("FF121212")
+Colors.Black = createColor("FF000000")
 Colors.Blue = createColor("FF4FAFE3")
 Colors.DarkGrey = createColor("FF1E1E1E")
 Colors.Gold = createColor("FFFFD100")
 Colors.Green = createColor("FF4FE34F")
 Colors.Grey = createColor("FF9D9D9D")
+Colors.Pink = createColor("FFDD75DD")
 Colors.Purple = createColor("FF9566BD")
 Colors.Red = createColor("FFE34F4F")
 Colors.White = createColor("FFFFFFFF")

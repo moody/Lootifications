@@ -1,9 +1,11 @@
 <Ui>
-  <!-- Lib -->
-  <Script file="lib\wux.lua"/>
+  <!-- Libs -->
+  <Script file="libs\Wux.lua"/>
 
   <!-- Src -->
-  <Script file="src\_init.lua"/>
+  <Script file="src\addon.lua"/>
+
+  <!-- Locales -->
   <Script file="src\locales\_enUS.lua"/>
   <Script file="src\locales\deDE.lua"/>
   <Script file="src\locales\esES.lua"/>
@@ -15,39 +17,56 @@
   <Script file="src\locales\ruRU.lua"/>
   <Script file="src\locales\zhCN.lua"/>
   <Script file="src\locales\zhTW.lua"/>
-  <Script file="src\colors.lua"/>
-  <Script file="src\message-builder.lua"/>
-  <Script file="src\tooltip.lua"/>
-  <Script file="src\ticker-manager.lua"/>
 
+  <!-- Events -->
   <Script file="src\events\events.lua"/>
   <Script file="src\events\event-manager.lua"/>
 
-  <Script file="src\store.lua"/>
-  <Script file="src\commands.lua"/>
+  <!-- Utils -->
+  <Script file="src\utils\colors.lua"/>
+  <Script file="src\utils\message-builder.lua"/>
+  <Script file="src\utils\ticker-manager.lua"/>
 
-  <Script file="src\loot-watcher.lua"/>
-  <Script file="src\money-watcher.lua"/>
-  <Script file="src\tester.lua"/>
+  <!-- Store -->
+  <Script file="src\store\store.lua"/>
 
-  <Script file="src\ui\widgets\_init.lua"/>
-  <Script file="src\ui\widgets\button.lua"/>
-  <Script file="src\ui\widgets\frame.lua"/>
-  <Script file="src\ui\widgets\notification.lua"/>
-  <Script file="src\ui\widgets\scrollable-title-frame.lua"/>
-  <Script file="src\ui\widgets\slider.lua"/>
-  <Script file="src\ui\widgets\title-frame.lua"/>
-  <Script file="src\ui\widgets\window.lua"/>
+  <!-- Input -->
+  <Script file="src\input\commands.lua"/>
 
-  <Script file="src\ui\widgets\options\option-button.lua"/>
-  <Script file="src\ui\widgets\options\option-heading.lua"/>
-  <Script file="src\ui\widgets\options\option-slider.lua"/>
-  <Script file="src\ui\widgets\options\options-frame.lua"/>
+  <!-- Services -->
+  <Script file="src\services\loot-watcher.lua"/>
+  <Script file="src\services\money-watcher.lua"/>
+  <Script file="src\services\tester.lua"/>
 
-  <Script file="src\ui\main-window\options.lua"/>
-  <Script file="src\ui\main-window\main-window.lua"/>
+  <!-- UI -->
+  <Script file="src\ui\tooltip.lua"/>
 
-  <Script file="src\ui\addon-compartment.lua"/>
+  <!-- UI Widgets -->
+  <Script file="src\ui\widgets\widgets.lua"/>
+
+  <!-- UI Widgets - Primitives -->
+  <Script file="src\ui\widgets\primitives\button.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\frame.lua"/>
+  <Script file="src\ui\widgets\primitives\slider.lua"/>
+
+  <!-- UI Widgets - Composites -->
+  <Script file="src\ui\widgets\composites\notification.lua"/>
+  <Script file="src\ui\widgets\composites\scrollable-title-frame.lua"/>
+  <Script file="src\ui\widgets\composites\title-frame.lua"/>
+  <Script file="src\ui\widgets\composites\window.lua"/>
+  <Script file="src\ui\widgets\composites\options\option-button.lua"/>
+  <Script file="src\ui\widgets\composites\options\option-heading.lua"/>
+  <Script file="src\ui\widgets\composites\options\option-slider.lua"/>
+  <Script file="src\ui\widgets\composites\options\options-frame.lua"/>
+
+  <!-- UI Screens -->
+  <Script file="src\ui\screens\main-window\options.lua"/>
+  <Script file="src\ui\screens\main-window\main-window.lua"/>
+
+  <!-- UI Notifications -->
   <Script file="src\ui\anchor-frame.lua"/>
   <Script file="src\ui\notification-manager.lua"/>
+
+  <!-- UI Blizzard -->
+  <Script file="src\ui\blizzard\addon-compartment.lua"/>
 </Ui>
