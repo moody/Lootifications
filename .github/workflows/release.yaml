@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Validate Locales
-        run: python .scripts/validate_locales.py
+        run: python3 .scripts/validate_locales.py
       - name: Release
         uses: BigWigsMods/packager@v2
         with:
