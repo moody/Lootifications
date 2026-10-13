@@ -29,42 +29,44 @@ function Widgets:Button(options)
   ---@class ButtonWidget : FrameWidget, Button
   local frame = self:Frame(options)
   frame.onClick = options.onClick
-  frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.75))
-  frame:SetBackdropBorderColor(0, 0, 0, 1)
+
+  -- Background texture.
+  frame.background = frame:CreateTexture("$parent_Background", "BACKGROUND", nil, -8)
+  frame.background:SetColorTexture(Colors.Backdrop:GetRGBA(1))
+  frame.background:SetAllPoints()
 
   -- Label text.
   frame.label = frame:CreateFontString("$parent_Label", "ARTWORK", "GameFontNormal")
   frame.label:SetText(options.labelText)
-  frame.label:SetTextColor(options.labelColor:GetRGB())
   frame.label:SetPoint("LEFT", frame, self:Padding(0.5), 0)
   frame.label:SetPoint("RIGHT", frame, -self:Padding(0.5), 0)
   frame.label:SetWordWrap(false)
   frame:SetFontString(frame.label)
+  frame:SetHeight(frame.label:GetHeight() + Widgets:Padding(2))
 
-  -- OnClick.
+  -- Scripts.
   frame:SetScript("OnClick", function(self, button)
     if self.onClick then self.onClick(self, button) end
   end)
 
-  -- OnEnter.
-  frame:HookScript("OnEnter", function(self)
-    self:SetBackdropColor(options.labelColor:GetRGBA(0.25))
-    self:SetBackdropBorderColor(options.labelColor:GetRGB())
-    self.label:SetTextColor(Colors.White:GetRGB())
-  end)
-
-  -- OnLeave.
-  frame:HookScript("OnLeave", function(self)
-    self:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.75))
-    self:SetBackdropBorderColor(0, 0, 0, 1)
-    self.label:SetTextColor(options.labelColor:GetRGB())
-  end)
-
-  -- OnUpdate.
-  frame:SetScript("OnUpdate", function(self)
-    self:SetHeight(self.label:GetHeight() + Widgets:Padding(2))
-    self:SetAlpha(self:IsEnabled() and 1 or 0.5)
-  end)
+  --- Colors the button as disabled, highlighted, or normal.
+  local function refresh()
+    if not frame:GetEventValue("ENABLED") then
+      frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.5))
+      frame:SetBackdropBorderColor(Colors.Black:GetRGBA(1))
+      frame.label:SetTextColor(Colors.Grey:GetRGBA(0.75))
+    elseif frame:GetEventValue("HOVERED") then
+      frame:SetBackdropColor(options.labelColor:GetRGBA(0.25))
+      frame:SetBackdropBorderColor(options.labelColor:GetRGBA(1))
+      frame.label:SetTextColor(Colors.White:GetRGBA(1))
+    else
+      frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.75))
+      frame:SetBackdropBorderColor(Colors.Black:GetRGBA(1))
+      frame.label:SetTextColor(options.labelColor:GetRGBA(1))
+    end
+  end
+  frame:OnEvent("HOVERED", refresh)
+  frame:OnEvent("ENABLED", refresh)
 
   return frame
 end
