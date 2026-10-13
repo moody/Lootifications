@@ -9,7 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-
       - name: Validate Locales
         run: python .scripts/validate_locales.py
       - name: Release
