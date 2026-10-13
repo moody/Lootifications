@@ -1,5 +1,6 @@
 <Ui>
   <!-- Libs -->
+  <Script file="libs\Waffle.lua"/>
   <Script file="libs\Wux.lua"/>
 
   <!-- Src -->
