@@ -13,6 +13,7 @@ local Commands = Addon:GetModule("Commands")
 -- Register the `/lootifications` slash command on login.
 EventManager:Once(E.Wow.PlayerLogin, function()
   SLASH_LOOTIFICATIONS1 = "/lootifications"
+  SLASH_LOOTIFICATIONS2 = "/lootif"
   SlashCmdList.LOOTIFICATIONS = function()
     Commands.options()
   end
