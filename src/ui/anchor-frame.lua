@@ -27,9 +27,16 @@ local NOTIFICATION_POINTS = {
 -- ============================================================================
 
 AnchorFrame.frame = (function()
-  local frame = Widgets:Notification({ name = ADDON_NAME .. "_AnchorFrame" })
+  --- @class AnchorFrameWidget : FrameWidget
+  local frame = Widgets:Frame({ name = ADDON_NAME .. "_AnchorFrame" })
   frame:SetBackdropColor(0, 0, 0, 1)
   frame:SetBackdropBorderColor(Colors.Gold:GetRGBA())
+
+  --- Text shown on the anchor.
+  frame.fontString = frame:CreateFontString("$parent_FontString", "OVERLAY", "ErrorFont")
+  frame.fontString:SetTextColor(1, 1, 1)
+  frame.fontString:SetPoint("CENTER")
+
   frame:SetMovable(true)
   frame:EnableMouse(true)
   frame:RegisterForDrag("LeftButton")
