@@ -57,7 +57,6 @@
   <Script file="src\ui\widgets\primitives\slider.lua"/>
 
   <!-- UI Widgets - Composites -->
-  <Script file="src\ui\widgets\composites\notification.lua"/>
   <Script file="src\ui\widgets\composites\scrollable-title-frame.lua"/>
   <Script file="src\ui\widgets\composites\title-frame.lua"/>
   <Script file="src\ui\widgets\composites\window.lua"/>
@@ -65,6 +64,9 @@
   <Script file="src\ui\widgets\composites\options\option-heading.lua"/>
   <Script file="src\ui\widgets\composites\options\option-slider.lua"/>
   <Script file="src\ui\widgets\composites\options\options-frame.lua"/>
+
+  <!-- UI Components -->
+  <Script file="src\ui\components\notification.lua"/>
 
   <!-- UI Screens -->
   <Script file="src\ui\screens\main-window\options.lua"/>

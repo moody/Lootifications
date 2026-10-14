@@ -101,25 +101,3 @@ function Addon:Debug(...)
   print(date("%H:%M:%S"), self:GetModule("Colors").Red("[Debug]"), ...)
   --@end-debug@
 end
-
-do -- Addon:RegisterIntervalCallback()
-  local callbacks = {}
-
-  CreateFrame("Frame"):SetScript("OnUpdate", function(_, elapsed)
-    for _, callback in ipairs(callbacks) do callback(elapsed) end
-  end)
-
-  --- Registers a function to be called repeatedly at a specified interval (defined in seconds).
-  --- @param interval number
-  --- @param callback function
-  function Addon:RegisterIntervalCallback(interval, callback)
-    local timer = interval
-    callbacks[#callbacks + 1] = function(elapsed)
-      timer = timer + elapsed
-      if timer >= interval then
-        timer = 0
-        callback()
-      end
-    end
-  end
-end

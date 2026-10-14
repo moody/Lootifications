@@ -9,16 +9,25 @@ local Widgets = Addon:GetModule("Widgets")
 --- @class AnchorFrame
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 
+--- Where the notification stack attaches to the anchor, and how it lays out its notifications.
+--- @class NotificationPoints
+--- @field point FramePoint Point of the stack that attaches to the anchor.
+--- @field relativePoint FramePoint Point of the anchor that the stack attaches to.
+--- @field direction WaffleFlexDirection
+--- @field align WaffleFlexAlign
+
+--- Points by growth direction, then by the anchor's horizontal position.
+--- @type table<"GROW_UP" | "GROW_DOWN", table<"LEFT" | "CENTER" | "RIGHT", NotificationPoints>>
 local NOTIFICATION_POINTS = {
   GROW_UP = {
-    LEFT = { point = "BOTTOMLEFT", relativePoint = "TOPLEFT" },
-    CENTER = { point = "BOTTOM", relativePoint = "TOP" },
-    RIGHT = { point = "BOTTOMRIGHT", relativePoint = "TOPRIGHT" }
+    LEFT = { point = "BOTTOMLEFT", relativePoint = "TOPLEFT", direction = "COLUMN_REVERSE", align = "START" },
+    CENTER = { point = "BOTTOM", relativePoint = "TOP", direction = "COLUMN_REVERSE", align = "CENTER" },
+    RIGHT = { point = "BOTTOMRIGHT", relativePoint = "TOPRIGHT", direction = "COLUMN_REVERSE", align = "END" }
   },
   GROW_DOWN = {
-    LEFT = { point = "TOPLEFT", relativePoint = "BOTTOMLEFT" },
-    CENTER = { point = "TOP", relativePoint = "BOTTOM" },
-    RIGHT = { point = "TOPRIGHT", relativePoint = "BOTTOMRIGHT" }
+    LEFT = { point = "TOPLEFT", relativePoint = "BOTTOMLEFT", direction = "COLUMN", align = "START" },
+    CENTER = { point = "TOP", relativePoint = "BOTTOM", direction = "COLUMN", align = "CENTER" },
+    RIGHT = { point = "TOPRIGHT", relativePoint = "BOTTOMRIGHT", direction = "COLUMN", align = "END" }
   }
 }
 
@@ -72,6 +81,8 @@ end)()
 -- Functions
 -- ============================================================================
 
+--- Returns the points the notification stack attaches with, based on where the anchor is on screen.
+--- @return NotificationPoints
 function AnchorFrame:GetNotificationPoints()
   local SCREEN_WIDTH = GetScreenWidth() or 0
   local SCREEN_HEIGHT = GetScreenHeight() or 0
@@ -88,7 +99,7 @@ function AnchorFrame:GetNotificationPoints()
   local isCloserToTop = anchorY >= SCREEN_MID_Y
   local growthDirection = isCloserToTop and NOTIFICATION_POINTS.GROW_DOWN or NOTIFICATION_POINTS.GROW_UP
 
-  -- Return center points if within the treshold.
+  -- Return center points if within the threshold.
   if anchorX >= SCREEN_MID_X - CENTER_THRESHOLD and anchorX <= SCREEN_MID_X + CENTER_THRESHOLD then
     return growthDirection.CENTER
   end
@@ -98,6 +109,9 @@ function AnchorFrame:GetNotificationPoints()
   return isToTheLeft and growthDirection.LEFT or growthDirection.RIGHT
 end
 
+--- Returns the notification spacing, positive for points that grow up and negative for points that grow down.
+--- @param points NotificationPoints
+--- @return number
 function AnchorFrame:GetNotificationSpacing(points)
   local state = Addon:GetStore():GetState()
   local spacing = state.notificationSpacing
@@ -109,6 +123,7 @@ function AnchorFrame:GetNotificationSpacing(points)
   return -spacing
 end
 
+--- Moves the anchor to its default position and clears the saved position.
 function AnchorFrame:Reset()
   self.frame:ClearAllPoints()
   self.frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
