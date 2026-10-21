@@ -76,7 +76,7 @@ function MainWindowOptions:Initialize(optionsFrame)
     tooltipText = L.NOTIFICATION_SPACING_TOOLTIP,
     minValue = Addon.NOTIFICATION_SPACING_MIN,
     maxValue = Addon.NOTIFICATION_SPACING_MAX,
-    valueStep = 4,
+    valueStep = 2,
     get = function() return Addon:GetState().notificationSpacing end,
     set = function(value) Addon:GetStore():Dispatch({ type = "notificationSpacing/set", payload = value }) end
   }))

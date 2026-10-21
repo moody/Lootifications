@@ -5,7 +5,7 @@ local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local Wux = Addon.Wux
 
-local GLOBAL_SV = "__LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__"
+local SAVED_VARIABLES = "__LOOTIFICATIONS_V2_SAVED_VARIABLES__"
 
 -- ============================================================================
 -- Default State
@@ -63,7 +63,7 @@ local rootReducer = Wux:CombineReducers({
       state = DEFAULT_STATE.maxNotifications
     end
 
-    return state
+    return Clamp(state, Addon.MAX_NOTIFICATIONS_MIN, Addon.MAX_NOTIFICATIONS_MAX)
   end,
 
   -- Money notifications.
@@ -113,7 +113,7 @@ local rootReducer = Wux:CombineReducers({
       state = DEFAULT_STATE.notificationSpacing
     end
 
-    return state
+    return Clamp(state, Addon.NOTIFICATION_SPACING_MIN, Addon.NOTIFICATION_SPACING_MAX)
   end,
 
   -- Owned item counts.
@@ -133,12 +133,12 @@ local rootReducer = Wux:CombineReducers({
 -- ============================================================================
 
 EventManager:Once(E.Wow.PlayerLogin, function()
-  local Store = Wux:CreateStore(rootReducer, _G[GLOBAL_SV])
-  _G[GLOBAL_SV] = Store:GetState()
+  local Store = Wux:CreateStore(rootReducer, _G[SAVED_VARIABLES])
+  _G[SAVED_VARIABLES] = Store:GetState()
 
   -- Update SavedVariables whenever the state changes.
   Store:Subscribe(function(state)
-    _G[GLOBAL_SV] = state
+    _G[SAVED_VARIABLES] = state
     EventManager:Fire(E.StateUpdated, state)
   end)
 

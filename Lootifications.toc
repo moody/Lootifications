@@ -5,6 +5,6 @@
 ## IconTexture: Interface\AddOns\Lootifications\assets\icon
 ## AddonCompartmentFunc: Lootifications_OnAddonCompartmentClick
 ## Notes: Displays notifications for new loot.
-## SavedVariables: __LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__
+## SavedVariables: __LOOTIFICATIONS_V2_SAVED_VARIABLES__, __LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__
 
 Lootifications.xml
