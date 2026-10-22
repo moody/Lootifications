@@ -35,6 +35,7 @@
   <Script file="src\input\commands.lua"/>
 
   <!-- Services -->
+  <Script file="src\services\loot-log.lua"/>
   <Script file="src\services\loot-watcher.lua"/>
   <Script file="src\services\money-watcher.lua"/>
   <Script file="src\services\tester.lua"/>
