@@ -2,6 +2,7 @@ local _, Addon = ...
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+local LootLog = Addon:GetModule("LootLog")
 local NotificationManager = Addon:GetModule("NotificationManager")
 
 -- ============================================================================
@@ -19,6 +20,7 @@ do -- Listen for `Wow.ChatMessageMoney` and fire `MoneyReceived`.
       local silverAmount = tonumber(message:match(SILVER_AMOUNT) or 0) * COPPER_PER_SILVER
       local copperAmount = tonumber(message:match(COPPER_AMOUNT) or 0)
       local total = goldAmount + silverAmount + copperAmount
+      if total > 0 then LootLog:AddMoney(total) end
       EventManager:Fire(E.MoneyReceived, total)
     end)
   end)

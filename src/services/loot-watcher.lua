@@ -1,11 +1,12 @@
 local Addon = select(2, ...) ---@type Addon
-local Colors = Addon:GetModule("Colors") ---@type Colors
+local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
 local GetItemCount = C_Item.GetItemCount or GetItemCount
 local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
-local MessageBuilder = Addon:GetModule("MessageBuilder") ---@type MessageBuilder
+local LootLog = Addon:GetModule("LootLog")
+local MessageBuilder = Addon:GetModule("MessageBuilder")
 local NotificationManager = Addon:GetModule("NotificationManager")
 
 -- ============================================================================
@@ -22,6 +23,7 @@ do -- Listen for `Wow.ChatMessageLoot` and fire `LootReceived`.
         local link = message:match(ITEM_LINK_PATTERN)
         local quantity = tonumber(message:match(LOOT_QUANTITY_PATTERN) or 1)
         if type(link) == "string" and type(quantity) == "number" then
+          LootLog:AddItem(link, quantity)
           EventManager:Fire(E.LootReceived, link, quantity)
         end
       end)
