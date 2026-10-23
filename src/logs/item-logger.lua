@@ -53,10 +53,11 @@ end
 
 --- Returns the owned count text, if that option is on and any are owned.
 --- @param link string
+--- @param ownedCount? integer Used instead of the number in the bags.
 --- @return string
-local function getCountText(link)
+local function getCountText(link, ownedCount)
   if Addon:GetState().ownedItemCounts then
-    local itemCount = tonumber(GetItemCount(link) or 0)
+    local itemCount = ownedCount or tonumber(GetItemCount(link) or 0)
     if itemCount > 0 then
       return PARENTHESES_FORMAT:format(itemCount)
     end
@@ -97,14 +98,15 @@ end
 --- Returns the entry's text, with the item's icon once cached. It changes when the item is cached or the
 --- owned count changes.
 --- @param entry ItemLogEntry
+--- @param ownedCount? integer Shown as the owned count instead of the number in the bags.
 --- @return string
-function ItemLogger:GetText(entry)
+function ItemLogger:GetText(entry, ownedCount)
   local payload = entry.payload
   local texture, price = select(10, GetItemInfo(payload.link))
 
   messageBuilder:Reset()
   messageBuilder:Append(payload.link .. getQuantityText(payload.quantity))
-  messageBuilder:Append(getCountText(payload.link))
+  messageBuilder:Append(getCountText(payload.link, ownedCount))
   messageBuilder:Append(getPriceText(price, payload.quantity))
   local text = messageBuilder:Build()
 
