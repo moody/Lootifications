@@ -62,21 +62,20 @@ local Stack = Addon.Waffle:Flex({
 })
 
 -- Create the notifications, one for each that can be shown at once.
-for i = 1, Addon.MAX_NOTIFICATIONS_MAX do
+for i = 1, Addon.MAX_NOTIFICATIONS do
   local notification = ComponentFactory:Notification()
   notifications[i] = notification
   Stack:AttachComponent(notification)
 end
 
---- Points the stack at the anchor, and sets its direction, alignment, and spacing.
+--- Points the stack at the anchor, and sets its direction and alignment.
 function Stack:Refresh()
-  local state = Addon:GetStore():GetState()
   local points = AnchorFrame:GetNotificationPoints()
   local isAnchorShown = AnchorFrame.frame:IsShown()
 
   self:SetDirection(points.direction)
   self:SetAlign(points.align)
-  self:SetGap(state.notificationSpacing)
+  self:SetGap(Addon.NOTIFICATION_SPACING)
 
   --- @type FrameWidget
   local frame = self:GetFrame()
@@ -112,17 +111,16 @@ end
 -- Tickers
 -- ============================================================================
 
--- Show queued notifications while there is room for them.
-TickerManager:NewTicker(0.1, function()
-  local state = Addon:GetStore():GetState()
+-- Show a queued notification each stagger interval, while there is room for it.
+TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
   local notification = getFreeNotification()
-  if not notification or getShownCount() >= state.maxNotifications then return end
+  if not notification or getShownCount() >= Addon.MAX_NOTIFICATIONS then return end
 
   local getText = table.remove(getTextQueue)
   if type(getText) == "function" then
     sequence = sequence + 1
     notification:SetOrder(-sequence)
-    notification:Notify(getText, state.notificationAlpha / Addon.NOTIFICATION_ALPHA_MAX, state.notificationFadeOutDelay)
+    notification:Notify(getText)
   end
 end)
 

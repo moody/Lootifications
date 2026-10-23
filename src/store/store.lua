@@ -15,11 +15,7 @@ local SAVED_VARIABLES = "__LOOTIFICATIONS_V2_SAVED_VARIABLES__"
 local DEFAULT_STATE = {
   anchorPoint = {},
   lootPrices = false,
-  maxNotifications = Addon.MAX_NOTIFICATIONS_DEFAULT,
   moneyNotifications = true,
-  notificationAlpha = Addon.NOTIFICATION_ALPHA_DEFAULT,
-  notificationFadeOutDelay = Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT,
-  notificationSpacing = Addon.NOTIFICATION_SPACING_DEFAULT,
   ownedItemCounts = false
 }
 
@@ -53,19 +49,6 @@ local rootReducer = Wux:CombineReducers({
     return state
   end,
 
-  -- Max notifications.
-  maxNotifications = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.maxNotifications)
-
-    if action.type == "maxNotifications/set" then
-      state = action.payload
-    elseif action.type == "maxNotifications/reset" then
-      state = DEFAULT_STATE.maxNotifications
-    end
-
-    return Clamp(state, Addon.MAX_NOTIFICATIONS_MIN, Addon.MAX_NOTIFICATIONS_MAX)
-  end,
-
   -- Money notifications.
   moneyNotifications = function(state, action)
     state = Wux:Coalesce(state, DEFAULT_STATE.moneyNotifications)
@@ -75,45 +58,6 @@ local rootReducer = Wux:CombineReducers({
     end
 
     return state
-  end,
-
-  -- Notification alpha.
-  notificationAlpha = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.notificationAlpha)
-
-    if action.type == "notificationAlpha/set" then
-      state = action.payload
-    elseif action.type == "notificationAlpha/reset" then
-      state = DEFAULT_STATE.notificationAlpha
-    end
-
-    return state
-  end,
-
-  -- Notification fade-out delay.
-  notificationFadeOutDelay = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.notificationFadeOutDelay)
-
-    if action.type == "notificationFadeOutDelay/set" then
-      state = action.payload
-    elseif action.type == "notificationFadeOutDelay/reset" then
-      state = DEFAULT_STATE.notificationFadeOutDelay
-    end
-
-    return state
-  end,
-
-  -- Notification spacing.
-  notificationSpacing = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.notificationSpacing)
-
-    if action.type == "notificationSpacing/set" then
-      state = action.payload
-    elseif action.type == "notificationSpacing/reset" then
-      state = DEFAULT_STATE.notificationSpacing
-    end
-
-    return Clamp(state, Addon.NOTIFICATION_SPACING_MIN, Addon.NOTIFICATION_SPACING_MAX)
   end,
 
   -- Owned item counts.

@@ -113,14 +113,11 @@ end
 --- @param points NotificationPoints
 --- @return number
 function AnchorFrame:GetNotificationSpacing(points)
-  local state = Addon:GetStore():GetState()
-  local spacing = state.notificationSpacing
-
   for _, v in pairs(NOTIFICATION_POINTS.GROW_UP) do
-    if points == v then return spacing end
+    if points == v then return Addon.NOTIFICATION_SPACING end
   end
 
-  return -spacing
+  return -Addon.NOTIFICATION_SPACING
 end
 
 --- Moves the anchor to its default position and clears the saved position.

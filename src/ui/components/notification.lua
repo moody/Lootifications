@@ -42,15 +42,15 @@ function ComponentFactory:Notification()
       local fadeIn = frame.animationGroup:CreateAnimation("Alpha")
       fadeIn:SetFromAlpha(0)
       fadeIn:SetToAlpha(1)
-      fadeIn:SetDuration(0.1)
+      fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
       fadeIn:SetStartDelay(0)
       fadeIn:SetSmoothing("IN")
 
       frame.fadeOut = frame.animationGroup:CreateAnimation("Alpha")
       frame.fadeOut:SetFromAlpha(1)
       frame.fadeOut:SetToAlpha(0)
-      frame.fadeOut:SetDuration(0.25)
-      frame.fadeOut:SetStartDelay(0)
+      frame.fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
+      frame.fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
       frame.fadeOut:SetSmoothing("OUT")
 
       -- Showing the frame starts the animation, and the notification hides once it finishes.
@@ -80,15 +80,11 @@ function ComponentFactory:Notification()
 
   --- Shows the notification and plays its animation.
   --- @param getText fun(): string Returns the text to show.
-  --- @param alpha number Backdrop alpha, from `0` to `1`.
-  --- @param delay number Seconds before the notification fades out.
-  function root:Notify(getText, alpha, delay)
+  function root:Notify(getText)
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
-      alpha = math.min(math.max(alpha, 0), 1)
-      frame:SetBackdropColor(0, 0, 0, alpha)
-      frame:SetBackdropBorderColor(0, 0, 0, alpha)
-      frame.fadeOut:SetStartDelay(delay)
+      frame:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
+      frame:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
       frame.getText = getText
       frame.fontString:SetText(getText())
     end)

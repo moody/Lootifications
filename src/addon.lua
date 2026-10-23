@@ -10,18 +10,13 @@ local Addon = select(2, ...)
 -- ============================================================================
 
 Addon.ICON = ("Interface\\AddOns\\%s\\assets\\icon"):format(ADDON_NAME)
-Addon.MAX_NOTIFICATIONS_DEFAULT = 5
-Addon.MAX_NOTIFICATIONS_MAX = 10
-Addon.MAX_NOTIFICATIONS_MIN = 1
-Addon.NOTIFICATION_ALPHA_DEFAULT = 30
-Addon.NOTIFICATION_ALPHA_MAX = 100
-Addon.NOTIFICATION_ALPHA_MIN = 0
-Addon.NOTIFICATION_FADE_OUT_DELAY_DEFAULT = 3
-Addon.NOTIFICATION_FADE_OUT_DELAY_MAX = 10
-Addon.NOTIFICATION_FADE_OUT_DELAY_MIN = 1
-Addon.NOTIFICATION_SPACING_DEFAULT = 4
-Addon.NOTIFICATION_SPACING_MAX = 16
-Addon.NOTIFICATION_SPACING_MIN = 0
+Addon.MAX_NOTIFICATIONS = 5
+Addon.NOTIFICATION_ALPHA = 0.3
+Addon.NOTIFICATION_FADE_IN = 0.25 -- Seconds.
+Addon.NOTIFICATION_FADE_OUT = 0.2 -- Seconds.
+Addon.NOTIFICATION_HOLD = 3       -- Seconds between fading in and fading out.
+Addon.NOTIFICATION_SPACING = 4
+Addon.NOTIFICATION_STAGGER = 0.15 -- Seconds between notifications showing.
 Addon.PLAYER_NAME = UnitName("Player")
 Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:1:15:1:15|t %s"
 Addon.VERSION = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
