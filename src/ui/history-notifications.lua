@@ -25,7 +25,7 @@ end
 
 -- Show a notification for each entry logged, except money while its notifications are off.
 EventManager:On(E.HistoryLogged, function(entry)
-  if entry.type ~= MoneyLog.ENTRY_TYPE or Addon:GetState().moneyNotifications then
+  if entry.source ~= MoneyLog or Addon:GetState().moneyNotifications then
     HistoryNotifications:Show(entry)
   end
 end)

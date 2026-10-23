@@ -19,9 +19,6 @@ local ItemLog = Addon:GetModule("ItemLog")
 --- @class ItemLogEntry : HistoryEntry
 --- @field payload ItemLogPayload
 
---- The `type` of the entries it records.
-ItemLog.ENTRY_TYPE = "ItemLogEntry"
-
 local ITEM_LINK_PATTERN = ".*(|c.+|r).*"
 local LOOT_QUANTITY_PATTERN = ".*x(%d+).*"
 local QUANTITY_FORMAT = Colors.Grey("x") .. "%s"
@@ -88,13 +85,13 @@ end
 --- @param link string
 --- @param quantity integer
 function ItemLog:Record(link, quantity)
-  HistoryLog:Record(self.ENTRY_TYPE, { link = link, quantity = quantity })
+  HistoryLog:Record(self, { link = link, quantity = quantity })
 end
 
 --- Returns the items looted this session, oldest first. Callers must not modify it.
 --- @return ItemLogEntry[]
 function ItemLog:GetEntries()
-  return HistoryLog:GetEntries(self.ENTRY_TYPE)
+  return HistoryLog:GetEntries(self)
 end
 
 --- Returns the text of the entry, with the item's icon once it is cached. It can change between calls, such
@@ -131,5 +128,3 @@ EventManager:On(E.Wow.ChatMessageLoot, function(message, _, _, _, receiverName)
     end
   end
 end)
-
-HistoryLog:Register(ItemLog)

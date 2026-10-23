@@ -60,7 +60,7 @@ function Tester:Start()
       if link then
         -- Shown without being recorded, so that tests stay out of the history.
         --- @type ItemLogEntry
-        local entry = { type = ItemLog.ENTRY_TYPE, time = time(), payload = { link = link, quantity = quantity } }
+        local entry = { source = ItemLog, time = time(), payload = { link = link, quantity = quantity } }
         HistoryNotifications:Show(entry)
       end
     end)

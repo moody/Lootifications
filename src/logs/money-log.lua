@@ -14,9 +14,6 @@ local MoneyLog = Addon:GetModule("MoneyLog")
 --- @class MoneyLogEntry : HistoryEntry
 --- @field payload MoneyLogPayload
 
---- The `type` of the entries it records.
-MoneyLog.ENTRY_TYPE = "MoneyLogEntry"
-
 local GOLD_AMOUNT = GOLD_AMOUNT:gsub("%%d", "(%%d+)")
 local SILVER_AMOUNT = SILVER_AMOUNT:gsub("%%d", "(%%d+)")
 local COPPER_AMOUNT = COPPER_AMOUNT:gsub("%%d", "(%%d+)")
@@ -42,13 +39,13 @@ end
 --- Logs money looted.
 --- @param copper integer
 function MoneyLog:Record(copper)
-  HistoryLog:Record(self.ENTRY_TYPE, { copper = copper })
+  HistoryLog:Record(self, { copper = copper })
 end
 
 --- Returns the money looted this session, oldest first. Callers must not modify it.
 --- @return MoneyLogEntry[]
 function MoneyLog:GetEntries()
-  return HistoryLog:GetEntries(self.ENTRY_TYPE)
+  return HistoryLog:GetEntries(self)
 end
 
 --- Returns the text of the entry.
@@ -69,5 +66,3 @@ EventManager:On(E.Wow.ChatMessageMoney, function(message)
     MoneyLog:Record(copper)
   end
 end)
-
-HistoryLog:Register(MoneyLog)
