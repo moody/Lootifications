@@ -9,10 +9,15 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 -- ComponentFactory - Notification
 -- =============================================================================
 
+--- @class NotificationOptions
+--- @field animated? boolean Whether it fades in and out. Defaults to `true`. One that is not animated stays until `Kill()`.
+
 --- Creates a line of text on a backdrop that fades in and out. It takes no space until `Notify()` is called,
 --- and is no longer visible once it has faded out.
+--- @param options? NotificationOptions
 --- @return NotificationComponent root
-function ComponentFactory:Notification()
+function ComponentFactory:Notification(options)
+  local animated = not options or options.animated ~= false
   local root
 
   --- @class NotificationComponent : WaffleFlexComponent
@@ -37,28 +42,31 @@ function ComponentFactory:Notification()
       --- Returns the text to show. Set by `Notify()`.
       frame.getText = function() return "" end
 
-      frame.animationGroup = frame:CreateAnimationGroup()
+      if animated then
+        --- Fades the notification in, then out after the hold.
+        frame.animationGroup = frame:CreateAnimationGroup()
 
-      local fadeIn = frame.animationGroup:CreateAnimation("Alpha")
-      fadeIn:SetFromAlpha(0)
-      fadeIn:SetToAlpha(1)
-      fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
-      fadeIn:SetStartDelay(0)
-      fadeIn:SetSmoothing("IN")
+        local fadeIn = frame.animationGroup:CreateAnimation("Alpha")
+        fadeIn:SetFromAlpha(0)
+        fadeIn:SetToAlpha(1)
+        fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
+        fadeIn:SetStartDelay(0)
+        fadeIn:SetSmoothing("IN")
 
-      frame.fadeOut = frame.animationGroup:CreateAnimation("Alpha")
-      frame.fadeOut:SetFromAlpha(1)
-      frame.fadeOut:SetToAlpha(0)
-      frame.fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-      frame.fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
-      frame.fadeOut:SetSmoothing("OUT")
+        local fadeOut = frame.animationGroup:CreateAnimation("Alpha")
+        fadeOut:SetFromAlpha(1)
+        fadeOut:SetToAlpha(0)
+        fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
+        fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
+        fadeOut:SetSmoothing("OUT")
 
-      -- Showing the frame starts the animation, and the notification hides once it finishes.
-      frame:HookScript("OnShow", function() frame.animationGroup:Play() end)
-      frame.animationGroup:HookScript("OnFinished", function()
-        frame:Hide()
-        root:SetVisibility("GONE")
-      end)
+        -- Showing the frame starts the animation, and the notification hides once it finishes.
+        frame:HookScript("OnShow", function() frame.animationGroup:Play() end)
+        frame.animationGroup:HookScript("OnFinished", function()
+          frame:Hide()
+          root:SetVisibility("GONE")
+        end)
+      end
 
       -- Re-read the text while shown, and resize the notification when it changes.
       TickerManager:NewTicker(0.1, function()
@@ -78,7 +86,7 @@ function ComponentFactory:Notification()
     end
   })
 
-  --- Shows the notification and plays its animation.
+  --- Shows the notification, and plays its animation if it has one.
   --- @param getText fun(): string Returns the text to show.
   function root:Notify(getText)
     self:WhenFrameReady(function(frame)
@@ -98,7 +106,7 @@ function ComponentFactory:Notification()
 
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
-      frame.animationGroup:Stop()
+      if frame.animationGroup then frame.animationGroup:Stop() end
       frame:Hide()
     end)
 
