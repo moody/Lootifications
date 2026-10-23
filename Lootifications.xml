@@ -34,10 +34,12 @@
   <!-- Input -->
   <Script file="src\input\commands.lua"/>
 
+  <!-- Logs -->
+  <Script file="src\logs\history-log.lua"/>
+  <Script file="src\logs\item-log.lua"/>
+  <Script file="src\logs\money-log.lua"/>
+
   <!-- Services -->
-  <Script file="src\services\loot-log.lua"/>
-  <Script file="src\services\loot-watcher.lua"/>
-  <Script file="src\services\money-watcher.lua"/>
   <Script file="src\services\tester.lua"/>
 
   <!-- UI -->
@@ -76,6 +78,7 @@
   <!-- UI Notifications -->
   <Script file="src\ui\anchor-frame.lua"/>
   <Script file="src\ui\notification-manager.lua"/>
+  <Script file="src\ui\history-notifications.lua"/>
 
   <!-- UI Blizzard -->
   <Script file="src\ui\blizzard\addon-compartment.lua"/>

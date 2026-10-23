@@ -2,6 +2,8 @@ local Addon = select(2, ...) ---@type Addon
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local HistoryNotifications = Addon:GetModule("HistoryNotifications")
+local ItemLog = Addon:GetModule("ItemLog")
 local NotificationManager = Addon:GetModule("NotificationManager")
 local TickerManager = Addon:GetModule("TickerManager")
 
@@ -56,7 +58,10 @@ function Tester:Start()
       local _, link, _, _, _, _, _, stackCount = GetItemInfo(TEST_ITEMS[math.random(#TEST_ITEMS)])
       local quantity = math.random(stackCount or 1)
       if link then
-        EventManager:Fire(E.LootReceived, link, quantity)
+        -- Shown without being recorded, so that tests stay out of the history.
+        --- @type ItemLogEntry
+        local entry = { type = ItemLog.ENTRY_TYPE, time = time(), payload = { link = link, quantity = quantity } }
+        HistoryNotifications:Show(entry)
       end
     end)
   end
