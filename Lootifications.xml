@@ -36,8 +36,8 @@
 
   <!-- Logs -->
   <Script file="src\logs\history-log.lua"/>
-  <Script file="src\logs\item-log.lua"/>
-  <Script file="src\logs\money-log.lua"/>
+  <Script file="src\logs\item-logger.lua"/>
+  <Script file="src\logs\money-logger.lua"/>
 
   <!-- Services -->
   <Script file="src\services\tester.lua"/>

@@ -2,10 +2,10 @@ local Addon = select(2, ...) ---@type Addon
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local HistoryLog = Addon:GetModule("HistoryLog")
-local MoneyLog = Addon:GetModule("MoneyLog")
+local MoneyLogger = Addon:GetModule("MoneyLogger")
 local NotificationManager = Addon:GetModule("NotificationManager")
 
---- Shows a notification for each history entry: one entry, one notification, in the order logged.
+--- Shows one notification per history entry, in the order logged.
 --- @class HistoryNotifications
 local HistoryNotifications = Addon:GetModule("HistoryNotifications")
 
@@ -14,7 +14,7 @@ local HistoryNotifications = Addon:GetModule("HistoryNotifications")
 -- ============================================================================
 
 --- Queues a notification for the entry. Its text updates while shown.
---- @param entry HistoryEntry
+--- @param entry HistoryLogEntry
 function HistoryNotifications:Show(entry)
   NotificationManager:Notify(function() return HistoryLog:GetText(entry) end)
 end
@@ -25,7 +25,7 @@ end
 
 -- Show a notification for each entry logged, except money while its notifications are off.
 EventManager:On(E.HistoryLogged, function(entry)
-  if entry.source ~= MoneyLog or Addon:GetState().moneyNotifications then
+  if entry.logger ~= MoneyLogger or Addon:GetState().moneyNotifications then
     HistoryNotifications:Show(entry)
   end
 end)

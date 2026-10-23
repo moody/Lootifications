@@ -5,69 +5,68 @@ local EventManager = Addon:GetModule("EventManager")
 --- @class HistoryLog
 local HistoryLog = Addon:GetModule("HistoryLog")
 
---- Something that happened. What `payload` holds is determined by `source`.
---- @class HistoryEntry
---- @field source HistorySource The log that recorded it.
+--- Something that happened. Its `logger` determines what `payload` holds.
+--- @class HistoryLogEntry
+--- @field logger HistoryLogger The logger that recorded it.
 --- @field time integer When it happened, as Unix time.
 --- @field payload any
 
---- A log of one kind of entry, such as `ItemLog`.
---- @class HistorySource
---- @field GetText fun(self: HistorySource, entry: any): string Returns the text of an entry it recorded.
+--- Logs one kind of entry, such as `ItemLogger`.
+--- @class HistoryLogger
+--- @field GetText fun(self: HistoryLogger, entry: any): string Returns the text of an entry it recorded.
 
---- Everything that happened this session, in the order it happened, whatever its source.
---- @type HistoryEntry[]
+--- Every entry this session, oldest first.
+--- @type HistoryLogEntry[]
 local entries = {}
 
---- The entries of each source, in the order they happened.
---- @type table<HistorySource, HistoryEntry[]>
-local entriesBySource = {}
+--- Every entry this session, by logger, oldest first.
+--- @type table<HistoryLogger, HistoryLogEntry[]>
+local entriesByLogger = {}
 
 -- ============================================================================
 -- Local Functions
 -- ============================================================================
 
---- Returns the entries of the source. It is empty until the source records one.
---- @param source HistorySource
---- @return HistoryEntry[]
-local function getSourceEntries(source)
-  local sourceEntries = entriesBySource[source]
-  if not sourceEntries then
-    sourceEntries = {}
-    entriesBySource[source] = sourceEntries
+--- Returns the logger's entries. The list is empty until it records one.
+--- @param logger HistoryLogger
+--- @return HistoryLogEntry[]
+local function getLoggerEntries(logger)
+  local loggerEntries = entriesByLogger[logger]
+  if not loggerEntries then
+    loggerEntries = {}
+    entriesByLogger[logger] = loggerEntries
   end
 
-  return sourceEntries
+  return loggerEntries
 end
 
 -- ============================================================================
 -- HistoryLog
 -- ============================================================================
 
---- Logs an entry from the source, stamped with the time, then fires `HistoryLogged` with it.
---- @param source HistorySource
+--- Logs an entry from the logger, then fires `HistoryLogged` with it.
+--- @param logger HistoryLogger
 --- @param payload any
-function HistoryLog:Record(source, payload)
-  local entry = { source = source, time = time(), payload = payload }
+function HistoryLog:Record(logger, payload)
+  local entry = { logger = logger, time = time(), payload = payload }
   entries[#entries + 1] = entry
 
-  local sourceEntries = getSourceEntries(source)
-  sourceEntries[#sourceEntries + 1] = entry
+  local loggerEntries = getLoggerEntries(logger)
+  loggerEntries[#loggerEntries + 1] = entry
 
   EventManager:Fire(E.HistoryLogged, entry)
 end
 
---- Returns everything that happened this session, oldest first, or only the entries of the source if given.
---- Callers must not modify it.
---- @param source? HistorySource
---- @return HistoryEntry[]
-function HistoryLog:GetEntries(source)
-  return source and getSourceEntries(source) or entries
+--- Returns every entry, oldest first, or only the logger's if given. Callers must not modify it.
+--- @param logger? HistoryLogger
+--- @return HistoryLogEntry[]
+function HistoryLog:GetEntries(logger)
+  return logger and getLoggerEntries(logger) or entries
 end
 
---- Returns the text of the entry, from the source that recorded it. It can change between calls.
---- @param entry HistoryEntry
+--- Returns the entry's text, from its logger. It can change between calls.
+--- @param entry HistoryLogEntry
 --- @return string
 function HistoryLog:GetText(entry)
-  return entry.source:GetText(entry)
+  return entry.logger:GetText(entry)
 end

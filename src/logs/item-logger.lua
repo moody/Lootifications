@@ -9,14 +9,14 @@ local HistoryLog = Addon:GetModule("HistoryLog")
 local MessageBuilder = Addon:GetModule("MessageBuilder")
 
 --- Logs the items looted.
---- @class ItemLog : HistorySource
-local ItemLog = Addon:GetModule("ItemLog")
+--- @class ItemLogger : HistoryLogger
+local ItemLogger = Addon:GetModule("ItemLogger")
 
 --- @class ItemLogPayload
 --- @field link string
 --- @field quantity integer
 
---- @class ItemLogEntry : HistoryEntry
+--- @class ItemLogEntry : HistoryLogEntry
 --- @field payload ItemLogPayload
 
 local ITEM_LINK_PATTERN = ".*(|c.+|r).*"
@@ -44,14 +44,14 @@ local function parse(message)
   return nil
 end
 
---- Returns the quantity of an item, or an empty string for one.
+--- Returns the quantity text, or an empty string for one item.
 --- @param quantity integer
 --- @return string
 local function getQuantityText(quantity)
   return (quantity > 1) and QUANTITY_FORMAT:format(quantity) or ""
 end
 
---- Returns how many of the item are owned, if that option is on.
+--- Returns the owned count text, if that option is on and any are owned.
 --- @param link string
 --- @return string
 local function getCountText(link)
@@ -65,7 +65,7 @@ local function getCountText(link)
   return ""
 end
 
---- Returns the vendor price of the items, if that option is on and the price is known.
+--- Returns the total vendor price text, if that option is on and the price is known.
 --- @param price? integer Vendor price of one item, `nil` until the item is cached.
 --- @param quantity integer
 --- @return string
@@ -78,27 +78,27 @@ local function getPriceText(price, quantity)
 end
 
 -- ============================================================================
--- ItemLog
+-- ItemLogger
 -- ============================================================================
 
 --- Logs an item looted.
 --- @param link string
 --- @param quantity integer
-function ItemLog:Record(link, quantity)
+function ItemLogger:Record(link, quantity)
   HistoryLog:Record(self, { link = link, quantity = quantity })
 end
 
 --- Returns the items looted this session, oldest first. Callers must not modify it.
 --- @return ItemLogEntry[]
-function ItemLog:GetEntries()
+function ItemLogger:GetEntries()
   return HistoryLog:GetEntries(self)
 end
 
---- Returns the text of the entry, with the item's icon once it is cached. It can change between calls, such
---- as when the item becomes cached or the owned count changes.
+--- Returns the entry's text, with the item's icon once cached. It changes when the item is cached or the
+--- owned count changes.
 --- @param entry ItemLogEntry
 --- @return string
-function ItemLog:GetText(entry)
+function ItemLogger:GetText(entry)
   local payload = entry.payload
   local texture, price = select(10, GetItemInfo(payload.link))
 
@@ -124,7 +124,7 @@ EventManager:On(E.Wow.ChatMessageLoot, function(message, _, _, _, receiverName)
   if receiverName and receiverName:find(Addon.PLAYER_NAME) then
     local ok, link, quantity = pcall(parse, message)
     if ok and link then
-      ItemLog:Record(link, quantity)
+      ItemLogger:Record(link, quantity)
     end
   end
 end)
