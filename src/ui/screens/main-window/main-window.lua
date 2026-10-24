@@ -4,7 +4,6 @@ local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
-local Tester = Addon:GetModule("Tester")
 local Widgets = Addon:GetModule("Widgets")
 
 --- @class MainWindow
@@ -49,57 +48,21 @@ MainWindow.frame = (function()
   frame.versionText:SetText(Colors.White(Addon.VERSION))
   frame.versionText:SetAlpha(0.5)
 
-  -- Anchor button.
-  frame.anchorButton = Widgets:Button({
-    name = "$parent_AnchorButton",
-    parent = frame,
-    points = {
-      { "BOTTOMLEFT", frame, Widgets:Padding(), Widgets:Padding() },
-      { "BOTTOMRIGHT", frame, "BOTTOM", -Widgets:Padding(0.25), Widgets:Padding() }
-    },
-    labelText = L.TOGGLE_ANCHOR,
-    labelColor = Colors.Yellow,
-    onUpdateTooltip = function(self, tooltip)
-      tooltip:AddDoubleLine(Addon:Concat("+", L.SHIFT_KEY, L.LEFT_CLICK), L.RESET_ANCHOR)
-    end,
-    onClick = function()
-      if IsShiftKeyDown() then
-        AnchorFrame:Reset()
-      else
-        AnchorFrame:Toggle()
-      end
-    end
-  })
-
-  -- Tester button.
-  frame.testerButton = Widgets:Button({
-    name = "$parent_TesterButton",
-    parent = frame,
-    points = {
-      { "BOTTOMRIGHT", frame, -Widgets:Padding(), Widgets:Padding() },
-      { "BOTTOMLEFT", frame, "BOTTOM", Widgets:Padding(0.25), Widgets:Padding() }
-    },
-    labelText = L.TEST_NOTIFICATIONS,
-    labelColor = Colors.Green,
-    onClick = function() Tester:Toggle() end
-  })
-
   -- Options frame.
   frame.optionsFrame = Widgets:OptionsFrame({
     name = "$parent_OptionsFrame",
     parent = frame,
     points = {
       { "TOPLEFT", frame.titleButton, "BOTTOMLEFT", Widgets:Padding(), 0 },
-      { "BOTTOMRIGHT", frame.testerButton, "TOPRIGHT", 0, Widgets:Padding(0.5) }
+      { "BOTTOMRIGHT", frame, -Widgets:Padding(), Widgets:Padding() }
     },
     titleText = L.OPTIONS_TEXT
   })
   MainWindowOptions:Initialize(frame.optionsFrame)
 
-  frame:HookScript("OnHide", function()
-    AnchorFrame:Hide()
-    Tester:Stop()
-  end)
+  -- The anchor is unlocked while the window is shown.
+  frame:HookScript("OnShow", function() AnchorFrame:Unlock() end)
+  frame:HookScript("OnHide", function() AnchorFrame:Lock() end)
 
   return frame
 end)()

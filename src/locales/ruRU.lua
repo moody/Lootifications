@@ -7,8 +7,8 @@ local L = Addon:GetModule("Locale")
 -- ============================================================================
 
 L.ANCHOR = "Якорь"
+L.ANCHOR_TOOLTIP = "Нажмите и перетащите эту рамку, чтобы переместить уведомления."
 L.GENERAL = "Общие"
-L.LEFT_CLICK = "Левый клик"
 L.LOOT_PRICES_TEXT = "Цены добычи"
 L.LOOT_PRICES_TOOLTIP = "Добавляет цену продажи предметов торговцу в уведомления о добыче."
 L.MONEY_NOTIFICATIONS_TEXT = "Уведомления о деньгах"
@@ -18,6 +18,3 @@ L.OWNED_ITEM_COUNTS_TEXT = "Количество предметов в нали�
 L.OWNED_ITEM_COUNTS_TOOLTIP = "Добавляет количество имеющихся у вас предметов в уведомления о добыче."
 L.RESET_ANCHOR = "Сбросить якорь"
 L.RIGHT_CLICK = "Правый клик"
-L.SHIFT_KEY = "Shift"
-L.TEST_NOTIFICATIONS = "Проверить уведомления"
-L.TOGGLE_ANCHOR = "Показать/скрыть якорь"

@@ -40,6 +40,8 @@
   <Script file="src\logs\money-logger.lua"/>
 
   <!-- Services -->
+  <Script file="src\services\example-notifications.lua"/>
+  <Script file="src\services\notification-manager.lua"/>
   <Script file="src\services\tester.lua"/>
 
   <!-- UI -->
@@ -77,7 +79,6 @@
 
   <!-- UI Notifications -->
   <Script file="src\ui\anchor-frame.lua"/>
-  <Script file="src\ui\notification-manager.lua"/>
   <Script file="src\ui\history-notifications.lua"/>
 
   <!-- UI Blizzard -->

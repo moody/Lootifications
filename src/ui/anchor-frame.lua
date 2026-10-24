@@ -1,164 +1,293 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
 local Colors = Addon:GetModule("Colors")
+local ComponentFactory = Addon:GetModule("ComponentFactory")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
+local ExampleNotifications = Addon:GetModule("ExampleNotifications")
 local L = Addon:GetModule("Locale")
+local NotificationManager = Addon:GetModule("NotificationManager")
+local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
+local Wux = Addon.Wux
 
+--- Holds the notifications, stacked and aligned per the state and pinned at the matching point of the screen.
+--- While locked it shows the live notifications, and while unlocked it shows examples of them and can be dragged.
 --- @class AnchorFrame
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 
---- Where the notification stack attaches to the anchor, and how it lays out its notifications.
---- @class NotificationPoints
---- @field point FramePoint Point of the stack that attaches to the anchor.
---- @field relativePoint FramePoint Point of the anchor that the stack attaches to.
---- @field direction WaffleFlexDirection
---- @field align WaffleFlexAlign
+local Components = {}
 
---- Points by growth direction, then by the anchor's horizontal position.
---- @type table<"GROW_UP" | "GROW_DOWN", table<"LEFT" | "CENTER" | "RIGHT", NotificationPoints>>
-local NOTIFICATION_POINTS = {
-  GROW_UP = {
-    LEFT = { point = "BOTTOMLEFT", relativePoint = "TOPLEFT", direction = "COLUMN_REVERSE", align = "START" },
-    CENTER = { point = "BOTTOM", relativePoint = "TOP", direction = "COLUMN_REVERSE", align = "CENTER" },
-    RIGHT = { point = "BOTTOMRIGHT", relativePoint = "TOPRIGHT", direction = "COLUMN_REVERSE", align = "END" }
-  },
-  GROW_DOWN = {
-    LEFT = { point = "TOPLEFT", relativePoint = "BOTTOMLEFT", direction = "COLUMN", align = "START" },
-    CENTER = { point = "TOP", relativePoint = "BOTTOM", direction = "COLUMN", align = "CENTER" },
-    RIGHT = { point = "TOPRIGHT", relativePoint = "BOTTOMRIGHT", direction = "COLUMN", align = "END" }
-  }
+--- The stacking direction and the pinned edge of each `anchorDirection`.
+local DIRECTIONS = {
+  DOWN = { direction = "COLUMN", edge = "TOP" },
+  UP = { direction = "COLUMN_REVERSE", edge = "BOTTOM" }
 }
 
--- ============================================================================
--- Create the frame.
--- ============================================================================
+--- The alignment and the pinned side of each `anchorAlignment`.
+local ALIGNMENTS = {
+  LEFT = { align = "START", side = "LEFT" },
+  CENTER = { align = "CENTER", side = "" },
+  RIGHT = { align = "END", side = "RIGHT" }
+}
 
-AnchorFrame.frame = (function()
-  --- @class AnchorFrameWidget : FrameWidget
-  local frame = Widgets:Frame({ name = ADDON_NAME .. "_AnchorFrame" })
-  frame:SetBackdropColor(0, 0, 0, 1)
-  frame:SetBackdropBorderColor(Colors.Gold:GetRGBA())
+--- Whether the anchor can be dragged.
+local isUnlocked = false
 
-  --- Text shown on the anchor.
-  frame.fontString = frame:CreateFontString("$parent_FontString", "OVERLAY", "ErrorFont")
-  frame.fontString:SetTextColor(1, 1, 1)
-  frame.fontString:SetPoint("CENTER")
+--- The live notifications, one for each that can be shown at once. One that is visible is being shown.
+--- @type NotificationComponent[]
+local notifications = {}
 
-  frame:SetMovable(true)
-  frame:EnableMouse(true)
-  frame:RegisterForDrag("LeftButton")
-
-  frame:HookScript("OnShow", function(self)
-    local text = Colors.Gold(("[%s %s]"):format(ADDON_NAME, L.ANCHOR))
-    self.fontString:SetText(Addon.TEXTURE_MESSAGE_FORMAT:format(Addon.ICON, text))
-    self:SetWidth(self.fontString:GetWidth() + Widgets:Padding(1.5))
-    self:SetHeight(self.fontString:GetHeight() + Widgets:Padding(1.5))
-  end)
-
-  frame:SetScript("OnDragStart", function(self)
-    self:StartMoving()
-  end)
-
-  frame:SetScript("OnDragStop", function(self)
-    self:StopMovingOrSizing()
-    local anchorPoint = { self:GetPoint() }
-    Addon:GetStore():Dispatch({ type = "anchorPoint/set", payload = anchorPoint })
-  end)
-
-  frame:SetScript("OnMouseDown", function(self, button)
-    if button == "RightButton" then
-      self:Hide()
-    end
-  end)
-
-  frame:Hide()
-  return frame
-end)()
+--- Counts the notifications shown, and starts over once none are. A newer notification gets a lower `order`, which
+--- puts it closest to the pinned edge.
+local sequence = 0
 
 -- ============================================================================
--- Functions
+-- Local Functions
 -- ============================================================================
 
---- Returns the points the notification stack attaches with, based on where the anchor is on screen.
---- @return NotificationPoints
-function AnchorFrame:GetNotificationPoints()
-  local SCREEN_WIDTH = GetScreenWidth() or 0
-  local SCREEN_HEIGHT = GetScreenHeight() or 0
-  local SCREEN_MID_X = SCREEN_WIDTH * 0.5
-  local SCREEN_MID_Y = SCREEN_HEIGHT * 0.5
-  local CENTER_THRESHOLD = SCREEN_WIDTH * 0.2
-
-  local anchorX, anchorY = self.frame:GetCenter()
-  anchorX = anchorX or 0
-  anchorY = anchorY or 0
-
-  -- Determine notification growth direction based on anchor position.
-  -- Y-axis: 0 at the bottom, increases upwards.
-  local isCloserToTop = anchorY >= SCREEN_MID_Y
-  local growthDirection = isCloserToTop and NOTIFICATION_POINTS.GROW_DOWN or NOTIFICATION_POINTS.GROW_UP
-
-  -- Return center points if within the threshold.
-  if anchorX >= SCREEN_MID_X - CENTER_THRESHOLD and anchorX <= SCREEN_MID_X + CENTER_THRESHOLD then
-    return growthDirection.CENTER
-  end
-
-  -- Return points based on if the anchor is to the left or right.
-  local isToTheLeft = anchorX <= SCREEN_MID_X
-  return isToTheLeft and growthDirection.LEFT or growthDirection.RIGHT
+--- Returns the point of the screen that the anchor is pinned at.
+--- @return FramePoint
+local function getPoint()
+  local state = Addon:GetState()
+  return DIRECTIONS[state.anchorDirection].edge .. ALIGNMENTS[state.anchorAlignment].side
 end
 
---- Returns the notification spacing, positive for points that grow up and negative for points that grow down.
---- @param points NotificationPoints
---- @return number
-function AnchorFrame:GetNotificationSpacing(points)
-  for _, v in pairs(NOTIFICATION_POINTS.GROW_UP) do
-    if points == v then return Addon.NOTIFICATION_SPACING end
-  end
-
-  return -Addon.NOTIFICATION_SPACING
+--- Pins the frame at its point, offset by `x` and `y` from the screen's edge.
+--- @param frame AnchorFrameWidget
+--- @param x number
+--- @param y number
+local function pinTo(frame, x, y)
+  local point = getPoint()
+  frame:ClearAllPoints()
+  frame:SetPoint(point, UIParent, point, x, y)
 end
 
---- Moves the anchor to its default position and clears the saved position.
-function AnchorFrame:Reset()
-  self.frame:ClearAllPoints()
-  self.frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
-  Addon:GetStore():Dispatch({ type = "anchorPoint/reset" })
+--- Pins the frame below the zone text.
+--- @param frame AnchorFrameWidget
+local function pinToDefault(frame)
+  frame:ClearAllPoints()
+  frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
 end
 
-function AnchorFrame:Show()
-  self.frame:Show()
-end
-
-function AnchorFrame:Hide()
-  self.frame:Hide()
-end
-
-function AnchorFrame:Toggle()
-  if self.frame:IsShown() then
-    self.frame:Hide()
+--- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
+--- @param frame AnchorFrameWidget
+local function refreshFrame(frame)
+  if isUnlocked then
+    frame:SetBackdropColor(0, 0, 0, 0.6)
+    frame:SetBackdropBorderColor(Colors.Gold:GetRGBA())
   else
-    self.frame:Show()
+    frame:SetBackdropColor(0, 0, 0, 0)
+    frame:SetBackdropBorderColor(0, 0, 0, 0)
   end
+
+  frame:EnableMouse(isUnlocked)
 end
+
+-- ============================================================================
+-- Root Component
+-- ============================================================================
+
+--- @class AnchorFrameComponent : WaffleFlexComponent
+Components.Root = Addon.Waffle:Flex({
+  padding = Widgets:Padding(0.25),
+  width = "AUTO",
+  height = "AUTO",
+
+  --- @param parent Frame
+  defaultFrameFactory = function(parent)
+    return CreateFrame("Frame", nil, parent)
+  end,
+
+  frameFactory = function()
+    --- @class AnchorFrameWidget : FrameWidget
+    local frame = Widgets:Frame({
+      name = ADDON_NAME .. "_AnchorFrame",
+      clipChildren = false,
+      tooltipAnchor = "ANCHOR_CURSOR",
+      onUpdateTooltip = function(_, tooltip)
+        tooltip:SetText(("%s %s"):format(ADDON_NAME, L.ANCHOR))
+        tooltip:AddLine(L.ANCHOR_TOOLTIP)
+        tooltip:AddLine(" ")
+        tooltip:AddDoubleLine(L.RIGHT_CLICK, L.RESET_ANCHOR)
+      end
+    })
+    refreshFrame(frame)
+
+    frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
+    frame:RegisterForDrag("LeftButton")
+    frame:SetScript("OnDragStart", frame.StartMoving)
+
+    -- Pin the frame where it was dropped, and save the offsets from the screen's edge at its point.
+    frame:SetScript("OnDragStop", function(self)
+      self:StopMovingOrSizing()
+
+      local point = getPoint()
+      local x = self:GetCenter() - (UIParent:GetLeft() + UIParent:GetWidth() * 0.5)
+      if point:find("LEFT") then
+        x = self:GetLeft() - UIParent:GetLeft()
+      elseif point:find("RIGHT") then
+        x = self:GetRight() - UIParent:GetRight()
+      end
+
+      local y = self:GetBottom() - UIParent:GetBottom()
+      if point:find("TOP") then
+        y = self:GetTop() - UIParent:GetTop()
+      end
+
+      pinTo(self, x, y)
+      Addon:GetStore():Dispatch({ type = "anchorPoint/set", payload = { x = x, y = y } })
+    end)
+
+    frame:SetScript("OnMouseDown", function(_, button)
+      if button == "RightButton" then
+        AnchorFrame:Reset()
+      end
+    end)
+
+    return frame
+  end
+})
+
+-- ============================================================================
+-- Screen Components
+-- ============================================================================
+
+-- The screen shown while locked: the notifications that come from loot.
+Components.LiveNotifications = Components.Root:AddChild({
+  direction = "COLUMN",
+  gap = Addon.NOTIFICATION_SPACING,
+  width = "AUTO",
+  height = "AUTO"
+})
+
+for i = 1, Addon.MAX_NOTIFICATIONS do
+  notifications[i] = ComponentFactory:Notification()
+  Components.LiveNotifications:AttachComponent(notifications[i])
+end
+
+-- The screen shown while unlocked: examples of the notifications, which stay until the anchor is locked.
+Components.ExampleNotifications = Components.Root:AddChild({
+  direction = "COLUMN",
+  gap = Addon.NOTIFICATION_SPACING,
+  width = "AUTO",
+  height = "AUTO",
+  visibility = "GONE"
+})
+
+for slot = 1, Addon.MAX_NOTIFICATIONS do
+  local example = ComponentFactory:Notification({ animated = false })
+  example:SetOrder(slot)
+  example:Notify(function() return ExampleNotifications:GetText(slot) end)
+  Components.ExampleNotifications:AttachComponent(example)
+end
+
+-- ============================================================================
+-- AnchorFrame
+-- ============================================================================
+
+--- Returns whether the anchor is unlocked.
+--- @return boolean
+function AnchorFrame:IsUnlocked()
+  return isUnlocked
+end
+
+--- Lets the anchor be dragged, and shows examples of the notifications in place of the live ones, which are dropped.
+function AnchorFrame:Unlock()
+  if isUnlocked then return end
+  isUnlocked = true
+
+  NotificationManager:Clear()
+  for _, notification in ipairs(notifications) do
+    notification:Kill()
+  end
+
+  Components.LiveNotifications:SetVisibility("GONE")
+  Components.ExampleNotifications:SetVisibility("VISIBLE")
+  Components.Root:WhenFrameReady(refreshFrame)
+end
+
+--- Stops the anchor from being dragged, and shows the live notifications again.
+function AnchorFrame:Lock()
+  if not isUnlocked then return end
+  isUnlocked = false
+
+  Components.ExampleNotifications:SetVisibility("GONE")
+  Components.LiveNotifications:SetVisibility("VISIBLE")
+  Components.Root:WhenFrameReady(refreshFrame)
+end
+
+--- Moves the anchor to its default position and resets its direction and alignment.
+function AnchorFrame:Reset()
+  Addon:GetStore():Dispatch({
+    type = Wux.ActionTypes.Batch,
+    payload = {
+      { type = "anchorAlignment/reset" },
+      { type = "anchorDirection/reset" },
+      { type = "anchorPoint/reset" }
+    }
+  })
+
+  Components.Root:WhenFrameReady(pinToDefault)
+end
+
+-- ============================================================================
+-- Tickers
+-- ============================================================================
+
+-- Lay out the notifications.
+TickerManager:NewTicker(1 / 30, function()
+  Components.Root:Layout()
+end)
+
+-- Show a queued notification each stagger interval, while there is room for it.
+TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
+  local shownCount, freeNotification = 0, nil
+  for _, notification in ipairs(notifications) do
+    if notification:IsVisible() then
+      shownCount = shownCount + 1
+    elseif not freeNotification then
+      freeNotification = notification
+    end
+  end
+
+  if shownCount == 0 then sequence = 0 end
+
+  if freeNotification then
+    local getText = NotificationManager:Pop()
+    if getText then
+      sequence = sequence + 1
+      freeNotification:SetOrder(-sequence)
+      freeNotification:Notify(getText)
+    end
+  end
+end)
 
 -- ============================================================================
 -- Events
 -- ============================================================================
 
--- Listen for `StoreInitialized` to create and position the frame.
+-- Listen for `StoreInitialized` to pin the anchor to its saved position.
 EventManager:Once(E.StoreInitialized, function(Store)
-  local state = Store:GetState()
+  local position = Store:GetState().anchorPoint
 
-  -- Attempt to set the saved anchor point.
-  local isAnchorPointSet = pcall(function()
-    AnchorFrame.frame:ClearAllPoints()
-    AnchorFrame.frame:SetPoint(unpack(state.anchorPoint))
+  Components.Root:WhenFrameReady(function(frame)
+    --- @cast frame AnchorFrameWidget
+    refreshFrame(frame)
+
+    if type(position.x) == "number" and type(position.y) == "number" then
+      pinTo(frame, position.x, position.y)
+    else
+      pinToDefault(frame)
+    end
   end)
+end)
 
-  -- If the saved anchor point couldn't be set, revert to the default anchor point.
-  if not isAnchorPointSet then
-    AnchorFrame:Reset()
+-- Listen for `StateUpdated` to stack and align the notifications.
+EventManager:On(E.StateUpdated, function(state)
+  for _, screen in ipairs({ Components.LiveNotifications, Components.ExampleNotifications }) do
+    screen:SetDirection(DIRECTIONS[state.anchorDirection].direction)
+    screen:SetAlign(ALIGNMENTS[state.anchorAlignment].align)
   end
 end)

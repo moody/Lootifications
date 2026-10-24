@@ -7,12 +7,17 @@ local Wux = Addon.Wux
 
 local SAVED_VARIABLES = "__LOOTIFICATIONS_V2_SAVED_VARIABLES__"
 
+local ANCHOR_ALIGNMENTS = { LEFT = true, CENTER = true, RIGHT = true }
+local ANCHOR_DIRECTIONS = { DOWN = true, UP = true }
+
 -- ============================================================================
 -- Default State
 -- ============================================================================
 
 --- @class AddonState
 local DEFAULT_STATE = {
+  anchorAlignment = "CENTER",
+  anchorDirection = "DOWN",
   anchorPoint = {},
   lootPrices = false,
   moneyNotifications = true,
@@ -25,6 +30,32 @@ local DEFAULT_STATE = {
 
 --- @type WuxReducer<AddonState, any>
 local rootReducer = Wux:CombineReducers({
+  -- Anchor alignment.
+  anchorAlignment = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.anchorAlignment)
+
+    if action.type == "anchorAlignment/set" then
+      state = action.payload
+    elseif action.type == "anchorAlignment/reset" then
+      state = DEFAULT_STATE.anchorAlignment
+    end
+
+    return ANCHOR_ALIGNMENTS[state] and state or DEFAULT_STATE.anchorAlignment
+  end,
+
+  -- Anchor direction.
+  anchorDirection = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.anchorDirection)
+
+    if action.type == "anchorDirection/set" then
+      state = action.payload
+    elseif action.type == "anchorDirection/reset" then
+      state = DEFAULT_STATE.anchorDirection
+    end
+
+    return ANCHOR_DIRECTIONS[state] and state or DEFAULT_STATE.anchorDirection
+  end,
+
   -- Anchor point.
   anchorPoint = function(state, action)
     state = Wux:Coalesce(state, DEFAULT_STATE.anchorPoint)

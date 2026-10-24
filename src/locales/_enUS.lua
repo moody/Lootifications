@@ -14,8 +14,8 @@ setmetatable(L, {
 -- ============================================================================
 
 L.ANCHOR = "Anchor"
+L.ANCHOR_TOOLTIP = "Click and drag this frame to move the notifications."
 L.GENERAL = "General"
-L.LEFT_CLICK = "Left-Click"
 L.LOOT_PRICES_TEXT = "Loot Prices"
 L.LOOT_PRICES_TOOLTIP = "Include the vendor price of items in loot notifications."
 L.MONEY_NOTIFICATIONS_TEXT = "Money Notifications"
@@ -25,6 +25,3 @@ L.OWNED_ITEM_COUNTS_TEXT = "Owned Item Counts"
 L.OWNED_ITEM_COUNTS_TOOLTIP = "Include an owned item count in loot notifications."
 L.RESET_ANCHOR = "Reset Anchor"
 L.RIGHT_CLICK = "Right-Click"
-L.SHIFT_KEY = "Shift"
-L.TEST_NOTIFICATIONS = "Test Notifications"
-L.TOGGLE_ANCHOR = "Toggle Anchor"

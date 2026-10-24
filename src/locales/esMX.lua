@@ -7,8 +7,8 @@ local L = Addon:GetModule("Locale")
 -- ============================================================================
 
 L.ANCHOR = "Ancla"
+L.ANCHOR_TOOLTIP = "Haz clic y arrastra este marco para mover las notificaciones."
 L.GENERAL = "General"
-L.LEFT_CLICK = "Clic izquierdo"
 L.LOOT_PRICES_TEXT = "Precios del botín"
 L.LOOT_PRICES_TOOLTIP = "Incluye el precio de venta a vendedores de los objetos en las notificaciones de botín."
 L.MONEY_NOTIFICATIONS_TEXT = "Notificaciones de dinero"
@@ -18,6 +18,3 @@ L.OWNED_ITEM_COUNTS_TEXT = "Cantidad de objetos que posees"
 L.OWNED_ITEM_COUNTS_TOOLTIP = "Incluye la cantidad que posees del objeto en las notificaciones de botín."
 L.RESET_ANCHOR = "Restablecer ancla"
 L.RIGHT_CLICK = "Clic derecho"
-L.SHIFT_KEY = "Mayús"
-L.TEST_NOTIFICATIONS = "Probar notificaciones"
-L.TOGGLE_ANCHOR = "Mostrar u ocultar ancla"

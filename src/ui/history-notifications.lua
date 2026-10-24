@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local AnchorFrame = Addon:GetModule("AnchorFrame")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local HistoryLog = Addon:GetModule("HistoryLog")
@@ -13,10 +14,12 @@ local HistoryNotifications = Addon:GetModule("HistoryNotifications")
 -- HistoryNotifications
 -- ============================================================================
 
---- Queues a notification for the entry. Its text updates while shown.
+--- Queues a notification for the entry, unless the `AnchorFrame` is unlocked. Its text updates while shown.
 --- @param entry HistoryLogEntry
 function HistoryNotifications:Show(entry)
-  NotificationManager:Notify(function() return HistoryLog:GetText(entry) end)
+  if not AnchorFrame:IsUnlocked() then
+    NotificationManager:Notify(function() return HistoryLog:GetText(entry) end)
+  end
 end
 
 -- ============================================================================

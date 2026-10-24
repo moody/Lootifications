@@ -7,8 +7,8 @@ local L = Addon:GetModule("Locale")
 -- ============================================================================
 
 L.ANCHOR = "Ancre"
+L.ANCHOR_TOOLTIP = "Cliquez et faites glisser ce cadre pour déplacer les notifications."
 L.GENERAL = "Général"
-L.LEFT_CLICK = "Clic gauche"
 L.LOOT_PRICES_TEXT = "Prix du butin"
 L.LOOT_PRICES_TOOLTIP = "Inclut le prix de vente marchand des objets dans les notifications de butin."
 L.MONEY_NOTIFICATIONS_TEXT = "Notifications d'argent"
@@ -18,6 +18,3 @@ L.OWNED_ITEM_COUNTS_TEXT = "Quantités possédées"
 L.OWNED_ITEM_COUNTS_TOOLTIP = "Inclut la quantité possédée de l'objet dans les notifications de butin."
 L.RESET_ANCHOR = "Réinitialiser l'ancre"
 L.RIGHT_CLICK = "Clic droit"
-L.SHIFT_KEY = "Maj"
-L.TEST_NOTIFICATIONS = "Tester les notifications"
-L.TOGGLE_ANCHOR = "Afficher/masquer l'ancre"

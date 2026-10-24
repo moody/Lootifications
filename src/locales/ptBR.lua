@@ -7,8 +7,8 @@ local L = Addon:GetModule("Locale")
 -- ============================================================================
 
 L.ANCHOR = "Âncora"
+L.ANCHOR_TOOLTIP = "Clique e arraste este quadro para mover as notificações."
 L.GENERAL = "Geral"
-L.LEFT_CLICK = "Clique esquerdo"
 L.LOOT_PRICES_TEXT = "Preços do saque"
 L.LOOT_PRICES_TOOLTIP = "Inclui o preço de venda dos itens nas notificações de saque."
 L.MONEY_NOTIFICATIONS_TEXT = "Notificações de dinheiro"
@@ -18,6 +18,3 @@ L.OWNED_ITEM_COUNTS_TEXT = "Quantidade de itens possuídos"
 L.OWNED_ITEM_COUNTS_TOOLTIP = "Inclui a quantidade possuída do item nas notificações de saque."
 L.RESET_ANCHOR = "Redefinir âncora"
 L.RIGHT_CLICK = "Clique direito"
-L.SHIFT_KEY = "Shift"
-L.TEST_NOTIFICATIONS = "Testar notificações"
-L.TOGGLE_ANCHOR = "Mostrar/ocultar âncora"
