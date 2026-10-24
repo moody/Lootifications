@@ -3,132 +3,18 @@ local Addon = select(2, ...)
 
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
+local Middlewares = Addon:GetModule("Middlewares")
+local RootReducer = Addon:GetModule("RootReducer")
 local Wux = Addon.Wux
 
 local SAVED_VARIABLES = "__LOOTIFICATIONS_V2_SAVED_VARIABLES__"
-
-local ANCHOR_ALIGNMENTS = { LEFT = true, CENTER = true, RIGHT = true }
-local ANCHOR_DIRECTIONS = { DOWN = true, UP = true }
-
--- ============================================================================
--- Default State
--- ============================================================================
-
---- @class AddonState
-local DEFAULT_STATE = {
-  anchorAlignment = "CENTER",
-  anchorDirection = "DOWN",
-  anchorPoint = {},
-  lootPrices = false,
-  mainWindowPoint = { point = "CENTER", relativePoint = "CENTER", offsetX = 0, offsetY = -40 },
-  moneyNotifications = true,
-  ownedItemCounts = false
-}
-
--- ============================================================================
--- Reducers
--- ============================================================================
-
---- @type WuxReducer<AddonState, any>
-local rootReducer = Wux:CombineReducers({
-  -- Anchor alignment.
-  anchorAlignment = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.anchorAlignment)
-
-    if action.type == "anchorAlignment/set" then
-      state = action.payload
-    elseif action.type == "anchorAlignment/reset" then
-      state = DEFAULT_STATE.anchorAlignment
-    end
-
-    return ANCHOR_ALIGNMENTS[state] and state or DEFAULT_STATE.anchorAlignment
-  end,
-
-  -- Anchor direction.
-  anchorDirection = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.anchorDirection)
-
-    if action.type == "anchorDirection/set" then
-      state = action.payload
-    elseif action.type == "anchorDirection/reset" then
-      state = DEFAULT_STATE.anchorDirection
-    end
-
-    return ANCHOR_DIRECTIONS[state] and state or DEFAULT_STATE.anchorDirection
-  end,
-
-  -- Anchor point.
-  anchorPoint = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.anchorPoint)
-
-    if action.type == "anchorPoint/set" then
-      state = action.payload
-    elseif action.type == "anchorPoint/reset" then
-      state = DEFAULT_STATE.anchorPoint
-    end
-
-    return state
-  end,
-
-  -- Loot prices.
-  lootPrices = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.lootPrices)
-
-    if action.type == "lootPrices/toggle" then
-      state = not state
-    elseif action.type == "lootPrices/reset" then
-      state = DEFAULT_STATE.lootPrices
-    end
-
-    return state
-  end,
-
-  -- Main window point.
-  mainWindowPoint = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.mainWindowPoint)
-
-    if action.type == "mainWindowPoint/set" then
-      state = action.payload
-    elseif action.type == "mainWindowPoint/reset" then
-      state = DEFAULT_STATE.mainWindowPoint
-    end
-
-    return type(state) == "table" and state or DEFAULT_STATE.mainWindowPoint
-  end,
-
-  -- Money notifications.
-  moneyNotifications = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.moneyNotifications)
-
-    if action.type == "moneyNotifications/toggle" then
-      state = not state
-    elseif action.type == "moneyNotifications/reset" then
-      state = DEFAULT_STATE.moneyNotifications
-    end
-
-    return state
-  end,
-
-  -- Owned item counts.
-  ownedItemCounts = function(state, action)
-    state = Wux:Coalesce(state, DEFAULT_STATE.ownedItemCounts)
-
-    if action.type == "ownedItemCounts/toggle" then
-      state = not state
-    elseif action.type == "ownedItemCounts/reset" then
-      state = DEFAULT_STATE.ownedItemCounts
-    end
-
-    return state
-  end,
-})
 
 -- ============================================================================
 -- Events
 -- ============================================================================
 
 EventManager:Once(E.Wow.PlayerLogin, function()
-  local Store = Wux:CreateStore(rootReducer, _G[SAVED_VARIABLES])
+  local Store = Wux:CreateStore(RootReducer:Build(), _G[SAVED_VARIABLES], Middlewares:Build())
   _G[SAVED_VARIABLES] = Store:GetState()
 
   -- Update SavedVariables whenever the state changes.
@@ -138,13 +24,13 @@ EventManager:Once(E.Wow.PlayerLogin, function()
   end)
 
   --- Returns the underlying Wux store.
-  --- @return WuxStore
+  --- @return WuxStore<LootificationsState>
   function Addon:GetStore()
     return Store
   end
 
   --- Returns the current state. Equivalent to `Addon:GetStore():GetState()`.
-  --- @return AddonState
+  --- @return LootificationsState
   function Addon:GetState()
     return Store:GetState()
   end

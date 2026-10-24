@@ -29,6 +29,11 @@
   <Script file="src\utils\ticker-manager.lua"/>
 
   <!-- Store -->
+  <Script file="src\store\action-types.lua"/>
+  <Script file="src\store\action-creators.lua"/>
+  <Script file="src\store\default-states.lua"/>
+  <Script file="src\store\middlewares.lua"/>
+  <Script file="src\store\root-reducer.lua"/>
   <Script file="src\store\store.lua"/>
 
   <!-- Input -->

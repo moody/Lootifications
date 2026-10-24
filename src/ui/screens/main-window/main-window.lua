@@ -1,5 +1,6 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
+local ActionCreators = Addon:GetModule("ActionCreators")
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
@@ -98,8 +99,8 @@ Components.Root = ComponentFactory:Window({
   height = 465,
   titleText = "", -- unused; MainWindow builds its own title-bar content below
   getPoint = function() return Addon:GetState().mainWindowPoint end,
-  setPoint = function(point) Addon:GetStore():Dispatch({ type = "mainWindowPoint/set", payload = point }) end,
-  onResetPoint = function() Addon:GetStore():Dispatch({ type = "mainWindowPoint/reset" }) end,
+  setPoint = function(point) Addon:GetStore():Dispatch(ActionCreators.setMainWindowPoint(point)) end,
+  onResetPoint = function() Addon:GetStore():Dispatch(ActionCreators.resetMainWindowPoint()) end,
   refresh = function() Components.Root:Layout() end
 })
 

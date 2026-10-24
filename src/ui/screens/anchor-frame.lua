@@ -1,5 +1,6 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
+local ActionCreators = Addon:GetModule("ActionCreators")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local E = Addon:GetModule("Events")
@@ -87,7 +88,7 @@ local function pinInPlace(frame)
   end
 
   pinTo(frame, x, y)
-  Addon:GetStore():Dispatch({ type = "anchorPoint/set", payload = { x = x, y = y } })
+  Addon:GetStore():Dispatch(ActionCreators.setAnchorPoint({ x = x, y = y }))
 end
 
 --- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
@@ -234,9 +235,9 @@ function AnchorFrame:Reset()
   Addon:GetStore():Dispatch({
     type = Wux.ActionTypes.Batch,
     payload = {
-      { type = "anchorAlignment/reset" },
-      { type = "anchorDirection/reset" },
-      { type = "anchorPoint/reset" }
+      ActionCreators.resetAnchorAlignment(),
+      ActionCreators.resetAnchorDirection(),
+      ActionCreators.resetAnchorPoint()
     }
   })
 

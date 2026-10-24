@@ -21,6 +21,10 @@ Addon.PLAYER_NAME = UnitName("Player")
 Addon.TEXTURE_MESSAGE_FORMAT = "|T%s:0:0:0:0:16:16:1:15:1:15|t %s"
 Addon.VERSION = C_AddOns.GetAddOnMetadata(ADDON_NAME, "Version")
 
+--@debug@
+Addon.IS_DEBUG = false
+--@end-debug@
+
 -- ============================================================================
 -- Functions
 -- ============================================================================
@@ -89,10 +93,16 @@ function Addon:Print(...)
   print(self:GetModule("Colors").Purple("[" .. ADDON_NAME .. "]"), ...)
 end
 
---- Prints the given arguments with debug formatting.
+--- Prints the given arguments with debug formatting. Does nothing unless `Addon.IS_DEBUG` is `true`.
 --- @param ... any
 function Addon:Debug(...)
-  --@debug@
+  if self.IS_DEBUG ~= true then return end
   print(date("%H:%M:%S"), self:GetModule("Colors").Red("[Debug]"), ...)
-  --@end-debug@
+end
+
+--- Dumps the given value. Does nothing unless `Addon.IS_DEBUG` is `true`.
+--- @param value any
+function Addon:Dump(value)
+  if self.IS_DEBUG ~= true then return end
+  DevTools_Dump(value)
 end

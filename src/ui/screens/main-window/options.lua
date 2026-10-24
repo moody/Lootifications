@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local ActionCreators = Addon:GetModule("ActionCreators")
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
@@ -37,10 +38,11 @@ end
 --- @param labelText string
 --- @param descriptionText string
 --- @param stateKey "lootPrices" | "moneyNotifications" | "ownedItemCounts" The state that the card toggles.
-local function addOptionCard(container, labelText, descriptionText, stateKey)
+--- @param toggle WuxActionCreator<nil> Toggles the state.
+local function addOptionCard(container, labelText, descriptionText, stateKey, toggle)
   addCard(container, {
     get = function() return Addon:GetState()[stateKey] end,
-    set = function() Addon:GetStore():Dispatch({ type = stateKey .. "/toggle" }) end
+    set = function() Addon:GetStore():Dispatch(toggle()) end
   }, labelText, descriptionText)
 end
 
@@ -51,8 +53,9 @@ end
 --- @param descriptionText string
 --- @param lineLabelText string Label to the left of the chips.
 --- @param stateKey "anchorAlignment" | "anchorDirection"
+--- @param setValue WuxActionCreator<string> Sets the state.
 --- @param choices { value: string, text: string }[]
-local function addChoiceCard(container, labelText, descriptionText, lineLabelText, stateKey, choices)
+local function addChoiceCard(container, labelText, descriptionText, lineLabelText, stateKey, setValue, choices)
   local chips = {}
 
   for _, choice in ipairs(choices) do
@@ -61,7 +64,7 @@ local function addChoiceCard(container, labelText, descriptionText, lineLabelTex
       get = function() return Addon:GetState()[stateKey] == choice.value end,
       set = function(checked)
         if checked then
-          Addon:GetStore():Dispatch({ type = stateKey .. "/set", payload = choice.value })
+          Addon:GetStore():Dispatch(setValue(choice.value))
           AnchorFrame:Pin()
         end
       end
@@ -95,18 +98,18 @@ end
 function MainWindowOptions:Initialize(container)
   container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = "GameFontNormalLarge" }))
 
-  addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications")
-  addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "lootPrices")
-  addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "ownedItemCounts")
+  addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications", ActionCreators.toggleMoneyNotifications)
+  addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "lootPrices", ActionCreators.toggleLootPrices)
+  addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "ownedItemCounts", ActionCreators.toggleOwnedItemCounts)
 
   addDivider(container)
   container:AttachComponent(ComponentFactory:Text({ text = L.LAYOUT, fontObject = "GameFontNormalLarge" }))
 
-  addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", {
+  addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", ActionCreators.setAnchorDirection, {
     { value = "DOWN", text = L.DOWN },
     { value = "UP", text = L.UP }
   })
-  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", {
+  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", ActionCreators.setAnchorAlignment, {
     { value = "LEFT", text = L.LEFT },
     { value = "CENTER", text = L.CENTER },
     { value = "RIGHT", text = L.RIGHT }
@@ -126,9 +129,9 @@ function MainWindowOptions:Initialize(container)
           Addon:GetStore():Dispatch({
             type = Wux.ActionTypes.Batch,
             payload = {
-              { type = "lootPrices/reset" },
-              { type = "moneyNotifications/reset" },
-              { type = "ownedItemCounts/reset" }
+              ActionCreators.resetLootPrices(),
+              ActionCreators.resetMoneyNotifications(),
+              ActionCreators.resetOwnedItemCounts()
             }
           })
           AnchorFrame:Reset()
