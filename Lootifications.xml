@@ -58,11 +58,13 @@
   <Script file="src\ui\widgets\primitives\frame\events\focused.lua"/>
   <Script file="src\ui\widgets\primitives\frame\events\hovered.lua"/>
   <Script file="src\ui\widgets\primitives\frame\frame.lua"/>
+  <Script file="src\ui\widgets\primitives\slider.lua"/>
 
   <!-- UI Components -->
   <Script file="src\ui\components\icon-button.lua"/>
   <Script file="src\ui\components\notification.lua"/>
   <Script file="src\ui\components\option-card.lua"/>
+  <Script file="src\ui\components\scroll-panel.lua"/>
   <Script file="src\ui\components\text.lua"/>
   <Script file="src\ui\components\window.lua"/>
 

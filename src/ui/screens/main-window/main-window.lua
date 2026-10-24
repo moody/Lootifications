@@ -68,11 +68,13 @@ Components.TitleBarButtonsRow:AttachComponent(Components.Root.CloseButton:Detach
 
 Components.Content = Components.Root:AddChild({
   direction = "COLUMN",
-  padding = Widgets:Padding(),
-  gap = Widgets:Padding(0.5)
+  padding = Widgets:Padding()
 })
 
-MainWindowOptions:Initialize(Components.Content)
+Components.ScrollPanel = Components.Content:AttachComponent(ComponentFactory:ScrollPanel()) --[[@as ScrollPanelComponent]]
+Components.ScrollPanel.ScrollChild:SetGap(Widgets:Padding(0.5))
+
+MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
 
 -- ============================================================================
 -- MainWindow
