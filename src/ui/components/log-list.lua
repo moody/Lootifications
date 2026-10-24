@@ -80,6 +80,9 @@ function ComponentFactory:LogList()
   --- Shown in the middle of the list while the log is empty.
   local emptyText ---@type FontString?
 
+  --- Number of entries the last refresh saw.
+  local lastCount = 0
+
   --- Cards, from the top.
   --- @type LogCardComponent[]
   local cards = {}
@@ -124,6 +127,13 @@ function ComponentFactory:LogList()
     local maxOffset = math.max(count - CARD_COUNT, 0)
     local _, sliderMax = slider:GetMinMaxValues()
     if sliderMax ~= maxOffset then slider:SetMinMaxValues(0, maxOffset) end
+
+    -- Scroll down with each new entry, so the entries being read stay still.
+    local addedCount = count - lastCount
+    lastCount = count
+    if addedCount > 0 and slider:GetValue() > 0 then
+      slider:SetValue(slider:GetValue() + addedCount)
+    end
 
     local isScrollable = maxOffset > 0
     if isScrollable ~= sliderColumn:IsVisible() then
