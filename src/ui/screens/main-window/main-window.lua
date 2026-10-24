@@ -5,9 +5,12 @@ local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
+local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
 local HistoryLog = Addon:GetModule("HistoryLog")
+local ItemLogger = Addon:GetModule("ItemLogger")
 local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
+local MoneyLogger = Addon:GetModule("MoneyLogger")
 local Widgets = Addon:GetModule("Widgets")
 
 --- @class MainWindow
@@ -156,6 +159,19 @@ Components.TabRow = Components.Content:AddRow({ height = "AUTO" })
 Components.ScreenArea = Components.Content:AddRow()
 
 -- ============================================================================
+-- Log Totals
+-- ============================================================================
+
+--- Shows the items and money looted this session in the totals of the log.
+local function refreshLogTotals()
+  Components.TotalItemsText:SetText(L.TOTAL_ITEMS:format(Colors.White(tostring(ItemLogger:GetTotal()))))
+  Components.TotalMoneyText:SetText(L.TOTAL_MONEY:format(Colors.White(GetCoinTextureString(MoneyLogger:GetTotal()))))
+end
+
+EventManager:On(E.HistoryLogged, refreshLogTotals)
+EventManager:On(E.HistoryCleared, refreshLogTotals)
+
+-- ============================================================================
 -- Tabs and Screens
 -- ============================================================================
 
@@ -163,10 +179,10 @@ Controller:AddTab({
   key = "LOG",
   labelText = L.LOG,
   createScreen = function(screen)
-    -- Holds the loot log, with the default backdrop and border around it.
+    -- Holds the loot log and its totals, with the default backdrop and border around them.
     Components.LogPanel = screen:AddChild({
       direction = "COLUMN",
-      padding = Widgets:Padding(),
+      padding = 1,
 
       --- @param parent Frame
       frameFactory = function(parent)
@@ -174,7 +190,34 @@ Controller:AddTab({
       end
     })
 
-    Components.LogPanel:AttachComponent(ComponentFactory:LogList())
+    Components.LogPanel:AddColumn({ padding = Widgets:Padding() }):AttachComponent(ComponentFactory:LogList())
+
+    -- Totals of the log, with a card-like fill and a line above it.
+    local totals = Components.LogPanel:AddRow({
+      height = "AUTO",
+      padding = Widgets:Padding(),
+
+      --- @param parent Frame
+      frameFactory = function(parent)
+        local frame = Widgets:Frame({ parent = parent, backdrop = false })
+
+        local fill = frame:CreateTexture("$parent_Fill", "BACKGROUND")
+        fill:SetAllPoints()
+        fill:SetColorTexture(Colors.White:GetRGBA(0.03))
+
+        local line = frame:CreateTexture("$parent_Line", "ARTWORK")
+        line:SetHeight(1)
+        line:SetPoint("TOPLEFT")
+        line:SetPoint("TOPRIGHT")
+        line:SetColorTexture(Colors.Black:GetRGBA(1))
+
+        return frame
+      end
+    })
+
+    Components.TotalItemsText = totals:AttachComponent(ComponentFactory:Text({ color = Colors.Grey, wordWrap = false })) --[[@as TextComponent]]
+    Components.TotalMoneyText = totals:AttachComponent(ComponentFactory:Text({ color = Colors.Grey, wordWrap = false, justifyH = "RIGHT" })) --[[@as TextComponent]]
+    refreshLogTotals()
 
     -- Wipes the log. Disabled while it is empty.
     screen:AddChild({

@@ -95,6 +95,17 @@ function ItemLogger:GetEntries()
   return HistoryLog:GetEntries(self)
 end
 
+--- Returns the number of items looted this session, counting each item in a stack.
+--- @return integer
+function ItemLogger:GetTotal()
+  local total = 0
+  for _, entry in ipairs(self:GetEntries()) do
+    total = total + entry.payload.quantity
+  end
+
+  return total
+end
+
 --- Returns the entry's text, with the item's icon once cached. It changes when the item is cached or the
 --- owned count changes.
 --- @param entry ItemLogEntry

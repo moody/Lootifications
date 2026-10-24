@@ -46,7 +46,7 @@ local function fillItemCard(card, entry)
   local payload = entry.payload
   local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(payload.link)
 
-  card:Set(payload.link, L.QUANTITY_FORMAT:format(payload.quantity), getAgeText(time() - entry.time), payload.link)
+  card:Set(payload.link, L.QUANTITY_FORMAT:format(Colors.White(payload.quantity)), getAgeText(time() - entry.time), payload.link)
   card:SetIcon(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
   card:SetAccentColor(GetItemQualityColor(quality or 1))
 end

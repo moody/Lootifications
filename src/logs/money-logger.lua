@@ -48,6 +48,17 @@ function MoneyLogger:GetEntries()
   return HistoryLog:GetEntries(self)
 end
 
+--- Returns the copper looted this session.
+--- @return integer
+function MoneyLogger:GetTotal()
+  local total = 0
+  for _, entry in ipairs(self:GetEntries()) do
+    total = total + entry.payload.copper
+  end
+
+  return total
+end
+
 --- Returns the entry's text.
 --- @param entry MoneyLogEntry
 --- @return string
