@@ -15,6 +15,76 @@ local MainWindow = Addon:GetModule("MainWindow")
 local Components = {}
 
 -- ============================================================================
+-- Controller
+-- ============================================================================
+
+--- @alias MainWindowTabKey "LOG" | "SETTINGS"
+
+--- @class MainWindowTabOptions
+--- @field key MainWindowTabKey
+--- @field labelText string Text of the tab.
+--- @field createScreen fun(screen: WaffleFlexComponent) Fills the screen the tab shows.
+
+local Controller = {
+  --- Tabs and the screens they show.
+  --- @type table<MainWindowTabKey, { tab: TabComponent, screen: WaffleFlexComponent }>
+  tabs = {},
+
+  --- Key of the selected tab.
+  --- @type MainWindowTabKey?
+  selectedTabKey = nil
+}
+
+--- Adds a tab that shows a screen. The screen is created hidden and filled by `options.createScreen`.
+--- @param options MainWindowTabOptions
+function Controller:AddTab(options)
+  local screen = Components.ScreenArea:AddColumn({ gap = Widgets:Padding(0.5), visibility = "GONE" })
+  options.createScreen(screen)
+
+  self.tabs[options.key] = {
+    screen = screen,
+    tab = Components.TabRow:AttachComponent(ComponentFactory:Tab({
+      labelText = options.labelText,
+      onClick = function() self:SelectTab(options.key) end
+    })) --[[@as TabComponent]]
+  }
+end
+
+--- Selects the tab and shows its screen, hiding the previous one. The anchor is unlocked while the settings are shown.
+--- @param key MainWindowTabKey
+function Controller:SelectTab(key)
+  if key == self.selectedTabKey then return end
+
+  local previous = self.tabs[self.selectedTabKey]
+  if previous then
+    previous.tab:SetSelected(false)
+    previous.screen:SetVisibility("GONE")
+  end
+
+  self.tabs[key].tab:SetSelected(true)
+  self.tabs[key].screen:SetVisibility("VISIBLE")
+  self.selectedTabKey = key
+
+  if Components.Root:IsVisible() then
+    if key == "SETTINGS" then
+      AnchorFrame:Unlock()
+    else
+      AnchorFrame:Lock()
+    end
+  end
+end
+
+--- Shows every screen once so its frames are built now, then returns to the log.
+function Controller:PreloadScreens()
+  for key in pairs(self.tabs) do
+    self:SelectTab(key)
+    Components.Root:Layout()
+  end
+
+  self:SelectTab("LOG")
+end
+
+-- ============================================================================
 -- Root Component
 -- ============================================================================
 
@@ -22,12 +92,15 @@ Components.Root = ComponentFactory:Window({
   name = "MainWindow",
   width = 425,
   height = 465,
-  titleText = "" -- unused; MainWindow builds its own title-bar content below
+  titleText = "", -- unused; MainWindow builds its own title-bar content below
+  refresh = function() Components.Root:Layout() end
 })
 
--- The anchor is unlocked while the window is shown.
+-- The anchor is locked while the window is hidden, and unlocked while it shows the settings.
 Components.Root:WhenFrameReady(function(frame)
-  frame:HookScript("OnShow", function() AnchorFrame:Unlock() end)
+  frame:HookScript("OnShow", function()
+    if Controller.selectedTabKey == "SETTINGS" then AnchorFrame:Unlock() end
+  end)
   frame:HookScript("OnHide", function() AnchorFrame:Lock() end)
 end)
 
@@ -72,32 +145,65 @@ Components.TitleBarButtonsRow:AttachComponent(Components.Root.CloseButton:Detach
 Components.Content = Components.Root:AddChild({
   direction = "COLUMN",
   padding = Widgets:Padding(),
-  gap = Widgets:Padding(0.5)
+  gap = Widgets:Padding(0.25)
 })
 
--- Holds the scroll panel, with the default backdrop and border around it.
-Components.OptionsPanel = Components.Content:AddChild({
-  direction = "COLUMN",
-  padding = Widgets:Padding(),
+-- Tabs, with no gap so their underlines form one line.
+Components.TabRow = Components.Content:AddRow({ height = "AUTO" })
 
-  --- @param parent Frame
-  frameFactory = function(parent)
-    return Widgets:Frame({ parent = parent })
+-- Screen area: shows the screen of the selected tab.
+Components.ScreenArea = Components.Content:AddRow()
+
+-- ============================================================================
+-- Tabs and Screens
+-- ============================================================================
+
+Controller:AddTab({
+  key = "LOG",
+  labelText = L.LOG,
+  createScreen = function(screen)
+    -- Holds the loot log, with the default backdrop and border around it.
+    Components.LogPanel = screen:AddChild({
+      direction = "COLUMN",
+      padding = Widgets:Padding(),
+
+      --- @param parent Frame
+      frameFactory = function(parent)
+        return Widgets:Frame({ parent = parent })
+      end
+    })
   end
 })
 
-Components.ScrollPanel = Components.OptionsPanel:AttachComponent(ComponentFactory:ScrollPanel()) --[[@as ScrollPanelComponent]]
-Components.ScrollPanel.ScrollChild:SetGap(Widgets:Padding(0.5))
+Controller:AddTab({
+  key = "SETTINGS",
+  labelText = L.SETTINGS,
+  createScreen = function(screen)
+    -- Holds the scroll panel, with the default backdrop and border around it.
+    Components.OptionsPanel = screen:AddChild({
+      direction = "COLUMN",
+      padding = Widgets:Padding(),
 
-MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
+      --- @param parent Frame
+      frameFactory = function(parent)
+        return Widgets:Frame({ parent = parent })
+      end
+    })
 
--- Points to the `test` command.
-Components.TestHint = Components.Content:AttachComponent(ComponentFactory:Text({
-  text = L.TEST_NOTIFICATIONS_HINT:format(Colors.White("/lootif test")),
-  color = Colors.Grey,
-  justifyH = "CENTER"
-}))
-Components.TestHint:SetMarginTop(Widgets:Padding(0.25))
+    Components.ScrollPanel = Components.OptionsPanel:AttachComponent(ComponentFactory:ScrollPanel()) --[[@as ScrollPanelComponent]]
+    Components.ScrollPanel.ScrollChild:SetGap(Widgets:Padding(0.5))
+
+    MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
+
+    -- Points to the `test` command.
+    Components.TestHint = screen:AttachComponent(ComponentFactory:Text({
+      text = L.TEST_NOTIFICATIONS_HINT:format(Colors.White("/lootif test")),
+      color = Colors.Grey,
+      justifyH = "CENTER"
+    }))
+    Components.TestHint:SetMarginTop(Widgets:Padding(0.25))
+  end
+})
 
 -- ============================================================================
 -- MainWindow
@@ -132,5 +238,6 @@ end
 -- ready.
 EventManager:Once(E.StoreInitialized, function()
   MainWindow:Show()
+  Controller:PreloadScreens()
   MainWindow:Hide()
 end)

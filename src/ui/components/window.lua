@@ -1,6 +1,7 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
 local Colors = Addon:GetModule("Colors")
+local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
 
 --- @class ComponentFactory
@@ -16,6 +17,7 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 --- @field height integer
 --- @field titleText string
 --- @field frameStrata? FrameStrata Defaults to `HIGH`.
+--- @field refresh? fun() Called repeatedly while the window is visible.
 
 -- =============================================================================
 -- ComponentFactory - Window
@@ -57,6 +59,11 @@ function ComponentFactory:Window(options)
       frame:HookScript("OnHide", function()
         root:SetVisibility("GONE")
       end)
+
+      -- Bind the refresh callback to the root frame, if given.
+      if options.refresh then
+        TickerManager:NewTicker(1 / 30, options.refresh):BindFrame(frame)
+      end
 
       return frame
     end
