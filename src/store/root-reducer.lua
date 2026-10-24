@@ -80,6 +80,9 @@ function RootReducer:Build()
       return type(state) == "table" and state or defaultState.mainWindowPoint
     end,
 
+    -- Minimap icon.
+    minimapIcon = Wux:CreatePatchReducer(ActionTypes.PATCH_MINIMAP_ICON, defaultState.minimapIcon),
+
     -- Money notifications.
     moneyNotifications = function(state, action)
       state = Wux:Coalesce(state, defaultState.moneyNotifications)

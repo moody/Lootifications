@@ -46,6 +46,14 @@ do
   end
 end
 
+--- Returns the library with the given name. Throws an error if there is none.
+--- @generic T
+--- @param key `T`
+--- @return T
+function Addon:GetLibrary(key)
+  return LibStub(key)
+end
+
 --- Returns the full path to a file in the `/assets` folder.
 --- @param fileName string
 --- @return string

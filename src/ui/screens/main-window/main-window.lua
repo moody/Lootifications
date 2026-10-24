@@ -285,8 +285,11 @@ Controller:AddTab({
 -- MainWindow
 -- ============================================================================
 
---- Shows the main window.
-function MainWindow:Show()
+--- Shows the main window, on the tab if one is given.
+--- @param tabKey? MainWindowTabKey
+function MainWindow:Show(tabKey)
+  if tabKey then Controller:SelectTab(tabKey) end
+
   Components.Root:SetVisibility("VISIBLE")
   Components.Root:Layout()
 end
@@ -297,12 +300,13 @@ function MainWindow:Hide()
   Components.Root:Layout()
 end
 
---- Shows the main window if it is hidden, and hides it if it is shown.
-function MainWindow:Toggle()
-  if Components.Root:IsVisible() then
+--- Hides the main window if it is shown, on the tab if one is given. Otherwise shows it, on that tab.
+--- @param tabKey? MainWindowTabKey
+function MainWindow:Toggle(tabKey)
+  if Components.Root:IsVisible() and (not tabKey or tabKey == Controller.selectedTabKey) then
     self:Hide()
   else
-    self:Show()
+    self:Show(tabKey)
   end
 end
 

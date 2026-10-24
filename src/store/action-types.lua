@@ -3,6 +3,7 @@ local Addon = select(2, ...) ---@type Addon
 --- @class ActionTypes
 local ActionTypes = Addon:GetModule("ActionTypes")
 
+ActionTypes.PATCH_MINIMAP_ICON = "minimapIcon/patch"
 ActionTypes.RESET_ANCHOR_ALIGNMENT = "anchorAlignment/reset"
 ActionTypes.RESET_ANCHOR_DIRECTION = "anchorDirection/reset"
 ActionTypes.RESET_ANCHOR_POINT = "anchorPoint/reset"

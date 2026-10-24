@@ -1,5 +1,9 @@
 <Ui>
   <!-- Libs -->
+  <Script file="libs\LibStub.lua"/>
+  <Script file="libs\CallbackHandler-1.0.lua"/>
+  <Script file="libs\LibDataBroker-1.1.lua"/>
+  <Script file="libs\LibDBIcon-1.0.lua"/>
   <Script file="libs\Waffle.lua"/>
   <Script file="libs\Wux.lua"/>
 
@@ -88,6 +92,9 @@
 
   <!-- UI Notifications -->
   <Script file="src\ui\history-notifications.lua"/>
+
+  <!-- UI Minimap -->
+  <Script file="src\ui\minimap-icon.lua"/>
 
   <!-- UI Blizzard -->
   <Script file="src\ui\blizzard\addon-compartment.lua"/>

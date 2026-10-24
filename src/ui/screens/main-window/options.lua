@@ -3,6 +3,7 @@ local ActionCreators = Addon:GetModule("ActionCreators")
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
+local DefaultStates = Addon:GetModule("DefaultStates")
 local L = Addon:GetModule("Locale")
 local Widgets = Addon:GetModule("Widgets")
 local Wux = Addon.Wux
@@ -116,6 +117,14 @@ function MainWindowOptions:Initialize(container)
   })
 
   addDivider(container)
+  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
+
+  addCard(container, {
+    get = function() return not Addon:GetState().minimapIcon.hide end,
+    set = function(show) Addon:GetStore():Dispatch(ActionCreators.patchMinimapIcon({ hide = not show })) end
+  }, L.MINIMAP_ICON_TEXT, L.MINIMAP_ICON_DESCRIPTION)
+
+  addDivider(container)
 
   -- Resets every option and the anchor's position.
   container:AddChild({
@@ -131,7 +140,8 @@ function MainWindowOptions:Initialize(container)
             payload = {
               ActionCreators.resetLootPrices(),
               ActionCreators.resetMoneyNotifications(),
-              ActionCreators.resetOwnedItemCounts()
+              ActionCreators.resetOwnedItemCounts(),
+              ActionCreators.patchMinimapIcon({ hide = DefaultStates.Root.minimapIcon.hide })
             }
           })
           AnchorFrame:Reset()

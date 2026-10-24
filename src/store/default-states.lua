@@ -11,6 +11,7 @@ DefaultStates.Root = {
   anchorPoint = {},
   lootPrices = false,
   mainWindowPoint = { point = "CENTER", relativePoint = "CENTER", offsetX = 0, offsetY = -40 },
+  minimapIcon = { hide = false },
   moneyNotifications = true,
   ownedItemCounts = false
 }

@@ -16,9 +16,17 @@ local ActionCreators = Addon:GetModule("ActionCreators")
 --- @field x number
 --- @field y number
 
+--- @class MinimapIconPayload
+--- @field hide? boolean
+--- @field minimapPos? number Position on the minimap, as an angle in degrees.
+
 -- ============================================================================
 -- ActionCreators
 -- ============================================================================
+
+--- Action creator for `ActionTypes.PATCH_MINIMAP_ICON`.
+--- @type WuxActionCreator<MinimapIconPayload>
+ActionCreators.patchMinimapIcon = Wux:CreateActionCreator(ActionTypes.PATCH_MINIMAP_ICON)
 
 --- Action creator for `ActionTypes.RESET_ANCHOR_ALIGNMENT`.
 --- @type WuxActionCreator<nil>
