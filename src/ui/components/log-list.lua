@@ -99,7 +99,7 @@ function ComponentFactory:LogList()
       emptyText = frame:CreateFontString("$parent_EmptyText", "ARTWORK", "GameFontNormal")
       emptyText:SetPoint("CENTER")
       emptyText:SetTextColor(Colors.Grey:GetRGB())
-      emptyText:SetText(L.NO_LOOT)
+      emptyText:SetText(L.NOTHING_LOOTED_YET)
 
       return frame
     end
