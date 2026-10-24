@@ -51,6 +51,7 @@
   <Script file="src\ui\widgets\widgets.lua"/>
 
   <!-- UI Widgets - Primitives -->
+  <Script file="src\ui\widgets\primitives\button.lua"/>
   <Script file="src\ui\widgets\primitives\checkbox.lua"/>
   <Script file="src\ui\widgets\primitives\frame\frame-event-state.lua"/>
   <Script file="src\ui\widgets\primitives\frame\frame-events.lua"/>
@@ -61,10 +62,14 @@
   <Script file="src\ui\widgets\primitives\slider.lua"/>
 
   <!-- UI Components -->
+  <Script file="src\ui\components\check-chip-group.lua"/>
+  <Script file="src\ui\components\check-chip.lua"/>
+  <Script file="src\ui\components\divider.lua"/>
   <Script file="src\ui\components\icon-button.lua"/>
   <Script file="src\ui\components\notification.lua"/>
   <Script file="src\ui\components\option-card.lua"/>
   <Script file="src\ui\components\scroll-panel.lua"/>
+  <Script file="src\ui\components\settings-box.lua"/>
   <Script file="src\ui\components\text.lua"/>
   <Script file="src\ui\components\window.lua"/>
 

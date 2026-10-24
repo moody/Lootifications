@@ -70,6 +70,26 @@ local function pinToDefault(frame)
   frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
 end
 
+--- Pins the frame at its point, in the place it is now, and saves the offsets from the screen's edge at that point.
+--- @param frame AnchorFrameWidget
+local function pinInPlace(frame)
+  local point = getPoint()
+  local x = frame:GetCenter() - (UIParent:GetLeft() + UIParent:GetWidth() * 0.5)
+  if point:find("LEFT") then
+    x = frame:GetLeft() - UIParent:GetLeft()
+  elseif point:find("RIGHT") then
+    x = frame:GetRight() - UIParent:GetRight()
+  end
+
+  local y = frame:GetBottom() - UIParent:GetBottom()
+  if point:find("TOP") then
+    y = frame:GetTop() - UIParent:GetTop()
+  end
+
+  pinTo(frame, x, y)
+  Addon:GetStore():Dispatch({ type = "anchorPoint/set", payload = { x = x, y = y } })
+end
+
 --- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
 --- @param frame AnchorFrameWidget
 local function refreshFrame(frame)
@@ -119,25 +139,10 @@ Components.Root = Addon.Waffle:Flex({
     frame:RegisterForDrag("LeftButton")
     frame:SetScript("OnDragStart", frame.StartMoving)
 
-    -- Pin the frame where it was dropped, and save the offsets from the screen's edge at its point.
+    -- Pin the frame where it was dropped.
     frame:SetScript("OnDragStop", function(self)
       self:StopMovingOrSizing()
-
-      local point = getPoint()
-      local x = self:GetCenter() - (UIParent:GetLeft() + UIParent:GetWidth() * 0.5)
-      if point:find("LEFT") then
-        x = self:GetLeft() - UIParent:GetLeft()
-      elseif point:find("RIGHT") then
-        x = self:GetRight() - UIParent:GetRight()
-      end
-
-      local y = self:GetBottom() - UIParent:GetBottom()
-      if point:find("TOP") then
-        y = self:GetTop() - UIParent:GetTop()
-      end
-
-      pinTo(self, x, y)
-      Addon:GetStore():Dispatch({ type = "anchorPoint/set", payload = { x = x, y = y } })
+      pinInPlace(self)
     end)
 
     frame:SetScript("OnMouseDown", function(_, button)
@@ -216,6 +221,12 @@ function AnchorFrame:Lock()
   Components.ExampleNotifications:SetVisibility("GONE")
   Components.LiveNotifications:SetVisibility("VISIBLE")
   Components.Root:WhenFrameReady(refreshFrame)
+end
+
+--- Pins the anchor at the point from its direction and alignment, where it is now. Call it after either changes,
+--- so that the notifications stay where they are.
+function AnchorFrame:Pin()
+  Components.Root:WhenFrameReady(pinInPlace)
 end
 
 --- Moves the anchor to its default position and resets its direction and alignment.

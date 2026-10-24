@@ -75,6 +75,8 @@ local rootReducer = Wux:CombineReducers({
 
     if action.type == "lootPrices/toggle" then
       state = not state
+    elseif action.type == "lootPrices/reset" then
+      state = DEFAULT_STATE.lootPrices
     end
 
     return state
@@ -86,6 +88,8 @@ local rootReducer = Wux:CombineReducers({
 
     if action.type == "moneyNotifications/toggle" then
       state = not state
+    elseif action.type == "moneyNotifications/reset" then
+      state = DEFAULT_STATE.moneyNotifications
     end
 
     return state
@@ -97,6 +101,8 @@ local rootReducer = Wux:CombineReducers({
 
     if action.type == "ownedItemCounts/toggle" then
       state = not state
+    elseif action.type == "ownedItemCounts/reset" then
+      state = DEFAULT_STATE.ownedItemCounts
     end
 
     return state

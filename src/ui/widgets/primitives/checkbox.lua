@@ -9,7 +9,7 @@ local Widgets = Addon:GetModule("Widgets")
 -- =============================================================================
 
 --- @class CheckboxWidgetOptions : FrameWidgetOptions
---- @field color? Color Defaults to `Colors.Blue`.
+--- @field color? Color Defaults to `Colors.Purple`.
 
 -- =============================================================================
 -- Widgets - Checkbox
@@ -24,7 +24,7 @@ function Widgets:Checkbox(options)
   options.name = Addon:IfNil(options.name, Widgets:GetUniqueName("Checkbox"))
   options.width = Addon:IfNil(options.width, 20)
   options.height = Addon:IfNil(options.height, 20)
-  options.color = Addon:IfNil(options.color, Colors.Blue)
+  options.color = Addon:IfNil(options.color, Colors.Purple)
 
   --- @class CheckboxWidget : FrameWidget
   local frame = self:Frame(options)

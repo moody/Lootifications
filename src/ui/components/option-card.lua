@@ -12,8 +12,8 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 -- =============================================================================
 
 --- @class OptionCardOptions
---- @field get fun(): boolean Returns whether the option is on.
---- @field set fun(value: boolean) Called with the new value when the card is clicked.
+--- @field get? fun(): boolean Returns whether the option is on. Without `get` and `set` the card is plain: it has no checkbox to show, and does nothing when clicked.
+--- @field set? fun(value: boolean) Called with the new value when the card is clicked.
 --- @field onUpdateTooltip? fun(self: FrameWidget, tooltip: Tooltip) Shown while hovering the card.
 
 -- =============================================================================
@@ -21,7 +21,8 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 -- =============================================================================
 
 --- Creates a full-width card with a checkbox beside its content. Clicking
---- anywhere on the card toggles the option.
+--- anywhere on the card toggles the option. A plain card keeps the space of the
+--- checkbox, so its content lines up with the other cards.
 --- @param options OptionCardOptions
 --- @return OptionCardComponent root
 function ComponentFactory:OptionCard(options)
@@ -44,7 +45,9 @@ function ComponentFactory:OptionCard(options)
       })
       frame:SetBackdropColor(Colors.White:GetRGBA(0.03))
       frame:SetBackdropBorderColor(0, 0, 0, 0)
-      frame:SetClickHandler("LeftButton", "NONE", function() options.set(not options.get()) end)
+      if options.get and options.set then
+        frame:SetClickHandler("LeftButton", "NONE", function() options.set(not options.get()) end)
+      end
       return frame
     end
   })
@@ -53,12 +56,15 @@ function ComponentFactory:OptionCard(options)
   root:AddChild({
     width = 18,
     height = 18,
+    visibility = options.get and "VISIBLE" or "INVISIBLE",
 
     --- @param parent Frame
     frameFactory = function(parent)
-      return Widgets:Checkbox({ parent = parent, color = Colors.Purple })
+      return Widgets:Checkbox({ parent = parent })
     end
   }):WhenFrameReady(function(checkbox) -- Refresh on hover, show, and state changes.
+    if not options.get then return end
+
     --- @cast checkbox CheckboxWidget
     --- @type FrameWidget
     local frame = root:GetFrame()

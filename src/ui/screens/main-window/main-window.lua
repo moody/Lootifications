@@ -3,8 +3,12 @@ local Addon = select(2, ...) ---@type Addon
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
+local E = Addon:GetModule("Events")
+local EventManager = Addon:GetModule("EventManager")
+local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 local Widgets = Addon:GetModule("Widgets")
+local Wux = Addon.Wux
 
 --- @class MainWindow
 local MainWindow = Addon:GetModule("MainWindow")
@@ -17,8 +21,8 @@ local Components = {}
 
 Components.Root = ComponentFactory:Window({
   name = "MainWindow",
-  width = 400,
-  height = 320,
+  width = 475,
+  height = 380,
   titleText = "" -- unused; MainWindow builds its own title-bar content below
 })
 
@@ -68,13 +72,48 @@ Components.TitleBarButtonsRow:AttachComponent(Components.Root.CloseButton:Detach
 
 Components.Content = Components.Root:AddChild({
   direction = "COLUMN",
-  padding = Widgets:Padding()
+  padding = Widgets:Padding(),
+  gap = Widgets:Padding(0.5)
 })
 
-Components.ScrollPanel = Components.Content:AttachComponent(ComponentFactory:ScrollPanel()) --[[@as ScrollPanelComponent]]
+-- Holds the scroll panel, with the default backdrop and border around it.
+Components.OptionsPanel = Components.Content:AddChild({
+  direction = "COLUMN",
+  padding = Widgets:Padding(),
+
+  --- @param parent Frame
+  frameFactory = function(parent)
+    return Widgets:Frame({ parent = parent })
+  end
+})
+
+Components.ScrollPanel = Components.OptionsPanel:AttachComponent(ComponentFactory:ScrollPanel()) --[[@as ScrollPanelComponent]]
 Components.ScrollPanel.ScrollChild:SetGap(Widgets:Padding(0.5))
 
 MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
+
+-- Resets every option and the anchor's position.
+Components.ResetButton = Components.Content:AddChild({
+  height = 30,
+  frameFactory = function()
+    return Widgets:Button({
+      name = "$parent_ResetToDefaultsButton",
+      labelText = L.RESET_TO_DEFAULTS,
+      labelColor = Colors.Yellow,
+      onClick = function()
+        Addon:GetStore():Dispatch({
+          type = Wux.ActionTypes.Batch,
+          payload = {
+            { type = "lootPrices/reset" },
+            { type = "moneyNotifications/reset" },
+            { type = "ownedItemCounts/reset" }
+          }
+        })
+        AnchorFrame:Reset()
+      end
+    })
+  end
+})
 
 -- ============================================================================
 -- MainWindow
@@ -100,3 +139,14 @@ function MainWindow:Toggle()
     self:Show()
   end
 end
+
+-- ============================================================================
+-- Events
+-- ============================================================================
+
+-- Some elements of the UI do not appear correctly without an initial load, so we force one here once the store is
+-- ready.
+EventManager:Once(E.StoreInitialized, function()
+  MainWindow:Show()
+  MainWindow:Hide()
+end)
