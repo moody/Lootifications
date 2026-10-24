@@ -12,7 +12,7 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 -- =============================================================================
 
 --- @class OptionCardOptions
---- @field get? fun(): boolean Returns whether the option is on. Without `get` and `set` the card is plain: it has no checkbox to show, and does nothing when clicked.
+--- @field get? fun(): boolean Returns whether the option is on. Without `get` and `set` the card is plain: it has no checkbox, and does nothing when clicked.
 --- @field set? fun(value: boolean) Called with the new value when the card is clicked.
 --- @field onUpdateTooltip? fun(self: FrameWidget, tooltip: Tooltip) Shown while hovering the card.
 
@@ -21,8 +21,7 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 -- =============================================================================
 
 --- Creates a full-width card with a checkbox beside its content. Clicking
---- anywhere on the card toggles the option. A plain card keeps the space of the
---- checkbox, so its content lines up with the other cards.
+--- anywhere on the card toggles the option. A plain card has no checkbox.
 --- @param options OptionCardOptions
 --- @return OptionCardComponent root
 function ComponentFactory:OptionCard(options)
@@ -53,36 +52,35 @@ function ComponentFactory:OptionCard(options)
   })
 
   -- Checkbox.
-  root:AddChild({
-    width = 18,
-    height = 18,
-    visibility = options.get and "VISIBLE" or "INVISIBLE",
+  if options.get then
+    root:AddChild({
+      width = 18,
+      height = 18,
 
-    --- @param parent Frame
-    frameFactory = function(parent)
-      return Widgets:Checkbox({ parent = parent })
-    end
-  }):WhenFrameReady(function(checkbox) -- Refresh on hover, show, and state changes.
-    if not options.get then return end
+      --- @param parent Frame
+      frameFactory = function(parent)
+        return Widgets:Checkbox({ parent = parent })
+      end
+    }):WhenFrameReady(function(checkbox) -- Refresh on hover, show, and state changes.
+      --- @cast checkbox CheckboxWidget
+      --- @type FrameWidget
+      local frame = root:GetFrame()
 
-    --- @cast checkbox CheckboxWidget
-    --- @type FrameWidget
-    local frame = root:GetFrame()
+      --- Applies the hover fill to the card, and updates the checkbox.
+      local function refresh()
+        local isHovered = frame:GetEventValue("HOVERED")
+        frame:SetBackdropColor(Colors.White:GetRGBA(isHovered and 0.06 or 0.03))
+        checkbox:SetChecked(options.get())
+        checkbox:FireEvent("HOVERED", isHovered)
+      end
 
-    --- Applies the hover fill to the card, and updates the checkbox.
-    local function refresh()
-      local isHovered = frame:GetEventValue("HOVERED")
-      frame:SetBackdropColor(Colors.White:GetRGBA(isHovered and 0.06 or 0.03))
-      checkbox:SetChecked(options.get())
-      checkbox:FireEvent("HOVERED", isHovered)
-    end
-
-    frame:OnEvent("HOVERED", refresh)
-    frame:HookScript("OnShow", refresh)
-    EventManager:On(E.StateUpdated, function()
-      if frame:IsVisible() then refresh() end
+      frame:OnEvent("HOVERED", refresh)
+      frame:HookScript("OnShow", refresh)
+      EventManager:On(E.StateUpdated, function()
+        if frame:IsVisible() then refresh() end
+      end)
     end)
-  end)
+  end
 
   root.Content = root:AddColumn({ height = "AUTO", gap = Widgets:Padding(0.25) })
 

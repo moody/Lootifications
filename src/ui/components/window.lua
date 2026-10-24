@@ -21,8 +21,8 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 -- ComponentFactory - Window
 -- =============================================================================
 
---- Creates a draggable floating window with a title bar and close button. It starts in the center of the screen,
---- and ESC closes it.
+--- Creates a draggable floating window with a title bar and close button. It starts a little below the center of the
+--- screen, and ESC closes it.
 --- @param options WindowComponentOptions
 --- @return WindowComponent root
 function ComponentFactory:Window(options)
@@ -48,7 +48,7 @@ function ComponentFactory:Window(options)
         enableDragging = true,
         frameStrata = options.frameStrata or "HIGH"
       })
-      frame:SetPoint("CENTER")
+      frame:SetPoint("CENTER", 0, -40)
 
       -- Close on ESC.
       table.insert(UISpecialFrames, frame:GetName())

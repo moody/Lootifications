@@ -21,7 +21,7 @@ local Components = {}
 Components.Root = ComponentFactory:Window({
   name = "MainWindow",
   width = 425,
-  height = 400,
+  height = 465,
   titleText = "" -- unused; MainWindow builds its own title-bar content below
 })
 
@@ -94,10 +94,10 @@ MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
 -- Points to the `test` command.
 Components.TestHint = Components.Content:AttachComponent(ComponentFactory:Text({
   text = L.TEST_NOTIFICATIONS_HINT:format(Colors.White("/lootif test")),
-  fontObject = "GameFontNormalSmall",
   color = Colors.Grey,
   justifyH = "CENTER"
 }))
+Components.TestHint:SetMarginTop(Widgets:Padding(0.25))
 
 -- ============================================================================
 -- MainWindow

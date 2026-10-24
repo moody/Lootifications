@@ -78,6 +78,14 @@ local function addChoiceCard(container, labelText, descriptionText, lineLabelTex
   box:AddLine(lineLabelText):AttachComponent(ComponentFactory:CheckChipGroup({ chips = chips }))
 end
 
+--- Adds a divider with space around it to the container.
+--- @param container WaffleFlexComponent
+local function addDivider(container)
+  local divider = container:AttachComponent(ComponentFactory:Divider())
+  divider:SetMarginTop(Widgets:Padding(0.5))
+  divider:SetMarginBottom(Widgets:Padding(0.5))
+end
+
 -- ============================================================================
 -- MainWindowOptions
 -- ============================================================================
@@ -85,9 +93,14 @@ end
 --- Adds the options to the container.
 --- @param container WaffleFlexComponent
 function MainWindowOptions:Initialize(container)
-  addOptionCard(container, L.MONEY_NOTIFICATIONS_TEXT, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications")
+  container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = "GameFontNormalLarge" }))
+
+  addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications")
   addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "lootPrices")
   addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "ownedItemCounts")
+
+  addDivider(container)
+  container:AttachComponent(ComponentFactory:Text({ text = L.LAYOUT, fontObject = "GameFontNormalLarge" }))
 
   addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", {
     { value = "DOWN", text = L.DOWN },
@@ -99,11 +112,9 @@ function MainWindowOptions:Initialize(container)
     { value = "RIGHT", text = L.RIGHT }
   })
 
-  -- Resets every option and the anchor's position.
-  local divider = container:AttachComponent(ComponentFactory:Divider())
-  divider:SetMarginTop(Widgets:Padding(0.5))
-  divider:SetMarginBottom(Widgets:Padding(0.5))
+  addDivider(container)
 
+  -- Resets every option and the anchor's position.
   container:AddChild({
     height = 30,
     frameFactory = function()
