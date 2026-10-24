@@ -1,8 +1,6 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
-local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
-local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
-local GetItemQualityColor = C_Item.GetItemQualityColor or GetItemQualityColor
 local HistoryLog = Addon:GetModule("HistoryLog")
 local ItemLogger = Addon:GetModule("ItemLogger")
 local L = Addon:GetModule("Locale")
@@ -12,15 +10,6 @@ local Widgets = Addon:GetModule("Widgets")
 
 --- @class ComponentFactory
 local ComponentFactory = Addon:GetModule("ComponentFactory")
-
---- Format of an age in hours.
-local HOUR_FORMAT = HOUR_ONELETTER_ABBR or "%d h"
-
---- Format of an age in minutes.
-local MINUTE_FORMAT = MINUTE_ONELETTER_ABBR or "%d m"
-
---- Format of an age in seconds.
-local SECOND_FORMAT = SECOND_ONELETTER_ABBR or "%d s"
 
 --- Number of cards, which share the list's height. Older entries are reached by scrolling.
 local CARD_COUNT = 7
@@ -34,9 +23,9 @@ local CARD_COUNT = 7
 --- @return string
 local function getAgeText(seconds)
   seconds = math.max(math.floor(seconds), 0)
-  if seconds >= 3600 then return HOUR_FORMAT:format(math.floor(seconds / 3600)) end
-  if seconds >= 60 then return MINUTE_FORMAT:format(math.floor(seconds / 60)) end
-  return SECOND_FORMAT:format(seconds)
+  if seconds >= 3600 then return B.Strings.HOURS_ABBREVIATED_TEXT:format(math.floor(seconds / 3600)) end
+  if seconds >= 60 then return B.Strings.MINUTES_ABBREVIATED_TEXT:format(math.floor(seconds / 60)) end
+  return B.Strings.SECONDS_ABBREVIATED_TEXT:format(seconds)
 end
 
 --- Shows an item entry on the card.
@@ -44,18 +33,18 @@ end
 --- @param entry ItemLogEntry
 local function fillItemCard(card, entry)
   local payload = entry.payload
-  local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(payload.link)
+  local _, quality, texture = B.Items:GetInfo(payload.link)
 
   card:Set(payload.link, L.QUANTITY_FORMAT:format(Colors.White(payload.quantity)), getAgeText(time() - entry.time), payload.link)
   card:SetIcon(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
-  card:SetAccentColor(GetItemQualityColor(quality or 1))
+  card:SetAccentColor((Colors.ByQuality[quality] or Colors.QualityCommon):GetRGB())
 end
 
 --- Shows a money entry on the card.
 --- @param card LogCardComponent
 --- @param entry MoneyLogEntry
 local function fillMoneyCard(card, entry)
-  card:Set(GetCoinTextureString(entry.payload.copper), L.MONEY, getAgeText(time() - entry.time))
+  card:Set(B.Money:GetCoinText(entry.payload.copper), L.MONEY, getAgeText(time() - entry.time))
   card:SetIcon(nil)
   card:SetAccentColor(Colors.Gold:GetRGB())
 end

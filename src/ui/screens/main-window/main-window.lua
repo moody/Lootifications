@@ -2,11 +2,11 @@ local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
 local ActionCreators = Addon:GetModule("ActionCreators")
 local AnchorFrame = Addon:GetModule("AnchorFrame")
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
-local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
 local HistoryLog = Addon:GetModule("HistoryLog")
 local ItemLogger = Addon:GetModule("ItemLogger")
 local L = Addon:GetModule("Locale")
@@ -168,8 +168,8 @@ Components.ScreenArea = Components.Content:AddRow()
 
 --- Shows the items and money looted this session in the totals of the log.
 local function refreshLogTotals()
-  Components.TotalItemsText:SetText(L.TOTAL_ITEMS:format(Colors.White(tostring(ItemLogger:GetTotal()))))
-  Components.TotalMoneyText:SetText(L.TOTAL_MONEY:format(Colors.White(GetCoinTextureString(MoneyLogger:GetTotal()))))
+  Components.TotalItemsText:SetText(L.TOTAL_ITEMS:format(Colors.White(ItemLogger:GetTotal())))
+  Components.TotalMoneyText:SetText(L.TOTAL_MONEY:format(Colors.White(B.Money:GetCoinText(MoneyLogger:GetTotal()))))
 end
 
 EventManager:On(E.HistoryLogged, refreshLogTotals)

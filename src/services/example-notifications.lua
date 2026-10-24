@@ -1,5 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
-local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local B = Addon:GetModule("Blizzard")
 local ItemLogger = Addon:GetModule("ItemLogger")
 local MoneyLogger = Addon:GetModule("MoneyLogger")
 
@@ -39,7 +39,7 @@ function ExampleNotifications:GetText(slot)
   local entry = itemEntries[index]
 
   if item and not entry then
-    local link = select(2, GetItemInfo(item.itemID))
+    local link = B.Items:GetInfo(item.itemID)
     if link then
       entry = { logger = ItemLogger, time = 0, payload = { link = link, quantity = item.quantity } }
       itemEntries[index] = entry

@@ -1,5 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
-local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local B = Addon:GetModule("Blizzard")
 local HistoryNotifications = Addon:GetModule("HistoryNotifications")
 local ItemLogger = Addon:GetModule("ItemLogger")
 
@@ -41,7 +41,7 @@ function Tester:Run()
   local shownCount = 0
 
   while shownCount < Addon.MAX_NOTIFICATIONS and #itemIDs > 0 do
-    local _, link = GetItemInfo(table.remove(itemIDs, math.random(#itemIDs)))
+    local link = B.Items:GetInfo(table.remove(itemIDs, math.random(#itemIDs)))
     if link then
       --- @type ItemLogEntry
       local entry = { logger = ItemLogger, time = time(), payload = { link = link, quantity = math.random() < 0.5 and math.random(2, 5) or 1 } }

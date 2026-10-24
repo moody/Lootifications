@@ -1,7 +1,7 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
-local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
 local HistoryLog = Addon:GetModule("HistoryLog")
 
 --- Logs the money looted.
@@ -14,9 +14,9 @@ local MoneyLogger = Addon:GetModule("MoneyLogger")
 --- @class MoneyLogEntry : HistoryLogEntry
 --- @field payload MoneyLogPayload
 
-local GOLD_AMOUNT = GOLD_AMOUNT:gsub("%%d", "(%%d+)")
-local SILVER_AMOUNT = SILVER_AMOUNT:gsub("%%d", "(%%d+)")
-local COPPER_AMOUNT = COPPER_AMOUNT:gsub("%%d", "(%%d+)")
+local GOLD_AMOUNT = B.Strings.GOLD_AMOUNT_TEXT:gsub("%%d", "(%%d+)")
+local SILVER_AMOUNT = B.Strings.SILVER_AMOUNT_TEXT:gsub("%%d", "(%%d+)")
+local COPPER_AMOUNT = B.Strings.COPPER_AMOUNT_TEXT:gsub("%%d", "(%%d+)")
 
 -- ============================================================================
 -- Local Functions
@@ -26,8 +26,8 @@ local COPPER_AMOUNT = COPPER_AMOUNT:gsub("%%d", "(%%d+)")
 --- @param message string
 --- @return integer copper
 local function parse(message)
-  local goldAmount = tonumber(message:match(GOLD_AMOUNT) or 0) * COPPER_PER_GOLD
-  local silverAmount = tonumber(message:match(SILVER_AMOUNT) or 0) * COPPER_PER_SILVER
+  local goldAmount = tonumber(message:match(GOLD_AMOUNT) or 0) * B.Money.COPPER_PER_GOLD
+  local silverAmount = tonumber(message:match(SILVER_AMOUNT) or 0) * B.Money.COPPER_PER_SILVER
   local copperAmount = tonumber(message:match(COPPER_AMOUNT) or 0)
   return goldAmount + silverAmount + copperAmount
 end
@@ -63,7 +63,7 @@ end
 --- @param entry MoneyLogEntry
 --- @return string
 function MoneyLogger:GetText(entry)
-  return GetCoinTextureString(entry.payload.copper)
+  return B.Money:GetCoinText(entry.payload.copper)
 end
 
 -- ============================================================================

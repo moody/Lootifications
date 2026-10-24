@@ -32,6 +32,9 @@
   <Script file="src\utils\message-builder.lua"/>
   <Script file="src\utils\ticker-manager.lua"/>
 
+  <!-- Blizzard -->
+  <Script file="src\blizzard\blizzard.lua"/>
+
   <!-- Store -->
   <Script file="src\store\action-types.lua"/>
   <Script file="src\store\action-creators.lua"/>

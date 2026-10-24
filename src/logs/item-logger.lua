@@ -1,10 +1,8 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
-local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
-local GetItemCount = C_Item.GetItemCount or GetItemCount
-local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
 local HistoryLog = Addon:GetModule("HistoryLog")
 local MessageBuilder = Addon:GetModule("MessageBuilder")
 
@@ -57,7 +55,7 @@ end
 --- @return string
 local function getCountText(link, ownedCount)
   if Addon:GetState().ownedItemCounts then
-    local itemCount = ownedCount or tonumber(GetItemCount(link) or 0)
+    local itemCount = ownedCount or B.Items:GetBagCount(link)
     if itemCount > 0 then
       return PARENTHESES_FORMAT:format(itemCount)
     end
@@ -72,7 +70,7 @@ end
 --- @return string
 local function getPriceText(price, quantity)
   if Addon:GetState().lootPrices and price and price > 0 then
-    return PARENTHESES_FORMAT:format(GetCoinTextureString(price * quantity))
+    return PARENTHESES_FORMAT:format(B.Money:GetCoinText(price * quantity))
   end
 
   return ""
@@ -113,7 +111,7 @@ end
 --- @return string
 function ItemLogger:GetText(entry, ownedCount)
   local payload = entry.payload
-  local texture, price = select(10, GetItemInfo(payload.link))
+  local _, _, texture, price = B.Items:GetInfo(payload.link)
 
   messageBuilder:Reset()
   messageBuilder:Append(payload.link .. getQuantityText(payload.quantity))

@@ -1,5 +1,6 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local ActionCreators = Addon:GetModule("ActionCreators")
 local Colors = Addon:GetModule("Colors")
 local Commands = Addon:GetModule("Commands")
@@ -10,8 +11,6 @@ local LDB = Addon:GetLibrary("LibDataBroker-1.1")
 local LDBIcon = Addon:GetLibrary("LibDBIcon-1.0")
 local MainWindow = Addon:GetModule("MainWindow")
 local TickerManager = Addon:GetModule("TickerManager")
-
-local SHIFT_KEY = assert(SHIFT_KEY_TEXT, "SHIFT_KEY_TEXT is not available on this client")
 
 -- ============================================================================
 -- Local Functions
@@ -33,7 +32,7 @@ end
 EventManager:Once(E.StoreInitialized, function()
   local logLine = getTooltipLine(L.LEFT_CLICK, L.LOG)
   local settingsLine = getTooltipLine(L.RIGHT_CLICK, L.SETTINGS)
-  local testLine = getTooltipLine(Addon:Concat("+", SHIFT_KEY, L.RIGHT_CLICK), L.TEST_NOTIFICATIONS)
+  local testLine = getTooltipLine(Addon:Concat("+", B.Strings.SHIFT_KEY_TEXT, L.RIGHT_CLICK), L.TEST_NOTIFICATIONS)
 
   local object = LDB:NewDataObject(ADDON_NAME, {
     type = "data source",
