@@ -66,6 +66,7 @@
   <Script file="src\ui\components\check-chip.lua"/>
   <Script file="src\ui\components\divider.lua"/>
   <Script file="src\ui\components\icon-button.lua"/>
+  <Script file="src\ui\components\log-card.lua"/>
   <Script file="src\ui\components\notification.lua"/>
   <Script file="src\ui\components\option-card.lua"/>
   <Script file="src\ui\components\scroll-panel.lua"/>
