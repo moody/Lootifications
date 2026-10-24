@@ -8,7 +8,6 @@ local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 local Widgets = Addon:GetModule("Widgets")
-local Wux = Addon.Wux
 
 --- @class MainWindow
 local MainWindow = Addon:GetModule("MainWindow")
@@ -92,28 +91,13 @@ Components.ScrollPanel.ScrollChild:SetGap(Widgets:Padding(0.5))
 
 MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
 
--- Resets every option and the anchor's position.
-Components.ResetButton = Components.Content:AddChild({
-  height = 30,
-  frameFactory = function()
-    return Widgets:Button({
-      name = "$parent_ResetToDefaultsButton",
-      labelText = L.RESET_TO_DEFAULTS,
-      labelColor = Colors.Yellow,
-      onClick = function()
-        Addon:GetStore():Dispatch({
-          type = Wux.ActionTypes.Batch,
-          payload = {
-            { type = "lootPrices/reset" },
-            { type = "moneyNotifications/reset" },
-            { type = "ownedItemCounts/reset" }
-          }
-        })
-        AnchorFrame:Reset()
-      end
-    })
-  end
-})
+-- Points to the `test` command.
+Components.TestHint = Components.Content:AttachComponent(ComponentFactory:Text({
+  text = L.TEST_NOTIFICATIONS_HINT:format(Colors.White("/lootif test")),
+  fontObject = "GameFontNormalSmall",
+  color = Colors.Grey,
+  justifyH = "CENTER"
+}))
 
 -- ============================================================================
 -- MainWindow

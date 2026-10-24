@@ -4,6 +4,7 @@ local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local L = Addon:GetModule("Locale")
 local Widgets = Addon:GetModule("Widgets")
+local Wux = Addon.Wux
 
 --- @class MainWindowOptions
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
@@ -96,5 +97,32 @@ function MainWindowOptions:Initialize(container)
     { value = "LEFT", text = L.LEFT },
     { value = "CENTER", text = L.CENTER },
     { value = "RIGHT", text = L.RIGHT }
+  })
+
+  -- Resets every option and the anchor's position.
+  local divider = container:AttachComponent(ComponentFactory:Divider())
+  divider:SetMarginTop(Widgets:Padding(0.5))
+  divider:SetMarginBottom(Widgets:Padding(0.5))
+
+  container:AddChild({
+    height = 30,
+    frameFactory = function()
+      return Widgets:Button({
+        name = "$parent_ResetToDefaultsButton",
+        labelText = L.RESET_TO_DEFAULTS,
+        labelColor = Colors.Red,
+        onClick = function()
+          Addon:GetStore():Dispatch({
+            type = Wux.ActionTypes.Batch,
+            payload = {
+              { type = "lootPrices/reset" },
+              { type = "moneyNotifications/reset" },
+              { type = "ownedItemCounts/reset" }
+            }
+          })
+          AnchorFrame:Reset()
+        end
+      })
+    end
   })
 end

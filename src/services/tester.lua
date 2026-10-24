@@ -1,11 +1,7 @@
 local Addon = select(2, ...) ---@type Addon
-local E = Addon:GetModule("Events")
-local EventManager = Addon:GetModule("EventManager")
 local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
 local HistoryNotifications = Addon:GetModule("HistoryNotifications")
 local ItemLogger = Addon:GetModule("ItemLogger")
-local NotificationManager = Addon:GetModule("NotificationManager")
-local TickerManager = Addon:GetModule("TickerManager")
 
 --- @class Tester
 local Tester = Addon:GetModule("Tester")
@@ -39,49 +35,18 @@ local TEST_ITEMS = {
 -- Tester
 -- ============================================================================
 
---- Toggles the Tester.
-function Tester:Toggle()
-  if not self.isTesting then
-    self:Start()
-  else
-    self:Stop()
+--- Shows a notification for a few different test items, which are not recorded in the history.
+function Tester:Run()
+  local itemIDs = { unpack(TEST_ITEMS) }
+  local shownCount = 0
+
+  while shownCount < Addon.MAX_NOTIFICATIONS and #itemIDs > 0 do
+    local _, link = GetItemInfo(table.remove(itemIDs, math.random(#itemIDs)))
+    if link then
+      --- @type ItemLogEntry
+      local entry = { logger = ItemLogger, time = time(), payload = { link = link, quantity = math.random() < 0.5 and math.random(2, 5) or 1 } }
+      HistoryNotifications:Show(entry)
+      shownCount = shownCount + 1
+    end
   end
 end
-
---- Starts the Tester.
-function Tester:Start()
-  if self.isTesting then return end
-  self.isTesting = true
-
-  if not self.ticker then
-    self.ticker = TickerManager:NewTicker(0.25, function()
-      local _, link, _, _, _, _, _, stackCount = GetItemInfo(TEST_ITEMS[math.random(#TEST_ITEMS)])
-      local quantity = math.random(stackCount or 1)
-      if link then
-        -- Shown without being recorded, so tests stay out of the history.
-        --- @type ItemLogEntry
-        local entry = { logger = ItemLogger, time = time(), payload = { link = link, quantity = quantity } }
-        HistoryNotifications:Show(entry)
-      end
-    end)
-  end
-
-  self.ticker:Restart()
-end
-
---- Stops the Tester.
-function Tester:Stop()
-  self.isTesting = false
-  if self.ticker then self.ticker:Cancel() end
-  NotificationManager:Clear()
-end
-
--- ============================================================================
--- Events
--- ============================================================================
-
-EventManager:On(E.StateUpdated, function()
-  if Tester.isTesting then
-    NotificationManager:Clear()
-  end
-end)
