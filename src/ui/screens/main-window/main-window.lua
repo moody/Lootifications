@@ -172,6 +172,8 @@ Controller:AddTab({
         return Widgets:Frame({ parent = parent })
       end
     })
+
+    Components.LogPanel:AttachComponent(ComponentFactory:LogList())
   end
 })
 

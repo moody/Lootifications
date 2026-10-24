@@ -33,7 +33,7 @@ function ComponentFactory:LogCard()
 
   --- @class LogCardComponent : WaffleFlexComponent
   local root = Addon.Waffle:Flex({
-    height = "AUTO",
+    align = "CENTER",
     paddingLeft = ACCENT_WIDTH,
 
     --- @param parent Frame

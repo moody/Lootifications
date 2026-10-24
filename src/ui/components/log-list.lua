@@ -1,0 +1,154 @@
+local Addon = select(2, ...) ---@type Addon
+local Colors = Addon:GetModule("Colors")
+local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or GetCoinTextureString
+local GetItemInfo = C_Item.GetItemInfo or GetItemInfo
+local GetItemQualityColor = C_Item.GetItemQualityColor or GetItemQualityColor
+local HistoryLog = Addon:GetModule("HistoryLog")
+local ItemLogger = Addon:GetModule("ItemLogger")
+local L = Addon:GetModule("Locale")
+local MoneyLogger = Addon:GetModule("MoneyLogger")
+local TickerManager = Addon:GetModule("TickerManager")
+local Widgets = Addon:GetModule("Widgets")
+
+--- @class ComponentFactory
+local ComponentFactory = Addon:GetModule("ComponentFactory")
+
+--- Format of an age in hours.
+local HOUR_FORMAT = HOUR_ONELETTER_ABBR or "%d h"
+
+--- Format of an age in minutes.
+local MINUTE_FORMAT = MINUTE_ONELETTER_ABBR or "%d m"
+
+--- Format of an age in seconds.
+local SECOND_FORMAT = SECOND_ONELETTER_ABBR or "%d s"
+
+--- Number of cards, which share the list's height. Older entries are reached by scrolling.
+local CARD_COUNT = 7
+
+-- =============================================================================
+-- Local Functions
+-- =============================================================================
+
+--- Returns how long ago something was, as the largest whole unit: hours, minutes, or seconds.
+--- @param seconds number Time elapsed.
+--- @return string
+local function getAgeText(seconds)
+  seconds = math.max(math.floor(seconds), 0)
+  if seconds >= 3600 then return HOUR_FORMAT:format(math.floor(seconds / 3600)) end
+  if seconds >= 60 then return MINUTE_FORMAT:format(math.floor(seconds / 60)) end
+  return SECOND_FORMAT:format(seconds)
+end
+
+--- Shows an item entry on the card.
+--- @param card LogCardComponent
+--- @param entry ItemLogEntry
+local function fillItemCard(card, entry)
+  local payload = entry.payload
+  local _, _, quality, _, _, _, _, _, _, texture = GetItemInfo(payload.link)
+
+  card:Set(payload.link, L.QUANTITY_FORMAT:format(payload.quantity), getAgeText(time() - entry.time), payload.link)
+  card:SetIcon(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
+  card:SetAccentColor(GetItemQualityColor(quality or 1))
+end
+
+--- Shows a money entry on the card.
+--- @param card LogCardComponent
+--- @param entry MoneyLogEntry
+local function fillMoneyCard(card, entry)
+  card:Set(GetCoinTextureString(entry.payload.copper), L.MONEY, getAgeText(time() - entry.time))
+  card:SetIcon(nil)
+  card:SetAccentColor(Colors.Gold:GetRGB())
+end
+
+--- Fills a card from an entry, by the logger that recorded it.
+--- @type table<HistoryLogger, fun(card: LogCardComponent, entry: any)>
+local cardFillers = {
+  [ItemLogger] = fillItemCard,
+  [MoneyLogger] = fillMoneyCard
+}
+
+-- =============================================================================
+-- ComponentFactory - LogList
+-- =============================================================================
+
+--- Creates the list of logged entries, newest first, scrolled with the mouse wheel or a slider.
+--- @return LogListComponent root
+function ComponentFactory:LogList()
+  local slider = Widgets:Slider({ orientation = "VERTICAL" })
+  slider:Hide()
+
+  --- Cards, from the top.
+  --- @type LogCardComponent[]
+  local cards = {}
+
+  --- @class LogListComponent : WaffleFlexComponent
+  local root = Addon.Waffle:Flex({
+    gap = Widgets:Padding(0.5),
+
+    --- @param parent Frame
+    frameFactory = function(parent)
+      local frame = Widgets:Frame({ parent = parent, backdrop = false, clipChildren = false })
+      frame:EnableMouseWheel(true)
+      frame:SetScript("OnMouseWheel", function(_, delta)
+        slider:SetValue(slider:GetValue() - delta)
+      end)
+      return frame
+    end
+  })
+
+  -- Cards.
+  local cardColumn = root:AddColumn({ gap = Widgets:Padding(0.5) })
+  -- Slider, shown only while the list can scroll.
+  local sliderColumn = root:AddColumn({ frame = slider, width = 12, visibility = "GONE" })
+
+  for i = 1, CARD_COUNT do
+    cards[i] = cardColumn:AttachComponent(ComponentFactory:LogCard())
+    cards[i]:SetVisibility("INVISIBLE")
+  end
+
+  --- Shows the entries from the scrolled position on the cards, and sizes the slider to the log.
+  local function refresh()
+    local entries = HistoryLog:GetEntries()
+    local count = #entries
+
+    local maxOffset = math.max(count - CARD_COUNT, 0)
+    local _, sliderMax = slider:GetMinMaxValues()
+    if sliderMax ~= maxOffset then slider:SetMinMaxValues(0, maxOffset) end
+
+    local isScrollable = maxOffset > 0
+    if isScrollable ~= sliderColumn:IsVisible() then
+      sliderColumn:SetVisibility(isScrollable and "VISIBLE" or "GONE")
+      if isScrollable then
+        -- Re-show the slider a frame later, or its thumb stays invisible.
+        TickerManager:After(0, function()
+          if not slider:IsShown() then return end
+          slider:Hide()
+          slider:Show()
+        end)
+      end
+    end
+
+    local offset = math.floor(slider:GetValue() + 0.5)
+    for i, card in ipairs(cards) do
+      local entry = entries[count - offset - (i - 1)]
+      local fillCard = entry and cardFillers[entry.logger]
+      if fillCard then
+        fillCard(card, entry)
+        card:SetVisibility("VISIBLE")
+      else
+        card:SetVisibility("INVISIBLE")
+      end
+    end
+
+    root:Layout()
+  end
+
+  slider:SetScript("OnValueChanged", refresh)
+
+  root:WhenFrameReady(function(frame)
+    frame:HookScript("OnShow", refresh)
+    TickerManager:NewTicker(0.1, refresh):BindFrame(frame)
+  end)
+
+  return root
+end
