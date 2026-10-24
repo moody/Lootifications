@@ -271,7 +271,7 @@ TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
     if getText then
       sequence = sequence + 1
       freeNotification:SetOrder(-sequence)
-      freeNotification:Notify(getText)
+      freeNotification:Notify(getText, Addon:GetState().anchorDirection)
     end
   end
 end)
