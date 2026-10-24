@@ -12,6 +12,7 @@ local Colors = Addon:GetModule("Colors")
 --- @param hex string AARRGGBB
 --- @return Color
 local function createColor(hex)
+  --- @type colorRGBA
   local color = CreateColorFromHexString(hex)
 
   --- @class Color
