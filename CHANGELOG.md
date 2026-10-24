@@ -9,6 +9,7 @@
 ### Added
 
 - Added the `/lootif` slash command as a short form of `/lootifications`.
+- Added Direction (down or up) and Alignment (left, center or right) options for the notifications, and a Reset to Defaults button.
 
 ### Changed
 
