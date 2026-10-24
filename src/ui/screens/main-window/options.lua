@@ -88,11 +88,11 @@ function MainWindowOptions:Initialize(container)
   addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "lootPrices")
   addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "ownedItemCounts")
 
-  addChoiceCard(container, L.GROWTH_DIRECTION_TEXT, L.GROWTH_DIRECTION_DESCRIPTION, L.DIRECTION, "anchorDirection", {
+  addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", {
     { value = "DOWN", text = L.DOWN },
     { value = "UP", text = L.UP }
   })
-  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.ALIGNMENT_TEXT, "anchorAlignment", {
+  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", {
     { value = "LEFT", text = L.LEFT },
     { value = "CENTER", text = L.CENTER },
     { value = "RIGHT", text = L.RIGHT }
