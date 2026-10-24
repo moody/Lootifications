@@ -18,13 +18,16 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 --- @field titleText string
 --- @field frameStrata? FrameStrata Defaults to `HIGH`.
 --- @field refresh? fun() Called repeatedly while the window is visible.
+--- @field getPoint fun(): table Returns the point the window is placed at.
+--- @field setPoint fun(point: table) Called with the new point when the window is dropped.
+--- @field onResetPoint fun() Called when the window is Shift and right-clicked.
 
 -- =============================================================================
 -- ComponentFactory - Window
 -- =============================================================================
 
---- Creates a draggable floating window with a title bar and close button. It starts a little below the center of the
---- screen, and ESC closes it.
+--- Creates a draggable floating window with a title bar and close button. It is placed at the point from `getPoint`,
+--- Shift and right-click resets that point, and ESC closes it.
 --- @param options WindowComponentOptions
 --- @return WindowComponent root
 function ComponentFactory:Window(options)
@@ -47,10 +50,18 @@ function ComponentFactory:Window(options)
     frameFactory = function()
       local frame = Widgets:Frame({
         name = ADDON_NAME .. "_" .. options.name,
+        enableClickHandling = true,
         enableDragging = true,
         frameStrata = options.frameStrata or "HIGH"
       })
-      frame:SetPoint("CENTER", 0, -40)
+
+      frame:SetClickHandler("RightButton", "SHIFT", options.onResetPoint)
+
+      Widgets:ConfigureForPointSync({
+        frame = frame,
+        getPoint = options.getPoint,
+        setPoint = options.setPoint
+      })
 
       -- Close on ESC.
       table.insert(UISpecialFrames, frame:GetName())

@@ -20,6 +20,7 @@ local DEFAULT_STATE = {
   anchorDirection = "DOWN",
   anchorPoint = {},
   lootPrices = false,
+  mainWindowPoint = { point = "CENTER", relativePoint = "CENTER", offsetX = 0, offsetY = -40 },
   moneyNotifications = true,
   ownedItemCounts = false
 }
@@ -80,6 +81,19 @@ local rootReducer = Wux:CombineReducers({
     end
 
     return state
+  end,
+
+  -- Main window point.
+  mainWindowPoint = function(state, action)
+    state = Wux:Coalesce(state, DEFAULT_STATE.mainWindowPoint)
+
+    if action.type == "mainWindowPoint/set" then
+      state = action.payload
+    elseif action.type == "mainWindowPoint/reset" then
+      state = DEFAULT_STATE.mainWindowPoint
+    end
+
+    return type(state) == "table" and state or DEFAULT_STATE.mainWindowPoint
   end,
 
   -- Money notifications.

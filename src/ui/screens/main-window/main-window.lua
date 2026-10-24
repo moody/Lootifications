@@ -97,6 +97,9 @@ Components.Root = ComponentFactory:Window({
   width = 425,
   height = 465,
   titleText = "", -- unused; MainWindow builds its own title-bar content below
+  getPoint = function() return Addon:GetState().mainWindowPoint end,
+  setPoint = function(point) Addon:GetStore():Dispatch({ type = "mainWindowPoint/set", payload = point }) end,
+  onResetPoint = function() Addon:GetStore():Dispatch({ type = "mainWindowPoint/reset" }) end,
   refresh = function() Components.Root:Layout() end
 })
 

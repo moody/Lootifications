@@ -1,5 +1,7 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
+local E = Addon:GetModule("Events")
+local EventManager = Addon:GetModule("EventManager")
 
 --- @class Widgets
 local Widgets = Addon:GetModule("Widgets")
@@ -53,4 +55,37 @@ do -- Widget:GetUniqueName()
     ids[widgetName] = (ids[widgetName] or 0) + 1
     return ("%s_%s%s"):format(ADDON_NAME, widgetName, ids[widgetName])
   end
+end
+
+--- @class ConfigureForPointSyncOptions
+--- @field frame ScriptRegion
+--- @field getPoint fun(): table Returns the point to apply.
+--- @field setPoint fun(point: table) Called with the point to save after dragging.
+
+--- Configures a draggable frame to refresh or save its point based on certain events.
+--- @param options ConfigureForPointSyncOptions
+function Widgets:ConfigureForPointSync(options)
+  local frame = options.frame
+
+  local function refresh()
+    local p = options.getPoint()
+    local relativeTo = p.relativeTo and _G[p.relativeTo] or UIParent
+    frame:ClearAllPoints()
+    frame:SetPoint(p.point, relativeTo, p.relativePoint, p.offsetX, p.offsetY)
+  end
+
+  local function save()
+    local parent = frame:GetParent() or UIParent
+    options.setPoint({
+      point = "TOPLEFT",
+      relativeTo = parent:GetName(),
+      relativePoint = "TOPLEFT",
+      offsetX = frame:GetLeft() - parent:GetLeft(),
+      offsetY = frame:GetTop() - parent:GetTop()
+    })
+  end
+
+  EventManager:On(E.StateUpdated, refresh)
+  frame:HookScript("OnShow", refresh)
+  frame:HookScript("OnDragStop", save)
 end
