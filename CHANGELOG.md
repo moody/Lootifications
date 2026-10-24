@@ -9,6 +9,7 @@
 ### Added
 
 - Added the `/lootif` slash command as a short form of `/lootifications`.
+- Added `/lootifications test`, which shows a few test notifications, and `/lootifications help`, which lists the commands.
 - Added Direction (down or up) and Alignment (left, center or right) options for the notifications, and a Reset to Defaults button.
 
 ### Changed
