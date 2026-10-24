@@ -21,8 +21,8 @@ local Components = {}
 
 Components.Root = ComponentFactory:Window({
   name = "MainWindow",
-  width = 475,
-  height = 380,
+  width = 425,
+  height = 400,
   titleText = "" -- unused; MainWindow builds its own title-bar content below
 })
 
