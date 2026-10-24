@@ -77,6 +77,9 @@ function ComponentFactory:LogList()
   local slider = Widgets:Slider({ orientation = "VERTICAL" })
   slider:Hide()
 
+  --- Shown in the middle of the list while the log is empty.
+  local emptyText ---@type FontString?
+
   --- Cards, from the top.
   --- @type LogCardComponent[]
   local cards = {}
@@ -92,6 +95,12 @@ function ComponentFactory:LogList()
       frame:SetScript("OnMouseWheel", function(_, delta)
         slider:SetValue(slider:GetValue() - delta)
       end)
+
+      emptyText = frame:CreateFontString("$parent_EmptyText", "ARTWORK", "GameFontNormal")
+      emptyText:SetPoint("CENTER")
+      emptyText:SetTextColor(Colors.Grey:GetRGB())
+      emptyText:SetText(L.NO_LOOT)
+
       return frame
     end
   })
@@ -110,6 +119,7 @@ function ComponentFactory:LogList()
   local function refresh()
     local entries = HistoryLog:GetEntries()
     local count = #entries
+    emptyText:SetShown(count == 0)
 
     local maxOffset = math.max(count - CARD_COUNT, 0)
     local _, sliderMax = slider:GetMinMaxValues()

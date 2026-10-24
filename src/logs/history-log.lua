@@ -57,6 +57,14 @@ function HistoryLog:Record(logger, payload)
   EventManager:Fire(E.HistoryLogged, entry)
 end
 
+--- Removes every entry, then fires `HistoryCleared`.
+function HistoryLog:Clear()
+  entries = {}
+  entriesByLogger = {}
+
+  EventManager:Fire(E.HistoryCleared)
+end
+
 --- Returns every entry, oldest first, or only the logger's if given. Callers must not modify it.
 --- @param logger? HistoryLogger
 --- @return HistoryLogEntry[]

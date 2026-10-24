@@ -5,6 +5,7 @@ local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
+local HistoryLog = Addon:GetModule("HistoryLog")
 local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 local Widgets = Addon:GetModule("Widgets")
@@ -174,6 +175,32 @@ Controller:AddTab({
     })
 
     Components.LogPanel:AttachComponent(ComponentFactory:LogList())
+
+    -- Wipes the log. Disabled while it is empty.
+    screen:AddChild({
+      height = 30,
+
+      --- @param parent Frame
+      frameFactory = function(parent)
+        local button = Widgets:Button({
+          parent = parent,
+          labelText = L.CLEAR_LOG,
+          labelColor = Colors.Red,
+          onClick = function() HistoryLog:Clear() end
+        })
+
+        --- Enables the button while the log has entries.
+        local function refresh()
+          button:FireEvent("ENABLED", #HistoryLog:GetEntries() > 0)
+        end
+
+        EventManager:On(E.HistoryLogged, refresh)
+        EventManager:On(E.HistoryCleared, refresh)
+        refresh()
+
+        return button
+      end
+    })
   end
 })
 
