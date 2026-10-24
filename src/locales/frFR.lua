@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Affiche une notification lorsque de l'argen
 L.NOTIFICATIONS = "Notifications"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Inclut la quantité possédée de l'objet dans les notifications de butin."
 L.OWNED_ITEM_COUNTS_TEXT = "Quantités possédées"
+L.QUANTITY_FORMAT = "Quantité : %d"
 L.RESET_ANCHOR = "Réinitialiser l'ancre"
 L.RESET_TO_DEFAULTS = "Réinitialiser les paramètres par défaut"
 L.RIGHT = "Droite"

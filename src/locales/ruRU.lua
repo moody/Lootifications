@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Показывает уведомление
 L.NOTIFICATIONS = "Уведомления"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Добавляет количество имеющихся у вас предметов в уведомления о добыче."
 L.OWNED_ITEM_COUNTS_TEXT = "Количество предметов в наличии"
+L.QUANTITY_FORMAT = "Количество: %d"
 L.RESET_ANCHOR = "Сбросить якорь"
 L.RESET_TO_DEFAULTS = "Сбросить настройки по умолчанию"
 L.RIGHT = "Справа"

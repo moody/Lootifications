@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "돈을 획득하거나 받을 때 알림을
 L.NOTIFICATIONS = "알림"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "전리품 알림에 보유 중인 아이템 수를 포함합니다."
 L.OWNED_ITEM_COUNTS_TEXT = "보유 아이템 수"
+L.QUANTITY_FORMAT = "수량: %d"
 L.RESET_ANCHOR = "앵커 초기화"
 L.RESET_TO_DEFAULTS = "기본값으로 초기화"
 L.RIGHT = "오른쪽"

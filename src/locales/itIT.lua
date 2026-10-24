@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Mostra una notifica quando si ottiene o si 
 L.NOTIFICATIONS = "Notifiche"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Include la quantità posseduta dell'oggetto nelle notifiche del bottino."
 L.OWNED_ITEM_COUNTS_TEXT = "Quantità di oggetti posseduti"
+L.QUANTITY_FORMAT = "Quantità: %d"
 L.RESET_ANCHOR = "Reimposta ancora"
 L.RESET_TO_DEFAULTS = "Reimposta valori predefiniti"
 L.RIGHT = "Destra"

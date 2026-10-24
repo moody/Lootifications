@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Muestra una notificación cuando se saquea 
 L.NOTIFICATIONS = "Notificaciones"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Incluye la cantidad que posees del objeto en las notificaciones de botín."
 L.OWNED_ITEM_COUNTS_TEXT = "Cantidad de objetos que posees"
+L.QUANTITY_FORMAT = "Cantidad: %d"
 L.RESET_ANCHOR = "Restablecer ancla"
 L.RESET_TO_DEFAULTS = "Restablecer valores predeterminados"
 L.RIGHT = "Derecha"

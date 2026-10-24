@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Mostra uma notificação quando dinheiro é
 L.NOTIFICATIONS = "Notificações"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Inclui a quantidade possuída do item nas notificações de saque."
 L.OWNED_ITEM_COUNTS_TEXT = "Quantidade de itens possuídos"
+L.QUANTITY_FORMAT = "Quantidade: %d"
 L.RESET_ANCHOR = "Redefinir âncora"
 L.RESET_TO_DEFAULTS = "Redefinir para os padrões"
 L.RIGHT = "Direita"

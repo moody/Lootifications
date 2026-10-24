@@ -30,6 +30,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Zeigt eine Benachrichtigung an, wenn Geld e
 L.NOTIFICATIONS = "Benachrichtigungen"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Zeigt die Anzahl der besessenen Gegenstände in Beutebenachrichtigungen an."
 L.OWNED_ITEM_COUNTS_TEXT = "Anzahl im Besitz"
+L.QUANTITY_FORMAT = "Menge: %d"
 L.RESET_ANCHOR = "Anker zurücksetzen"
 L.RESET_TO_DEFAULTS = "Auf Standard zurücksetzen"
 L.RIGHT = "Rechts"

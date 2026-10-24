@@ -37,6 +37,7 @@ L.MONEY_NOTIFICATIONS_DESCRIPTION = "Show a notification when money is looted or
 L.NOTIFICATIONS = "Notifications"
 L.OWNED_ITEM_COUNTS_DESCRIPTION = "Include an owned item count in loot notifications."
 L.OWNED_ITEM_COUNTS_TEXT = "Owned Item Counts"
+L.QUANTITY_FORMAT = "Quantity: %d"
 L.RESET_ANCHOR = "Reset Anchor"
 L.RESET_TO_DEFAULTS = "Reset to Defaults"
 L.RIGHT = "Right"
