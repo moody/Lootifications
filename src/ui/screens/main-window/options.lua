@@ -107,8 +107,8 @@ function MainWindowOptions:Initialize(container)
 
   addDivider(container)
 
-  -- Notifications.
-  container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = "GameFontNormalLarge" }))
+  -- Content.
+  container:AttachComponent(ComponentFactory:Text({ text = L.CONTENT, fontObject = "GameFontNormalLarge" }))
 
   addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications", ActionCreators.toggleMoneyNotifications)
   addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "lootPrices", ActionCreators.toggleLootPrices)
