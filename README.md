@@ -1,6 +1,8 @@
 # Lootifications
 
-Lootifications is an addon for World of Warcraft that shows a notification when you receive loot or money, and keeps a log of what you have looted this session.
+Lootifications is an addon for World of Warcraft that shows notifications for loot and money, and keeps a log of them.
+
+![Notifications](/.github/images/Lootifications.gif?raw=true)
 
 ## Features
 
