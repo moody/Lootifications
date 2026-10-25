@@ -54,7 +54,6 @@
   <!-- Services -->
   <Script file="src\services\example-notifications.lua"/>
   <Script file="src\services\notification-manager.lua"/>
-  <Script file="src\services\tester.lua"/>
 
   <!-- UI -->
   <Script file="src\ui\tooltip.lua"/>

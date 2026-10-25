@@ -284,14 +284,6 @@ Controller:AddTab({
     Components.ScrollPanel.ScrollChild:SetGap(Widgets:Padding(0.5))
 
     MainWindowOptions:Initialize(Components.ScrollPanel.ScrollChild)
-
-    -- Points to the `test` command.
-    Components.TestHint = screen:AttachComponent(ComponentFactory:Text({
-      text = L.TEST_NOTIFICATIONS_HINT:format(Colors.White("/lootif test")),
-      color = Colors.Grey,
-      justifyH = "CENTER"
-    }))
-    Components.TestHint:SetMarginTop(Widgets:Padding(0.25))
   end
 })
 

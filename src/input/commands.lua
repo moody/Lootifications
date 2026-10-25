@@ -4,7 +4,6 @@ local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
 local MainWindow = Addon:GetModule("MainWindow")
-local Tester = Addon:GetModule("Tester")
 
 --- @class Commands
 local Commands = Addon:GetModule("Commands")
@@ -49,17 +48,10 @@ end
 function Commands.help()
   Addon:Print(L.COMMANDS .. ":")
   printCommand("", L.COMMAND_DESCRIPTION_OPTIONS)
-  printCommand("test", L.COMMAND_DESCRIPTION_TEST)
   printCommand("help", L.COMMAND_DESCRIPTION_HELP)
 end
 
 --- Toggles the `MainWindow`.
 function Commands.options()
   MainWindow:Toggle()
-end
-
---- Hides the `MainWindow`, so that its notifications are not dropped, and shows a few test notifications.
-function Commands.test()
-  MainWindow:Hide()
-  Tester:Run()
 end

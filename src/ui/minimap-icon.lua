@@ -1,9 +1,7 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
-local B = Addon:GetModule("Blizzard")
 local ActionCreators = Addon:GetModule("ActionCreators")
 local Colors = Addon:GetModule("Colors")
-local Commands = Addon:GetModule("Commands")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
@@ -32,7 +30,6 @@ end
 EventManager:Once(E.StoreInitialized, function()
   local logLine = getTooltipLine(L.LEFT_CLICK, L.LOG)
   local settingsLine = getTooltipLine(L.RIGHT_CLICK, L.SETTINGS)
-  local testLine = getTooltipLine(Addon:Concat("+", B.Strings.SHIFT_KEY_TEXT, L.RIGHT_CLICK), L.TEST_NOTIFICATIONS)
 
   local object = LDB:NewDataObject(ADDON_NAME, {
     type = "data source",
@@ -43,11 +40,7 @@ EventManager:Once(E.StoreInitialized, function()
       if button == "LeftButton" then
         MainWindow:Toggle("LOG")
       elseif button == "RightButton" then
-        if IsShiftKeyDown() then
-          Commands.test()
-        else
-          MainWindow:Toggle("SETTINGS")
-        end
+        MainWindow:Toggle("SETTINGS")
       end
     end,
 
@@ -55,7 +48,6 @@ EventManager:Once(E.StoreInitialized, function()
       tooltip:AddDoubleLine(Colors.Purple(ADDON_NAME), Colors.Grey(Addon.VERSION))
       tooltip:AddLine(logLine)
       tooltip:AddLine(settingsLine)
-      tooltip:AddLine(testLine)
     end
   })
 

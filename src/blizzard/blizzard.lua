@@ -29,7 +29,6 @@ local GetItemInfo = C_Item.GetItemInfo or getGlobal("GetItemInfo")
 --- The game's own localized strings.
 B.Strings = {
   --- Name of the Shift key.
-  SHIFT_KEY_TEXT = getGlobal("SHIFT_KEY_TEXT"),
 
   --- Format of an amount of gold. Takes the number.
   GOLD_AMOUNT_TEXT = getGlobal("GOLD_AMOUNT"),
