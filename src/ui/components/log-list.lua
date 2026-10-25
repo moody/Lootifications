@@ -1,10 +1,7 @@
 local Addon = select(2, ...) ---@type Addon
-local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local HistoryLog = Addon:GetModule("HistoryLog")
-local ItemLogger = Addon:GetModule("ItemLogger")
 local L = Addon:GetModule("Locale")
-local MoneyLogger = Addon:GetModule("MoneyLogger")
 local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
 
@@ -13,46 +10,6 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 
 --- Number of cards, which share the list's height. Older entries are reached by scrolling.
 local CARD_COUNT = 7
-
--- =============================================================================
--- Local Functions
--- =============================================================================
-
---- Returns how long ago something was, as the largest whole unit: hours, minutes, or seconds.
---- @param seconds number Time elapsed.
---- @return string
-local function getAgeText(seconds)
-  seconds = math.max(math.floor(seconds), 0)
-  if seconds >= 3600 then return B.Strings.HOURS_ABBREVIATED_TEXT:format(math.floor(seconds / 3600)) end
-  if seconds >= 60 then return B.Strings.MINUTES_ABBREVIATED_TEXT:format(math.floor(seconds / 60)) end
-  return B.Strings.SECONDS_ABBREVIATED_TEXT:format(seconds)
-end
-
---- Shows an item entry on the card.
---- @param card LogCardComponent
---- @param entry ItemLogEntry
-local function fillItemCard(card, entry)
-  local payload = entry.payload
-  local _, _, texture = B.Items:GetInfo(payload.link)
-
-  card:Set(payload.link, L.QUANTITY_FORMAT:format(Colors.White(payload.quantity)), getAgeText(time() - entry.time), payload.link)
-  card:SetIcon(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
-end
-
---- Shows a money entry on the card.
---- @param card LogCardComponent
---- @param entry MoneyLogEntry
-local function fillMoneyCard(card, entry)
-  card:Set(B.Money:GetCoinText(entry.payload.copper), L.MONEY, getAgeText(time() - entry.time))
-  card:SetIcon(nil)
-end
-
---- Fills a card from an entry, by the logger that recorded it.
---- @type table<HistoryLogger, fun(card: LogCardComponent, entry: any)>
-local cardFillers = {
-  [ItemLogger] = fillItemCard,
-  [MoneyLogger] = fillMoneyCard
-}
 
 -- =============================================================================
 -- ComponentFactory - LogList
@@ -102,7 +59,6 @@ function ComponentFactory:LogList()
 
   for i = 1, CARD_COUNT do
     cards[i] = cardColumn:AttachComponent(ComponentFactory:LogCard())
-    cards[i]:SetVisibility("INVISIBLE")
   end
 
   --- Shows the entries from the scrolled position on the cards, and sizes the slider to the log.
@@ -137,15 +93,7 @@ function ComponentFactory:LogList()
 
     local offset = math.floor(slider:GetValue() + 0.5)
     for i, card in ipairs(cards) do
-      local entry = entries[count - offset - (i - 1)]
-      local fillCard = entry and cardFillers[entry.logger]
-      if fillCard then
-        fillCard(card, entry)
-        card:SetAccentColor((HistoryLog:GetColor(entry) or Colors.QualityCommon):GetRGB())
-        card:SetVisibility("VISIBLE")
-      else
-        card:SetVisibility("INVISIBLE")
-      end
+      card:SetEntry(entries[count - offset - (i - 1)])
     end
 
     root:Layout()
