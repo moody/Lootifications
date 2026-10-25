@@ -154,7 +154,10 @@ function ComponentFactory:LogList()
   slider:SetScript("OnValueChanged", refresh)
 
   root:WhenFrameReady(function(frame)
-    frame:HookScript("OnShow", refresh)
+    frame:HookScript("OnShow", function()
+      slider:SetValue(0)
+      refresh()
+    end)
     TickerManager:NewTicker(0.1, refresh):BindFrame(frame)
   end)
 
