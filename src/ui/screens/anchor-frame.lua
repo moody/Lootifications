@@ -140,10 +140,10 @@ Components.Root = Addon.Waffle:Flex({
       clipChildren = false,
       tooltipAnchor = "ANCHOR_CURSOR",
       onUpdateTooltip = function(_, tooltip)
-        tooltip:SetText(("%s %s"):format(ADDON_NAME, L.ANCHOR))
+        tooltip:SetText(ADDON_NAME)
         tooltip:AddLine(L.ANCHOR_TOOLTIP)
         tooltip:AddLine(" ")
-        tooltip:AddDoubleLine(L.RIGHT_CLICK, L.RESET_ANCHOR)
+        tooltip:AddDoubleLine(Colors.Purple(L.RIGHT_CLICK), Colors.White(L.RESET_ANCHOR))
       end
     })
     refreshFrame(frame)
