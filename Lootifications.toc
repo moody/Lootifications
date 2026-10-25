@@ -4,7 +4,7 @@
 ## Author: https://github.com/moody
 ## IconTexture: Interface\AddOns\Lootifications\assets\icon
 ## AddonCompartmentFunc: Lootifications_OnAddonCompartmentClick
-## Notes: Displays notifications for new loot.
+## Notes: Shows notifications for loot and money, and keeps a log of them.
 ## SavedVariables: __LOOTIFICATIONS_V2_SAVED_VARIABLES__, __LOOTIFICATIONS_ADDON_GLOBAL_SAVED_VARIABLES__
 
 Lootifications.xml
