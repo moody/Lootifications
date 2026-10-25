@@ -123,8 +123,8 @@ function MainWindowOptions:Initialize(container)
 
   addDivider(container)
 
-  -- Layout.
-  container:AttachComponent(ComponentFactory:Text({ text = L.LAYOUT, fontObject = "GameFontNormalLarge" }))
+  -- Look & Feel.
+  container:AttachComponent(ComponentFactory:Text({ text = L.LOOK_AND_FEEL, fontObject = "GameFontNormalLarge" }))
 
   addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", ActionCreators.setAnchorDirection, {
     { value = "DOWN", text = L.DOWN },
@@ -137,12 +137,7 @@ function MainWindowOptions:Initialize(container)
     { value = "RIGHT", text = L.RIGHT }
   }, pinAnchor)
 
-  addDivider(container)
-
-  -- Style.
-  container:AttachComponent(ComponentFactory:Text({ text = L.STYLE, fontObject = "GameFontNormalLarge" }))
-
-  addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.LOOK, "notificationBackground", ActionCreators.setNotificationBackground, {
+  addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.STYLE, "notificationBackground", ActionCreators.setNotificationBackground, {
     { value = "NONE", text = L.NONE },
     { value = "SUBTLE", text = L.SUBTLE },
     { value = "HIGH_CONTRAST", text = L.HIGH_CONTRAST }
