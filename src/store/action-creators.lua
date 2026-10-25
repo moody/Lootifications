@@ -11,6 +11,7 @@ local ActionCreators = Addon:GetModule("ActionCreators")
 
 --- @alias AnchorAlignment "LEFT" | "CENTER" | "RIGHT"
 --- @alias AnchorDirection "DOWN" | "UP"
+--- @alias NotificationBackground "NONE" | "SUBTLE" | "HIGH_CONTRAST"
 
 --- @class AnchorPointPayload
 --- @field x number
@@ -52,6 +53,10 @@ ActionCreators.resetMainWindowPoint = Wux:CreateActionCreator(ActionTypes.RESET_
 --- @type WuxActionCreator<nil>
 ActionCreators.resetMoneyNotifications = Wux:CreateActionCreator(ActionTypes.RESET_MONEY_NOTIFICATIONS)
 
+--- Action creator for `ActionTypes.RESET_NOTIFICATION_BACKGROUND`.
+--- @type WuxActionCreator<nil>
+ActionCreators.resetNotificationBackground = Wux:CreateActionCreator(ActionTypes.RESET_NOTIFICATION_BACKGROUND)
+
 --- Action creator for `ActionTypes.RESET_OWNED_ITEM_COUNTS`.
 --- @type WuxActionCreator<nil>
 ActionCreators.resetOwnedItemCounts = Wux:CreateActionCreator(ActionTypes.RESET_OWNED_ITEM_COUNTS)
@@ -71,6 +76,10 @@ ActionCreators.setAnchorPoint = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_P
 --- Action creator for `ActionTypes.SET_MAIN_WINDOW_POINT`.
 --- @type WuxActionCreator<table>
 ActionCreators.setMainWindowPoint = Wux:CreateActionCreator(ActionTypes.SET_MAIN_WINDOW_POINT)
+
+--- Action creator for `ActionTypes.SET_NOTIFICATION_BACKGROUND`.
+--- @type WuxActionCreator<NotificationBackground>
+ActionCreators.setNotificationBackground = Wux:CreateActionCreator(ActionTypes.SET_NOTIFICATION_BACKGROUND)
 
 --- Action creator for `ActionTypes.TOGGLE_LOOT_PRICES`.
 --- @type WuxActionCreator<nil>

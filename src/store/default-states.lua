@@ -13,5 +13,6 @@ DefaultStates.Root = {
   mainWindowPoint = { point = "CENTER", relativePoint = "CENTER", offsetX = 0, offsetY = -40 },
   minimapIcon = { hide = false },
   moneyNotifications = true,
+  notificationBackground = "SUBTLE",
   ownedItemCounts = false
 }

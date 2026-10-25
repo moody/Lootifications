@@ -8,6 +8,7 @@ local RootReducer = Addon:GetModule("RootReducer")
 
 local ANCHOR_ALIGNMENTS = { LEFT = true, CENTER = true, RIGHT = true }
 local ANCHOR_DIRECTIONS = { DOWN = true, UP = true }
+local NOTIFICATION_BACKGROUNDS = { NONE = true, SUBTLE = true, HIGH_CONTRAST = true }
 
 --- Builds the reducer of the whole state.
 --- @return WuxReducer<LootificationsState, any>
@@ -94,6 +95,19 @@ function RootReducer:Build()
       end
 
       return state
+    end,
+
+    -- Notification background.
+    notificationBackground = function(state, action)
+      state = Wux:Coalesce(state, defaultState.notificationBackground)
+
+      if action.type == ActionTypes.SET_NOTIFICATION_BACKGROUND then
+        state = action.payload
+      elseif action.type == ActionTypes.RESET_NOTIFICATION_BACKGROUND then
+        state = defaultState.notificationBackground
+      end
+
+      return NOTIFICATION_BACKGROUNDS[state] and state or defaultState.notificationBackground
     end,
 
     -- Owned item counts.
