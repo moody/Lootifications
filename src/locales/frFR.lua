@@ -8,7 +8,6 @@ local L = Addon:GetModule("Locale")
 
 L.ALIGNMENT_DESCRIPTION = "Définit comment les notifications sont alignées entre elles."
 L.ALIGNMENT_TEXT = "Alignement"
-L.ANCHOR = "Ancre"
 L.ANCHOR_TOOLTIP = "Cliquez et faites glisser ce cadre pour déplacer les notifications."
 L.BACKGROUND_DESCRIPTION = "L'arrière-plan et la bordure des notifications."
 L.BACKGROUND_TEXT = "Arrière-plan"

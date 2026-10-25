@@ -15,7 +15,6 @@ setmetatable(L, {
 
 L.ALIGNMENT_DESCRIPTION = "How the notifications line up with each other."
 L.ALIGNMENT_TEXT = "Alignment"
-L.ANCHOR = "Anchor"
 L.ANCHOR_TOOLTIP = "Click and drag this frame to move the notifications."
 L.BACKGROUND_DESCRIPTION = "The background and border of the notifications."
 L.BACKGROUND_TEXT = "Background"

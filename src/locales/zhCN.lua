@@ -8,7 +8,6 @@ local L = Addon:GetModule("Locale")
 
 L.ALIGNMENT_DESCRIPTION = "决定通知之间如何对齐。"
 L.ALIGNMENT_TEXT = "对齐"
-L.ANCHOR = "锚点"
 L.ANCHOR_TOOLTIP = "点击并拖动此框架以移动通知。"
 L.BACKGROUND_DESCRIPTION = "通知的背景和边框。"
 L.BACKGROUND_TEXT = "背景"

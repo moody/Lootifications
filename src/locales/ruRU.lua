@@ -8,7 +8,6 @@ local L = Addon:GetModule("Locale")
 
 L.ALIGNMENT_DESCRIPTION = "Определяет, как уведомления выравниваются относительно друг друга."
 L.ALIGNMENT_TEXT = "Выравнивание"
-L.ANCHOR = "Якорь"
 L.ANCHOR_TOOLTIP = "Нажмите и перетащите эту рамку, чтобы переместить уведомления."
 L.BACKGROUND_DESCRIPTION = "Фон и рамка уведомлений."
 L.BACKGROUND_TEXT = "Фон"

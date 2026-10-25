@@ -8,7 +8,6 @@ local L = Addon:GetModule("Locale")
 
 L.ALIGNMENT_DESCRIPTION = "Legt fest, wie die Benachrichtigungen zueinander ausgerichtet werden."
 L.ALIGNMENT_TEXT = "Ausrichtung"
-L.ANCHOR = "Anker"
 L.ANCHOR_TOOLTIP = "Diesen Rahmen anklicken und ziehen, um die Benachrichtigungen zu verschieben."
 L.BACKGROUND_DESCRIPTION = "Hintergrund und Rahmen der Benachrichtigungen."
 L.BACKGROUND_TEXT = "Hintergrund"

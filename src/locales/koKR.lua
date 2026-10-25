@@ -8,7 +8,6 @@ local L = Addon:GetModule("Locale")
 
 L.ALIGNMENT_DESCRIPTION = "알림이 서로 어떻게 정렬될지 정합니다."
 L.ALIGNMENT_TEXT = "정렬"
-L.ANCHOR = "앵커"
 L.ANCHOR_TOOLTIP = "이 프레임을 클릭하고 드래그하여 알림을 이동합니다."
 L.BACKGROUND_DESCRIPTION = "알림의 배경과 테두리입니다."
 L.BACKGROUND_TEXT = "배경"

@@ -8,7 +8,6 @@ local L = Addon:GetModule("Locale")
 
 L.ALIGNMENT_DESCRIPTION = "Stabilisce come le notifiche si allineano tra loro."
 L.ALIGNMENT_TEXT = "Allineamento"
-L.ANCHOR = "Ancora"
 L.ANCHOR_TOOLTIP = "Fai clic e trascina questo riquadro per spostare le notifiche."
 L.BACKGROUND_DESCRIPTION = "Lo sfondo e il bordo delle notifiche."
 L.BACKGROUND_TEXT = "Sfondo"
