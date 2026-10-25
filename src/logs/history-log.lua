@@ -14,6 +14,7 @@ local HistoryLog = Addon:GetModule("HistoryLog")
 --- Logs one kind of entry, such as `ItemLogger`.
 --- @class HistoryLogger
 --- @field GetText fun(self: HistoryLogger, entry: any): string Returns the text of an entry it recorded.
+--- @field GetColor fun(self: HistoryLogger, entry: any): Color? Returns the color that stands for an entry it recorded.
 
 --- Every entry this session, oldest first.
 --- @type HistoryLogEntry[]
@@ -77,4 +78,11 @@ end
 --- @return string
 function HistoryLog:GetText(entry)
   return entry.logger:GetText(entry)
+end
+
+--- Returns the entry's color, from its logger, or `nil` if it has none yet. It can change between calls.
+--- @param entry HistoryLogEntry
+--- @return Color?
+function HistoryLog:GetColor(entry)
+  return entry.logger:GetColor(entry)
 end

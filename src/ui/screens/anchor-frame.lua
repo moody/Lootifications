@@ -99,7 +99,7 @@ end
 --- @param frame AnchorFrameWidget
 local function refreshFrame(frame)
   if isUnlocked then
-    frame:SetBackdropColor(0, 0, 0, 0.6)
+    frame:SetBackdropColor(0.5, 0.5, 0.5, 0.1)
     frame:SetBackdropBorderColor(Colors.Gold:GetRGBA())
   else
     frame:SetBackdropColor(0, 0, 0, 0)

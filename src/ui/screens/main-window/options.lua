@@ -47,16 +47,23 @@ local function addOptionCard(container, labelText, descriptionText, stateKey, to
   }, labelText, descriptionText)
 end
 
+--- Pins the anchor where it is, since its point depends on the direction and the alignment.
+local function pinAnchor()
+  AnchorFrame:Pin()
+end
+
 --- Adds a card with a line of chips below a divider, where exactly one is checked: the one whose value is in the
---- state. Clicking a chip selects its value, and pins the anchor where it is, since its point depends on the choice.
+--- state. Clicking a chip selects its value, then calls `afterSelect`.
 --- @param container WaffleFlexComponent
 --- @param labelText string
 --- @param descriptionText string
 --- @param lineLabelText string Label to the left of the chips.
---- @param stateKey "anchorAlignment" | "anchorDirection"
+--- @param stateKey "anchorAlignment" | "anchorDirection" | "notificationBackground"
 --- @param setValue WuxActionCreator<string> Sets the state.
 --- @param choices { value: string, text: string }[]
-local function addChoiceCard(container, labelText, descriptionText, lineLabelText, stateKey, setValue, choices)
+--- @param afterSelect? fun()
+local function addChoiceCard(container, labelText, descriptionText, lineLabelText, stateKey, setValue, choices,
+                             afterSelect)
   local chips = {}
 
   for _, choice in ipairs(choices) do
@@ -66,7 +73,7 @@ local function addChoiceCard(container, labelText, descriptionText, lineLabelTex
       set = function(checked)
         if checked then
           Addon:GetStore():Dispatch(setValue(choice.value))
-          AnchorFrame:Pin()
+          if afterSelect then afterSelect() end
         end
       end
     }
@@ -122,12 +129,23 @@ function MainWindowOptions:Initialize(container)
   addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", ActionCreators.setAnchorDirection, {
     { value = "DOWN", text = L.DOWN },
     { value = "UP", text = L.UP }
-  })
+  }, pinAnchor)
 
   addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", ActionCreators.setAnchorAlignment, {
     { value = "LEFT", text = L.LEFT },
     { value = "CENTER", text = L.CENTER },
     { value = "RIGHT", text = L.RIGHT }
+  }, pinAnchor)
+
+  addDivider(container)
+
+  -- Style.
+  container:AttachComponent(ComponentFactory:Text({ text = L.STYLE, fontObject = "GameFontNormalLarge" }))
+
+  addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.LOOK, "notificationBackground", ActionCreators.setNotificationBackground, {
+    { value = "NONE", text = L.NONE },
+    { value = "SUBTLE", text = L.SUBTLE },
+    { value = "HIGH_CONTRAST", text = L.HIGH_CONTRAST }
   })
 
   addDivider(container)
@@ -146,6 +164,7 @@ function MainWindowOptions:Initialize(container)
             payload = {
               ActionCreators.resetLootPrices(),
               ActionCreators.resetMoneyNotifications(),
+              ActionCreators.resetNotificationBackground(),
               ActionCreators.resetOwnedItemCounts(),
               ActionCreators.patchMinimapIcon({ hide = DefaultStates.Root.minimapIcon.hide })
             }

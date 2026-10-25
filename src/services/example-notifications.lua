@@ -49,6 +49,13 @@ function ExampleItemLogger:GetText(entry)
   return ItemLogger:GetText(entry, entry.payload.ownedCount)
 end
 
+--- Returns the color of the item's quality, or `nil` until the item is cached.
+--- @param entry ExampleItemLogEntry
+--- @return Color?
+function ExampleItemLogger:GetColor(entry)
+  return ItemLogger:GetColor(entry)
+end
+
 -- ============================================================================
 -- ExampleNotifications
 -- ============================================================================

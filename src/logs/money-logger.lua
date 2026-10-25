@@ -1,5 +1,6 @@
 local Addon = select(2, ...) ---@type Addon
 local B = Addon:GetModule("Blizzard")
+local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local HistoryLog = Addon:GetModule("HistoryLog")
@@ -64,6 +65,16 @@ end
 --- @return string
 function MoneyLogger:GetText(entry)
   return B.Money:GetCoinText(entry.payload.copper)
+end
+
+--- Returns the color of the largest coin in the amount.
+--- @param entry MoneyLogEntry
+--- @return Color
+function MoneyLogger:GetColor(entry)
+  local copper = entry.payload.copper
+  if copper >= B.Money.COPPER_PER_GOLD then return Colors.Gold end
+  if copper >= B.Money.COPPER_PER_SILVER then return Colors.Silver end
+  return Colors.Copper
 end
 
 -- ============================================================================

@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local Colors = Addon:GetModule("Colors")
 local HistoryLog = Addon:GetModule("HistoryLog")
 local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
@@ -15,6 +16,9 @@ local DRIFT_DISTANCE = 6
 --- How quickly a displaced content settles into place. Higher is quicker.
 local SETTLE_RATE = 16
 
+--- Opacity of the background with the `HIGH_CONTRAST` style.
+local HIGH_CONTRAST_ALPHA = 0.95
+
 -- =============================================================================
 -- Local Functions
 -- =============================================================================
@@ -24,6 +28,28 @@ local SETTLE_RATE = 16
 --- @return string
 local function getText(frame)
   return frame.entry and HistoryLog:GetText(frame.entry) or ""
+end
+
+--- Colors the background and border of the content for the notification background in the state and the color of the
+--- entry. Does nothing if neither changed.
+--- @param frame NotificationWidget
+local function applyBackground(frame)
+  local style = Addon:GetState().notificationBackground
+  local color = frame.entry and HistoryLog:GetColor(frame.entry)
+  if style == frame.style and color == frame.color then return end
+
+  frame.style, frame.color = style, color
+
+  if style == "NONE" then
+    frame.content:SetBackdropColor(0, 0, 0, 0)
+    frame.content:SetBackdropBorderColor(0, 0, 0, 0)
+  elseif style == "HIGH_CONTRAST" then
+    frame.content:SetBackdropColor(0, 0, 0, HIGH_CONTRAST_ALPHA)
+    frame.content:SetBackdropBorderColor((color or Colors.Black):GetRGBA(1))
+  else
+    frame.content:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
+    frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
+  end
 end
 
 --- Shows the entry on the frame, and returns whether its text changed.
@@ -123,6 +149,9 @@ function ComponentFactory:Notification(options)
       --- @type HistoryLogEntry?
       frame.entry = nil
 
+      --- Notification background and border color that the content was last colored for.
+      frame.style, frame.color = nil, nil
+
       if animated then
         --- Fades the notification in, then out after the hold.
         content.animationGroup = content:CreateAnimationGroup()
@@ -157,13 +186,15 @@ function ComponentFactory:Notification(options)
         end)
       end
 
-      -- Re-read the text while shown, and resize the notification when it changes.
+      -- Re-read the text and the colors while shown, and resize the notification when the text changes.
       TickerManager:NewTicker(0.1, function()
         local text = getText(frame)
         if text ~= frame.content.fontString:GetText() then
           frame.content.fontString:SetText(text)
           root:MarkDirty()
         end
+
+        applyBackground(frame)
       end):BindFrame(frame)
 
       return frame
@@ -197,9 +228,8 @@ function ComponentFactory:Notification(options)
   function root:Notify(entry, direction)
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
-      frame.content:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
-      frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
       setEntry(frame, entry)
+      applyBackground(frame)
 
       if animated then
         local growth = direction == "UP" and 1 or -1
@@ -217,6 +247,7 @@ function ComponentFactory:Notification(options)
   function root:SetEntry(entry)
     self:WhenFrameReady(function(frame)
       if setEntry(frame, entry) then self:MarkDirty() end
+      applyBackground(frame)
     end)
   end
 

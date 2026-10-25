@@ -126,6 +126,14 @@ function ItemLogger:GetText(entry, ownedCount)
   return text
 end
 
+--- Returns the color of the item's quality, or `nil` until the item is cached.
+--- @param entry ItemLogEntry
+--- @return Color?
+function ItemLogger:GetColor(entry)
+  local _, quality = B.Items:GetInfo(entry.payload.link)
+  return Colors.ByQuality[quality]
+end
+
 -- ============================================================================
 -- Events
 -- ============================================================================
