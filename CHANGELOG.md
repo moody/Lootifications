@@ -12,6 +12,7 @@
 - Added item and money totals to the Log tab, and a Clear Log button that empties the log.
 - Added a minimap icon. Left-click toggles the Log, right-click toggles the Settings, and Shift and right-click shows test notifications. The Minimap Icon option in the Settings hides it.
 - Added Direction (down or up) and Alignment (left, center or right) options for the notifications, which were chosen by where the anchor was placed, and a Reset to Defaults button.
+- Added a Background option for the notifications: None, Subtle (as before), or High Contrast, which darkens the background and colors the border by item quality, or by the largest coin for money.
 - The options window remembers where it was moved. Shift and right-click on it resets its position.
 - Added the `/lootif` slash command as a short form of `/lootifications`.
 - Added `/lootifications test`, which shows a few test notifications, and `/lootifications help`, which lists the commands.
