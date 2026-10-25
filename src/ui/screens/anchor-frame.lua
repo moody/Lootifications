@@ -39,6 +39,10 @@ local isUnlocked = false
 --- @type NotificationComponent[]
 local notifications = {}
 
+--- The example notifications, one for each slot.
+--- @type NotificationComponent[]
+local examples = {}
+
 --- Counts the notifications shown, and starts over once none are. A newer notification gets a lower `order`, which
 --- puts it closest to the pinned edge.
 local sequence = 0
@@ -183,11 +187,20 @@ Components.ExampleNotifications = Components.Root:AddChild({
 })
 
 for slot = 1, Addon.MAX_NOTIFICATIONS do
-  local example = ComponentFactory:Notification({ animated = false })
-  example:SetOrder(slot)
-  example:Notify(function() return ExampleNotifications:GetText(slot) end)
-  Components.ExampleNotifications:AttachComponent(example)
+  examples[slot] = ComponentFactory:Notification({ animated = false })
+  examples[slot]:SetOrder(slot)
+  examples[slot]:Notify()
+  Components.ExampleNotifications:AttachComponent(examples[slot])
 end
+
+-- Keep the examples showing the entries of their slots, which an option or an item being cached can change.
+Components.ExampleNotifications:WhenFrameReady(function(frame)
+  TickerManager:NewTicker(0.1, function()
+    for slot, example in ipairs(examples) do
+      example:SetEntry(ExampleNotifications:GetEntry(slot))
+    end
+  end):BindFrame(frame)
+end)
 
 -- ============================================================================
 -- AnchorFrame
@@ -267,11 +280,11 @@ TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
   if shownCount == 0 then sequence = 0 end
 
   if freeNotification then
-    local getText = NotificationManager:Pop()
-    if getText then
+    local entry = NotificationManager:Pop()
+    if entry then
       sequence = sequence + 1
       freeNotification:SetOrder(-sequence)
-      freeNotification:Notify(getText, Addon:GetState().anchorDirection)
+      freeNotification:Notify(entry, Addon:GetState().anchorDirection)
     end
   end
 end)

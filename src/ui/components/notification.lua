@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local HistoryLog = Addon:GetModule("HistoryLog")
 local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
 
@@ -17,6 +18,27 @@ local SETTLE_RATE = 16
 -- =============================================================================
 -- Local Functions
 -- =============================================================================
+
+--- Returns the text of the frame's entry, or an empty string if it has none.
+--- @param frame NotificationWidget
+--- @return string
+local function getText(frame)
+  return frame.entry and HistoryLog:GetText(frame.entry) or ""
+end
+
+--- Shows the entry on the frame, and returns whether its text changed.
+--- @param frame NotificationWidget
+--- @param entry? HistoryLogEntry
+--- @return boolean
+local function setEntry(frame, entry)
+  frame.entry = entry
+
+  local text = getText(frame)
+  if text == frame.content.fontString:GetText() then return false end
+
+  frame.content.fontString:SetText(text)
+  return true
+end
 
 --- Places the content `y` pixels above its place in the frame.
 --- @param frame NotificationWidget
@@ -56,9 +78,9 @@ end
 --- @class NotificationOptions
 --- @field animated? boolean Whether it fades and slides. Defaults to `true`. One that is not animated stays until `Kill()`.
 
---- Creates a line of text on a backdrop that slides and fades in, then fades out. It takes no space until `Notify()`
---- is called, and is no longer visible once it has faded out. It glides to its new place when the others around it
---- change.
+--- Creates a line of text on a backdrop that shows a history entry. It slides and fades in, then fades out, and glides
+--- to its new place when the others around it change. It takes no space until `Notify()` is called, and is not visible
+--- once it has faded out.
 --- @param options? NotificationOptions
 --- @return NotificationComponent root
 function ComponentFactory:Notification(options)
@@ -97,8 +119,9 @@ function ComponentFactory:Notification(options)
       content.fontString:SetTextColor(1, 1, 1)
       content.fontString:SetPoint("CENTER")
 
-      --- Returns the text to show. Set by `Notify()`.
-      frame.getText = function() return "" end
+      --- Entry that the notification shows. Set by `Notify()` and `SetEntry()`.
+      --- @type HistoryLogEntry?
+      frame.entry = nil
 
       if animated then
         --- Fades the notification in, then out after the hold.
@@ -136,7 +159,7 @@ function ComponentFactory:Notification(options)
 
       -- Re-read the text while shown, and resize the notification when it changes.
       TickerManager:NewTicker(0.1, function()
-        local text = frame.getText()
+        local text = getText(frame)
         if text ~= frame.content.fontString:GetText() then
           frame.content.fontString:SetText(text)
           root:MarkDirty()
@@ -168,16 +191,15 @@ function ComponentFactory:Notification(options)
     end
   })
 
-  --- Shows the notification, and plays its animation if it has one.
-  --- @param getText fun(): string Returns the text to show.
+  --- Shows the notification with the entry, and plays its animation if it has one.
+  --- @param entry? HistoryLogEntry
   --- @param direction? AnchorDirection The way the stack grows. Defaults to `DOWN`.
-  function root:Notify(getText, direction)
+  function root:Notify(entry, direction)
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
       frame.content:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
       frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
-      frame.getText = getText
-      frame.content.fontString:SetText(getText())
+      setEntry(frame, entry)
 
       if animated then
         local growth = direction == "UP" and 1 or -1
@@ -188,6 +210,14 @@ function ComponentFactory:Notification(options)
     end)
 
     self:SetVisibility("VISIBLE")
+  end
+
+  --- Shows the entry in place of the one shown now.
+  --- @param entry? HistoryLogEntry
+  function root:SetEntry(entry)
+    self:WhenFrameReady(function(frame)
+      if setEntry(frame, entry) then self:MarkDirty() end
+    end)
   end
 
   --- Hides the notification, even while it is still animating. Does nothing if it is already hidden.

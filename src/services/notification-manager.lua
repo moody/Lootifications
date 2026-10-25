@@ -4,27 +4,27 @@ local Addon = select(2, ...) ---@type Addon
 --- @class NotificationManager
 local NotificationManager = Addon:GetModule("NotificationManager")
 
---- Functions that return the text of notifications waiting to be shown, newest first.
---- @type table<integer, fun():string>
-local getTextQueue = {}
+--- Entries of the notifications waiting to be shown, newest first.
+--- @type HistoryLogEntry[]
+local queue = {}
 
 -- ============================================================================
 -- NotificationManager
 -- ============================================================================
 
 --- Queues a notification to be shown once there is room for it.
---- @param getText fun(): string
-function NotificationManager:Notify(getText)
-  table.insert(getTextQueue, 1, getText)
+--- @param entry HistoryLogEntry
+function NotificationManager:Notify(entry)
+  table.insert(queue, 1, entry)
 end
 
---- Removes and returns the text function of the notification that has waited longest, if there is one.
---- @return (fun(): string)?
+--- Removes and returns the entry of the notification that has waited longest, if there is one.
+--- @return HistoryLogEntry?
 function NotificationManager:Pop()
-  return table.remove(getTextQueue)
+  return table.remove(queue)
 end
 
 --- Drops every queued notification.
 function NotificationManager:Clear()
-  for k in pairs(getTextQueue) do getTextQueue[k] = nil end
+  for k in pairs(queue) do queue[k] = nil end
 end

@@ -3,7 +3,7 @@ local B = Addon:GetModule("Blizzard")
 local ItemLogger = Addon:GetModule("ItemLogger")
 local MoneyLogger = Addon:GetModule("MoneyLogger")
 
---- Provides the text of the example notifications that show what the notifications will look like, using real items.
+--- Provides the entries of the example notifications, which use real items.
 --- @class ExampleNotifications
 local ExampleNotifications = Addon:GetModule("ExampleNotifications")
 
@@ -21,19 +21,46 @@ local ITEMS = {
 local MONEY_ENTRY = { logger = MoneyLogger, time = 0, payload = { copper = 42069 } }
 
 --- Each item's entry, once the item is cached.
---- @type table<integer, ItemLogEntry>
+--- @type table<integer, ExampleItemLogEntry>
 local itemEntries = {}
+
+-- ============================================================================
+-- LuaCATS Annotations
+-- ============================================================================
+
+--- @class ExampleItemLogPayload : ItemLogPayload
+--- @field ownedCount integer
+
+--- @class ExampleItemLogEntry : ItemLogEntry
+--- @field payload ExampleItemLogPayload
+
+-- ============================================================================
+-- ExampleItemLogger
+-- ============================================================================
+
+--- Gives the text of an example item, with the example's owned count instead of the number in the bags.
+--- @class ExampleItemLogger : HistoryLogger
+local ExampleItemLogger = {}
+
+--- Returns the entry's text, with its owned count.
+--- @param entry ExampleItemLogEntry
+--- @return string
+function ExampleItemLogger:GetText(entry)
+  return ItemLogger:GetText(entry, entry.payload.ownedCount)
+end
 
 -- ============================================================================
 -- ExampleNotifications
 -- ============================================================================
 
---- Returns the text of the example in the slot. The first slot is money while its notifications are on, and the
---- items that follow move down a slot. It is empty for an item that is not cached yet.
+--- Returns the entry of the example in the slot, or `nil` for an item that is not cached yet. The first slot is money
+--- while its notifications are on, and the items move down a slot.
 --- @param slot integer
---- @return string
-function ExampleNotifications:GetText(slot)
+--- @return HistoryLogEntry?
+function ExampleNotifications:GetEntry(slot)
   local isMoneyOn = Addon:GetState().moneyNotifications
+  if isMoneyOn and slot == 1 then return MONEY_ENTRY end
+
   local index = isMoneyOn and slot - 1 or slot
   local item = ITEMS[index]
   local entry = itemEntries[index]
@@ -41,16 +68,14 @@ function ExampleNotifications:GetText(slot)
   if item and not entry then
     local link = B.Items:GetInfo(item.itemID)
     if link then
-      entry = { logger = ItemLogger, time = 0, payload = { link = link, quantity = item.quantity } }
+      entry = {
+        logger = ExampleItemLogger,
+        time = 0,
+        payload = { link = link, quantity = item.quantity, ownedCount = item.ownedCount }
+      }
       itemEntries[index] = entry
     end
   end
 
-  if isMoneyOn and slot == 1 then
-    return MoneyLogger:GetText(MONEY_ENTRY)
-  elseif entry then
-    return ItemLogger:GetText(entry, item.ownedCount)
-  end
-
-  return ""
+  return entry
 end
