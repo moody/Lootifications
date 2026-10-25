@@ -10,7 +10,7 @@ Lootifications is an addon for World of Warcraft that shows notifications for lo
 - Optional vendor price and owned count in item notifications
 - Choose which way the notifications grow and how they line up, and drag them anywhere on the screen
 - A log of the items and money looted this session, with totals
-- A minimap icon and chat commands, including one for test notifications
+- A minimap icon and chat commands
 
 ### Options
 
@@ -30,7 +30,7 @@ The options are on the `Settings` tab of the main window. The window remembers w
 
 ### Anchor
 
-The anchor is where the notifications appear. While the `Settings` tab is open, it shows sample notifications. Drag it to move the notifications, and right-click it to reset its position. Loot notifications are not shown meanwhile, but the loot is still recorded in the log.
+The anchor is where the notifications appear. While the `Settings` tab is open, it plays sample notifications in a loop. Drag it to move the notifications, and right-click it to reset its position. Loot notifications are not shown meanwhile, but the loot is still recorded in the log.
 
 ![Anchor](/.github/images/Anchor.png?raw=true)
 
@@ -49,7 +49,6 @@ The `Log` tab, which the main window opens on, lists the items and money looted 
 
 - Left-click toggles the `Log`
 - Right-click toggles the `Settings`
-- Shift and right-click shows test notifications
 
 The `Minimap Icon` option hides it.
 
@@ -60,9 +59,6 @@ The `Minimap Icon` option hides it.
 ```bash
 # Toggle the main window.
 /lootifications
-
-# Show a few test notifications.
-/lootifications test
 
 # Display a list of commands.
 /lootifications help
