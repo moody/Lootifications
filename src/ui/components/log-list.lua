@@ -33,11 +33,10 @@ end
 --- @param entry ItemLogEntry
 local function fillItemCard(card, entry)
   local payload = entry.payload
-  local _, quality, texture = B.Items:GetInfo(payload.link)
+  local _, _, texture = B.Items:GetInfo(payload.link)
 
   card:Set(payload.link, L.QUANTITY_FORMAT:format(Colors.White(payload.quantity)), getAgeText(time() - entry.time), payload.link)
   card:SetIcon(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
-  card:SetAccentColor((Colors.ByQuality[quality] or Colors.QualityCommon):GetRGB())
 end
 
 --- Shows a money entry on the card.
@@ -46,7 +45,6 @@ end
 local function fillMoneyCard(card, entry)
   card:Set(B.Money:GetCoinText(entry.payload.copper), L.MONEY, getAgeText(time() - entry.time))
   card:SetIcon(nil)
-  card:SetAccentColor(Colors.Gold:GetRGB())
 end
 
 --- Fills a card from an entry, by the logger that recorded it.
@@ -143,6 +141,7 @@ function ComponentFactory:LogList()
       local fillCard = entry and cardFillers[entry.logger]
       if fillCard then
         fillCard(card, entry)
+        card:SetAccentColor((HistoryLog:GetColor(entry) or Colors.QualityCommon):GetRGB())
         card:SetVisibility("VISIBLE")
       else
         card:SetVisibility("INVISIBLE")
