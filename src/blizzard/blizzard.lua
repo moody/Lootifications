@@ -18,9 +18,9 @@ end
 -- Globals
 -- =============================================================================
 
-local GetCoinTextureString = C_CurrencyInfo.GetCoinTextureString or getGlobal("GetCoinTextureString")
 local GetItemCount = C_Item.GetItemCount or getGlobal("GetItemCount")
 local GetItemInfo = C_Item.GetItemInfo or getGlobal("GetItemInfo")
+local GetMoneyString = GetMoneyString or getGlobal("GetMoneyString")
 
 -- =============================================================================
 -- Blizzard - Strings
@@ -28,8 +28,6 @@ local GetItemInfo = C_Item.GetItemInfo or getGlobal("GetItemInfo")
 
 --- The game's own localized strings.
 B.Strings = {
-  --- Name of the Shift key.
-
   --- Format of an amount of gold. Takes the number.
   GOLD_AMOUNT_TEXT = getGlobal("GOLD_AMOUNT"),
 
@@ -91,5 +89,5 @@ B.Money = {
 --- @param copper number
 --- @return string
 function B.Money:GetCoinText(copper)
-  return GetCoinTextureString(copper)
+  return GetMoneyString(copper)
 end
