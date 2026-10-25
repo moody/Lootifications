@@ -80,6 +80,7 @@
   <Script file="src\ui\components\log-card.lua"/>
   <Script file="src\ui\components\log-list.lua"/>
   <Script file="src\ui\components\notification.lua"/>
+  <Script file="src\ui\components\notification-stack.lua"/>
   <Script file="src\ui\components\option-card.lua"/>
   <Script file="src\ui\components\scroll-panel.lua"/>
   <Script file="src\ui\components\settings-box.lua"/>

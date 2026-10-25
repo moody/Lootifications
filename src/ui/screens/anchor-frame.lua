@@ -35,17 +35,8 @@ local ALIGNMENTS = {
 --- Whether the anchor can be dragged.
 local isUnlocked = false
 
---- The live notifications, one for each that can be shown at once. One that is visible is being shown.
---- @type NotificationComponent[]
-local notifications = {}
-
---- The example notifications, one for each slot.
---- @type NotificationComponent[]
-local examples = {}
-
---- Counts the notifications shown, and starts over once none are. A newer notification gets a lower `order`, which
---- puts it closest to the pinned edge.
-local sequence = 0
+--- Counts the examples shown in the current loop. The first is the bottom slot.
+local exampleSequence = 0
 
 -- ============================================================================
 -- Local Functions
@@ -109,6 +100,24 @@ local function refreshFrame(frame)
   frame:EnableMouse(isUnlocked)
 end
 
+--- Returns the entries of the examples in the order they appear: the bottom slot first.
+--- @return HistoryLogEntry[]
+local function getExampleEntries()
+  local entries = {}
+  for i = 1, Addon.MAX_NOTIFICATIONS do
+    entries[i] = ExampleNotifications:GetEntry(Addon.MAX_NOTIFICATIONS + 1 - i)
+  end
+
+  return entries
+end
+
+--- Starts the examples over, hiding the ones that are showing.
+local function restartExamples()
+  Components.ExampleNotifications:Clear()
+  Components.ExampleNotifications:SetEntries(getExampleEntries())
+  exampleSequence = 0
+end
+
 -- ============================================================================
 -- Root Component
 -- ============================================================================
@@ -160,44 +169,58 @@ Components.Root = Addon.Waffle:Flex({
   end
 })
 
+-- Lay out the notifications.
+TickerManager:NewTicker(1 / 30, function()
+  Components.Root:Layout()
+end)
+
 -- ============================================================================
--- Screen Components
+-- Screen Components - LiveNotifications
 -- ============================================================================
 
--- The screen shown while locked: the notifications that come from loot.
-Components.LiveNotifications = Components.Root:AddChild({
-  direction = "COLUMN",
-  gap = Addon.NOTIFICATION_SPACING,
-  width = "AUTO",
-  height = "AUTO"
-})
+--- The screen shown while locked: the notifications that come from loot.
+--- @type NotificationStackComponent
+Components.LiveNotifications = Components.Root:AttachComponent(ComponentFactory:NotificationStack())
 
-for i = 1, Addon.MAX_NOTIFICATIONS do
-  notifications[i] = ComponentFactory:Notification()
-  Components.LiveNotifications:AttachComponent(notifications[i])
-end
+-- Show a queued notification each stagger interval, while there is room for it.
+Components.LiveNotifications:WhenFrameReady(function(frame)
+  TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
+    if not Components.LiveNotifications:IsFull() then
+      local entry = NotificationManager:Pop()
+      if entry then
+        Components.LiveNotifications:Show(entry, Addon:GetState().anchorDirection)
+      end
+    end
+  end):BindFrame(frame)
+end)
 
--- The screen shown while unlocked: examples of the notifications, which stay until the anchor is locked.
-Components.ExampleNotifications = Components.Root:AddChild({
-  direction = "COLUMN",
-  gap = Addon.NOTIFICATION_SPACING,
-  width = "AUTO",
-  height = "AUTO",
-  visibility = "GONE"
-})
+-- ============================================================================
+-- Screen Components - ExampleNotifications
+-- ============================================================================
 
-for slot = 1, Addon.MAX_NOTIFICATIONS do
-  examples[slot] = ComponentFactory:Notification({ animated = false })
-  examples[slot]:SetOrder(slot)
-  examples[slot]:Notify()
-  Components.ExampleNotifications:AttachComponent(examples[slot])
-end
+--- The screen shown while unlocked: examples of the notifications, played in a loop.
+--- @type NotificationStackComponent
+Components.ExampleNotifications = Components.Root:AttachComponent(ComponentFactory:NotificationStack())
+Components.ExampleNotifications:SetVisibility("GONE")
 
--- Keep the examples showing the entries of their slots, which an option or an item being cached can change.
+-- Play the examples in a loop while shown, bottom slot first, with a pause between loops.
 Components.ExampleNotifications:WhenFrameReady(function(frame)
-  TickerManager:NewTicker(0.1, function()
-    for slot, example in ipairs(examples) do
-      example:SetEntry(ExampleNotifications:GetEntry(slot))
+  local pause = 0
+  TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
+    local entries = getExampleEntries()
+    Components.ExampleNotifications:SetEntries(entries)
+
+    if exampleSequence < Addon.MAX_NOTIFICATIONS then
+      exampleSequence = exampleSequence + 1
+      Components.ExampleNotifications:Show(entries[exampleSequence], Addon:GetState().anchorDirection)
+    elseif Components.ExampleNotifications:IsShowing() then
+      pause = 0
+    else
+      pause = pause + Addon.NOTIFICATION_STAGGER
+      if pause >= 0.5 then -- Pause for 0.5 secs.
+        pause = 0
+        exampleSequence = 0
+      end
     end
   end):BindFrame(frame)
 end)
@@ -212,18 +235,16 @@ function AnchorFrame:IsUnlocked()
   return isUnlocked
 end
 
---- Lets the anchor be dragged, and shows examples of the notifications in place of the live ones, which are dropped.
+--- Lets the anchor be dragged, and plays examples of the notifications in place of the live ones, which are dropped.
 function AnchorFrame:Unlock()
   if isUnlocked then return end
   isUnlocked = true
 
   NotificationManager:Clear()
-  for _, notification in ipairs(notifications) do
-    notification:Kill()
-  end
-
+  Components.LiveNotifications:Clear()
   Components.LiveNotifications:SetVisibility("GONE")
   Components.ExampleNotifications:SetVisibility("VISIBLE")
+  restartExamples()
   Components.Root:WhenFrameReady(refreshFrame)
 end
 
@@ -232,6 +253,7 @@ function AnchorFrame:Lock()
   if not isUnlocked then return end
   isUnlocked = false
 
+  Components.ExampleNotifications:Clear()
   Components.ExampleNotifications:SetVisibility("GONE")
   Components.LiveNotifications:SetVisibility("VISIBLE")
   Components.Root:WhenFrameReady(refreshFrame)
@@ -258,38 +280,6 @@ function AnchorFrame:Reset()
 end
 
 -- ============================================================================
--- Tickers
--- ============================================================================
-
--- Lay out the notifications.
-TickerManager:NewTicker(1 / 30, function()
-  Components.Root:Layout()
-end)
-
--- Show a queued notification each stagger interval, while there is room for it.
-TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
-  local shownCount, freeNotification = 0, nil
-  for _, notification in ipairs(notifications) do
-    if notification:IsVisible() then
-      shownCount = shownCount + 1
-    elseif not freeNotification then
-      freeNotification = notification
-    end
-  end
-
-  if shownCount == 0 then sequence = 0 end
-
-  if freeNotification then
-    local entry = NotificationManager:Pop()
-    if entry then
-      sequence = sequence + 1
-      freeNotification:SetOrder(-sequence)
-      freeNotification:Notify(entry, Addon:GetState().anchorDirection)
-    end
-  end
-end)
-
--- ============================================================================
 -- Events
 -- ============================================================================
 
@@ -309,10 +299,12 @@ EventManager:Once(E.StoreInitialized, function(Store)
   end)
 end)
 
--- Listen for `StateUpdated` to stack and align the notifications.
+-- Listen for `StateUpdated` to stack and align the notifications, and to restart the examples.
 EventManager:On(E.StateUpdated, function(state)
   for _, screen in ipairs({ Components.LiveNotifications, Components.ExampleNotifications }) do
     screen:SetDirection(DIRECTIONS[state.anchorDirection].direction)
     screen:SetAlign(ALIGNMENTS[state.anchorAlignment].align)
   end
+
+  if isUnlocked then restartExamples() end
 end)

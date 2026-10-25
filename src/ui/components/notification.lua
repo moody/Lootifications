@@ -30,28 +30,6 @@ local function getText(frame)
   return frame.entry and HistoryLog:GetText(frame.entry) or ""
 end
 
---- Colors the background and border of the content for the notification background in the state and the color of the
---- entry. Does nothing if neither changed.
---- @param frame NotificationWidget
-local function applyBackground(frame)
-  local style = Addon:GetState().notificationBackground
-  local color = frame.entry and HistoryLog:GetColor(frame.entry)
-  if style == frame.style and color == frame.color then return end
-
-  frame.style, frame.color = style, color
-
-  if style == "NONE" then
-    frame.content:SetBackdropColor(0, 0, 0, 0)
-    frame.content:SetBackdropBorderColor(0, 0, 0, 0)
-  elseif style == "HIGH_CONTRAST" then
-    frame.content:SetBackdropColor(0, 0, 0, HIGH_CONTRAST_ALPHA)
-    frame.content:SetBackdropBorderColor((color or Colors.Black):GetRGBA(1))
-  else
-    frame.content:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
-    frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
-  end
-end
-
 --- Shows the entry on the frame, and returns whether its text changed.
 --- @param frame NotificationWidget
 --- @param entry? HistoryLogEntry
@@ -101,23 +79,18 @@ end
 -- ComponentFactory - Notification
 -- =============================================================================
 
---- @class NotificationOptions
---- @field animated? boolean Whether it fades and slides. Defaults to `true`. One that is not animated stays until `Kill()`.
-
 --- Creates a line of text on a backdrop that shows a history entry. It slides and fades in, then fades out, and glides
---- to its new place when the others around it change. It takes no space until `Notify()` is called, and is not visible
---- once it has faded out.
---- @param options? NotificationOptions
+--- to its new place when the others around it change. It is invisible, keeping its space, until `Notify()` is called
+--- and once it has faded out.
 --- @return NotificationComponent root
-function ComponentFactory:Notification(options)
-  local animated = not options or options.animated ~= false
+function ComponentFactory:Notification()
   local root
 
   --- @class NotificationComponent : WaffleFlexComponent
   root = Addon.Waffle:Flex({
     width = "AUTO",
     height = "AUTO",
-    visibility = "GONE",
+    visibility = "INVISIBLE",
 
     --- @param parent Frame
     frameFactory = function(parent)
@@ -149,52 +122,45 @@ function ComponentFactory:Notification(options)
       --- @type HistoryLogEntry?
       frame.entry = nil
 
-      --- Notification background and border color that the content was last colored for.
-      frame.style, frame.color = nil, nil
+      --- Fades the notification in, then out after the hold.
+      content.animationGroup = content:CreateAnimationGroup()
 
-      if animated then
-        --- Fades the notification in, then out after the hold.
-        content.animationGroup = content:CreateAnimationGroup()
+      local fadeIn = content.animationGroup:CreateAnimation("Alpha")
+      fadeIn:SetFromAlpha(0)
+      fadeIn:SetToAlpha(1)
+      fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
+      fadeIn:SetStartDelay(0)
+      fadeIn:SetSmoothing("OUT")
 
-        local fadeIn = content.animationGroup:CreateAnimation("Alpha")
-        fadeIn:SetFromAlpha(0)
-        fadeIn:SetToAlpha(1)
-        fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
-        fadeIn:SetStartDelay(0)
-        fadeIn:SetSmoothing("OUT")
+      local fadeOut = content.animationGroup:CreateAnimation("Alpha")
+      fadeOut:SetFromAlpha(1)
+      fadeOut:SetToAlpha(0)
+      fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
+      fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
+      fadeOut:SetSmoothing("IN")
 
-        local fadeOut = content.animationGroup:CreateAnimation("Alpha")
-        fadeOut:SetFromAlpha(1)
-        fadeOut:SetToAlpha(0)
-        fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-        fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
-        fadeOut:SetSmoothing("IN")
+      --- Drifts the content while it fades out. Its offset is set by `Notify()`.
+      frame.drift = content.animationGroup:CreateAnimation("Translation")
+      frame.drift:SetDuration(Addon.NOTIFICATION_FADE_OUT)
+      frame.drift:SetStartDelay(Addon.NOTIFICATION_HOLD)
+      frame.drift:SetSmoothing("IN")
 
-        --- Drifts the content while it fades out. Its offset is set by `Notify()`.
-        frame.drift = content.animationGroup:CreateAnimation("Translation")
-        frame.drift:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-        frame.drift:SetStartDelay(Addon.NOTIFICATION_HOLD)
-        frame.drift:SetSmoothing("IN")
+      -- Showing the frame starts the animation, and the notification hides once it finishes.
+      frame:HookScript("OnShow", function() content.animationGroup:Play() end)
+      content.animationGroup:HookScript("OnFinished", function()
+        frame:Hide()
+        displace(frame, 0)
+        frame.lastTop = nil
+        root:SetVisibility("INVISIBLE")
+      end)
 
-        -- Showing the frame starts the animation, and the notification hides once it finishes.
-        frame:HookScript("OnShow", function() content.animationGroup:Play() end)
-        content.animationGroup:HookScript("OnFinished", function()
-          frame:Hide()
-          displace(frame, 0)
-          frame.lastTop = nil
-          root:SetVisibility("GONE")
-        end)
-      end
-
-      -- Re-read the text and the colors while shown, and resize the notification when the text changes.
+      -- Re-read the text while shown, and resize the notification when it changes.
       TickerManager:NewTicker(0.1, function()
         local text = getText(frame)
         if text ~= frame.content.fontString:GetText() then
           frame.content.fontString:SetText(text)
           root:MarkDirty()
         end
-
-        applyBackground(frame)
       end):BindFrame(frame)
 
       return frame
@@ -209,8 +175,6 @@ function ComponentFactory:Notification(options)
     --- Glides the content from where it was when the layout moves the notification.
     --- @param frame NotificationWidget
     onLayout = function(frame)
-      if not animated then return end
-
       local top = frame:GetTop()
       if not top then return end
 
@@ -222,21 +186,33 @@ function ComponentFactory:Notification(options)
     end
   })
 
-  --- Shows the notification with the entry, and plays its animation if it has one.
+  --- Shows the notification with the entry, and plays its animation.
   --- @param entry? HistoryLogEntry
   --- @param direction? AnchorDirection The way the stack grows. Defaults to `DOWN`.
   function root:Notify(entry, direction)
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
       setEntry(frame, entry)
-      applyBackground(frame)
 
-      if animated then
-        local growth = direction == "UP" and 1 or -1
-        frame.lastTop = nil
-        displace(frame, -growth * SLIDE_DISTANCE)
-        frame.drift:SetOffset(0, growth * DRIFT_DISTANCE)
+      -- Color the background and border before the animation starts, since the game reverts colors set while it plays.
+      local style = Addon:GetState().notificationBackground
+      local color = entry and HistoryLog:GetColor(entry)
+
+      if style == "NONE" then
+        frame.content:SetBackdropColor(0, 0, 0, 0)
+        frame.content:SetBackdropBorderColor(0, 0, 0, 0)
+      elseif style == "HIGH_CONTRAST" then
+        frame.content:SetBackdropColor(0, 0, 0, HIGH_CONTRAST_ALPHA)
+        frame.content:SetBackdropBorderColor((color or Colors.Black):GetRGBA(1))
+      else
+        frame.content:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
+        frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
       end
+
+      local growth = direction == "UP" and 1 or -1
+      frame.lastTop = nil
+      displace(frame, -growth * SLIDE_DISTANCE)
+      frame.drift:SetOffset(0, growth * DRIFT_DISTANCE)
     end)
 
     self:SetVisibility("VISIBLE")
@@ -247,23 +223,22 @@ function ComponentFactory:Notification(options)
   function root:SetEntry(entry)
     self:WhenFrameReady(function(frame)
       if setEntry(frame, entry) then self:MarkDirty() end
-      applyBackground(frame)
     end)
   end
 
-  --- Hides the notification, even while it is still animating. Does nothing if it is already hidden.
+  --- Hides the notification, even while it is still animating. Does nothing if it is already invisible.
   function root:Kill()
     if not self:IsVisible() then return end
 
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
-      if frame.content.animationGroup then frame.content.animationGroup:Stop() end
+      frame.content.animationGroup:Stop()
       frame:Hide()
       displace(frame, 0)
       frame.lastTop = nil
     end)
 
-    self:SetVisibility("GONE")
+    self:SetVisibility("INVISIBLE")
   end
 
   return root
