@@ -19,6 +19,7 @@ The options are on the `Settings` tab of the main window. The window remembers w
 - **Owned Item Counts** — Include an owned item count in loot notifications
 - **Direction** — Grow down from the anchor's top or up from its bottom
 - **Alignment** — Line the notifications up to the left, center, or right
+- **Background** — The background and border of the notifications: none, subtle, or high contrast, which colors the border by item quality, or by the largest coin for money
 - **Minimap Icon** — Show an icon on the minimap
 
 `Reset to Defaults` resets every option and the anchor's position.
