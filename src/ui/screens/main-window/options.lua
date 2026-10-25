@@ -97,6 +97,17 @@ end
 --- Adds the options to the container.
 --- @param container WaffleFlexComponent
 function MainWindowOptions:Initialize(container)
+  -- General.
+  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
+
+  addCard(container, {
+    get = function() return not Addon:GetState().minimapIcon.hide end,
+    set = function(show) Addon:GetStore():Dispatch(ActionCreators.patchMinimapIcon({ hide = not show })) end
+  }, L.MINIMAP_ICON_TEXT, L.MINIMAP_ICON_DESCRIPTION)
+
+  addDivider(container)
+
+  -- Notifications.
   container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = "GameFontNormalLarge" }))
 
   addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications", ActionCreators.toggleMoneyNotifications)
@@ -104,25 +115,20 @@ function MainWindowOptions:Initialize(container)
   addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "ownedItemCounts", ActionCreators.toggleOwnedItemCounts)
 
   addDivider(container)
+
+  -- Layout.
   container:AttachComponent(ComponentFactory:Text({ text = L.LAYOUT, fontObject = "GameFontNormalLarge" }))
 
   addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", ActionCreators.setAnchorDirection, {
     { value = "DOWN", text = L.DOWN },
     { value = "UP", text = L.UP }
   })
+
   addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", ActionCreators.setAnchorAlignment, {
     { value = "LEFT", text = L.LEFT },
     { value = "CENTER", text = L.CENTER },
     { value = "RIGHT", text = L.RIGHT }
   })
-
-  addDivider(container)
-  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
-
-  addCard(container, {
-    get = function() return not Addon:GetState().minimapIcon.hide end,
-    set = function(show) Addon:GetStore():Dispatch(ActionCreators.patchMinimapIcon({ hide = not show })) end
-  }, L.MINIMAP_ICON_TEXT, L.MINIMAP_ICON_DESCRIPTION)
 
   addDivider(container)
 
