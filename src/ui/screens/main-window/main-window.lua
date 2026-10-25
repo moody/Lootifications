@@ -120,7 +120,21 @@ Components.Root.TitleText = nil
 -- Title Bar Components
 -- ============================================================================
 
-Components.TitleBarNameText = Components.Root.TitleRow:AddRow()
+Components.TitleBarNameText = Components.Root.TitleRow:AddRow({ gap = Widgets:Padding(0.5) })
+
+Components.TitleBarNameText:AddChild({
+  width = 20,
+  height = 20,
+  alignSelf = "CENTER",
+
+  --- @param parent Frame
+  frameFactory = function(parent)
+    local texture = parent:CreateTexture("$parent_Icon", "ARTWORK")
+    texture:SetTexture(Addon.ICON)
+    return texture
+  end
+})
+
 Components.TitleBarNameText:AddChild({
   --- @param parent Frame
   frameFactory = function(parent)
