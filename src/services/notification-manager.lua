@@ -39,7 +39,7 @@ end
 
 -- Queue a notification for each entry logged, except money while its notifications are off.
 EventManager:On(E.HistoryLogged, function(entry)
-  if entry.logger ~= MoneyLogger or StateManager:GetGlobalState().moneyNotifications then
+  if entry.logger ~= MoneyLogger or StateManager:GetGlobalState().notifications.money then
     NotificationManager:Notify(entry)
   end
 end)

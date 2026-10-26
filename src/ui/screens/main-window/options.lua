@@ -39,11 +39,11 @@ end
 --- @param container WaffleFlexComponent
 --- @param labelText string
 --- @param descriptionText string
---- @param stateKey "lootPrices" | "moneyNotifications" | "ownedItemCounts" The state that the card toggles.
+--- @param stateKey "bagCounts" | "itemPrices" | "money" The notifications state that the card toggles.
 --- @param toggle WuxActionCreator<nil> Toggles the state.
 local function addOptionCard(container, labelText, descriptionText, stateKey, toggle)
   addCard(container, {
-    get = function() return StateManager:GetGlobalState()[stateKey] end,
+    get = function() return StateManager:GetGlobalState().notifications[stateKey] end,
     set = function() StateManager:Dispatch(toggle()) end
   }, labelText, descriptionText)
 end
@@ -59,18 +59,18 @@ end
 --- @param labelText string
 --- @param descriptionText string
 --- @param lineLabelText string Label to the left of the chips.
---- @param stateKey "anchorAlignment" | "anchorDirection" | "notificationBackground"
+--- @param getValue fun(state: GlobalState): string Returns the value in the state that the chips choose.
 --- @param setValue WuxActionCreator<string> Sets the state.
 --- @param choices { value: string, text: string }[]
 --- @param afterSelect? fun()
-local function addChoiceCard(container, labelText, descriptionText, lineLabelText, stateKey, setValue, choices,
+local function addChoiceCard(container, labelText, descriptionText, lineLabelText, getValue, setValue, choices,
                              afterSelect)
   local chips = {}
 
   for _, choice in ipairs(choices) do
     chips[#chips + 1] = {
       text = choice.text,
-      get = function() return StateManager:GetGlobalState()[stateKey] == choice.value end,
+      get = function() return getValue(StateManager:GetGlobalState()) == choice.value end,
       set = function(checked)
         if checked then
           StateManager:Dispatch(setValue(choice.value))
@@ -110,7 +110,7 @@ function MainWindowOptions:Initialize(container)
 
   addCard(container, {
     get = function() return not StateManager:GetGlobalState().minimapIcon.hide end,
-    set = function(show) StateManager:Dispatch(ActionCreators.patchMinimapIcon({ hide = not show })) end
+    set = function(show) StateManager:Dispatch(ActionCreators.MinimapIcon.patch({ hide = not show })) end
   }, L.MINIMAP_ICON_TEXT, L.MINIMAP_ICON_DESCRIPTION)
 
   addDivider(container)
@@ -118,27 +118,27 @@ function MainWindowOptions:Initialize(container)
   -- Content.
   container:AttachComponent(ComponentFactory:Text({ text = L.CONTENT, fontObject = "GameFontNormalLarge" }))
 
-  addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "moneyNotifications", ActionCreators.toggleMoneyNotifications)
-  addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "lootPrices", ActionCreators.toggleLootPrices)
-  addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "ownedItemCounts", ActionCreators.toggleOwnedItemCounts)
+  addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "money", ActionCreators.Notifications.toggleMoney)
+  addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "itemPrices", ActionCreators.Notifications.toggleItemPrices)
+  addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "bagCounts", ActionCreators.Notifications.toggleBagCounts)
 
   addDivider(container)
 
   -- Look & Feel.
   container:AttachComponent(ComponentFactory:Text({ text = L.LOOK_AND_FEEL, fontObject = "GameFontNormalLarge" }))
 
-  addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", ActionCreators.setAnchorDirection, {
+  addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, function(state) return state.anchorFrame.direction end, ActionCreators.AnchorFrame.setDirection, {
     { value = DefaultStates.ANCHOR_DIRECTIONS.DOWN, text = L.DOWN },
     { value = DefaultStates.ANCHOR_DIRECTIONS.UP, text = L.UP }
   }, pinAnchor)
 
-  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", ActionCreators.setAnchorAlignment, {
+  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, function(state) return state.anchorFrame.alignment end, ActionCreators.AnchorFrame.setAlignment, {
     { value = DefaultStates.ANCHOR_ALIGNMENTS.LEFT, text = L.LEFT },
     { value = DefaultStates.ANCHOR_ALIGNMENTS.CENTER, text = L.CENTER },
     { value = DefaultStates.ANCHOR_ALIGNMENTS.RIGHT, text = L.RIGHT }
   }, pinAnchor)
 
-  addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.STYLE, "notificationBackground", ActionCreators.setNotificationBackground, {
+  addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.STYLE, function(state) return state.notifications.background end, ActionCreators.Notifications.setBackground, {
     { value = DefaultStates.NOTIFICATION_BACKGROUNDS.NONE, text = L.NONE },
     { value = DefaultStates.NOTIFICATION_BACKGROUNDS.SUBTLE, text = L.SUBTLE },
     { value = DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST, text = L.HIGH_CONTRAST }
@@ -158,11 +158,11 @@ function MainWindowOptions:Initialize(container)
           StateManager:Dispatch({
             type = Wux.ActionTypes.Batch,
             payload = {
-              ActionCreators.resetLootPrices(),
-              ActionCreators.resetMoneyNotifications(),
-              ActionCreators.resetNotificationBackground(),
-              ActionCreators.resetOwnedItemCounts(),
-              ActionCreators.patchMinimapIcon({ hide = DefaultStates.Global.minimapIcon.hide })
+              ActionCreators.Notifications.resetBagCounts(),
+              ActionCreators.Notifications.resetItemPrices(),
+              ActionCreators.Notifications.resetMoney(),
+              ActionCreators.Notifications.resetBackground(),
+              ActionCreators.MinimapIcon.patch({ hide = DefaultStates.Global.minimapIcon.hide })
             }
           })
           AnchorFrame:Reset()

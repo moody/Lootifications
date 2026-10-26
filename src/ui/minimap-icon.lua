@@ -56,7 +56,7 @@ EventManager:Once(E.StoreInitialized, function()
   local patch = {}
 
   local savePatch = TickerManager:NewDebouncer(0.2, function()
-    StateManager:Dispatch(ActionCreators.patchMinimapIcon(patch))
+    StateManager:Dispatch(ActionCreators.MinimapIcon.patch(patch))
     for key in pairs(patch) do patch[key] = nil end
   end)
 

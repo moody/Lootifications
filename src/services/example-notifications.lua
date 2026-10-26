@@ -66,7 +66,7 @@ end
 --- @param slot integer
 --- @return HistoryLogEntry?
 function ExampleNotifications:GetEntry(slot)
-  local moneyEnabled = StateManager:GetGlobalState().moneyNotifications
+  local moneyEnabled = StateManager:GetGlobalState().notifications.money
   if moneyEnabled and slot == 1 then return MONEY_ENTRY end
 
   local index = moneyEnabled and slot - 1 or slot

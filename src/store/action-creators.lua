@@ -6,73 +6,93 @@ local Wux = Addon.Wux
 local ActionCreators = Addon:GetModule("ActionCreators")
 
 -- ============================================================================
--- ActionCreators
+-- ActionCreators - Global - Notifications
 -- ============================================================================
 
---- Action creator for `ActionTypes.PATCH_MINIMAP_ICON`.
---- @type WuxActionCreator<MinimapIconState>
-ActionCreators.patchMinimapIcon = Wux:CreateActionCreator(ActionTypes.PATCH_MINIMAP_ICON)
+ActionCreators.Notifications = {
+  --- Action creator for `ActionTypes.Notifications.RESET_BACKGROUND`.
+  --- @type WuxActionCreator<nil>
+  resetBackground = Wux:CreateActionCreator(ActionTypes.Notifications.RESET_BACKGROUND),
 
---- Action creator for `ActionTypes.RESET_ANCHOR_ALIGNMENT`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetAnchorAlignment = Wux:CreateActionCreator(ActionTypes.RESET_ANCHOR_ALIGNMENT)
+  --- Action creator for `ActionTypes.Notifications.RESET_BAG_COUNTS`.
+  --- @type WuxActionCreator<nil>
+  resetBagCounts = Wux:CreateActionCreator(ActionTypes.Notifications.RESET_BAG_COUNTS),
 
---- Action creator for `ActionTypes.RESET_ANCHOR_DIRECTION`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetAnchorDirection = Wux:CreateActionCreator(ActionTypes.RESET_ANCHOR_DIRECTION)
+  --- Action creator for `ActionTypes.Notifications.RESET_ITEM_PRICES`.
+  --- @type WuxActionCreator<nil>
+  resetItemPrices = Wux:CreateActionCreator(ActionTypes.Notifications.RESET_ITEM_PRICES),
 
---- Action creator for `ActionTypes.RESET_ANCHOR_POINT`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetAnchorPoint = Wux:CreateActionCreator(ActionTypes.RESET_ANCHOR_POINT)
+  --- Action creator for `ActionTypes.Notifications.RESET_MONEY`.
+  --- @type WuxActionCreator<nil>
+  resetMoney = Wux:CreateActionCreator(ActionTypes.Notifications.RESET_MONEY),
 
---- Action creator for `ActionTypes.RESET_LOOT_PRICES`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetLootPrices = Wux:CreateActionCreator(ActionTypes.RESET_LOOT_PRICES)
+  --- Action creator for `ActionTypes.Notifications.SET_BACKGROUND`.
+  --- @type WuxActionCreator<NotificationBackground>
+  setBackground = Wux:CreateActionCreator(ActionTypes.Notifications.SET_BACKGROUND),
 
---- Action creator for `ActionTypes.RESET_MAIN_WINDOW_POINT`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetMainWindowPoint = Wux:CreateActionCreator(ActionTypes.RESET_MAIN_WINDOW_POINT)
+  --- Action creator for `ActionTypes.Notifications.TOGGLE_BAG_COUNTS`.
+  --- @type WuxActionCreator<nil>
+  toggleBagCounts = Wux:CreateActionCreator(ActionTypes.Notifications.TOGGLE_BAG_COUNTS),
 
---- Action creator for `ActionTypes.RESET_MONEY_NOTIFICATIONS`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetMoneyNotifications = Wux:CreateActionCreator(ActionTypes.RESET_MONEY_NOTIFICATIONS)
+  --- Action creator for `ActionTypes.Notifications.TOGGLE_ITEM_PRICES`.
+  --- @type WuxActionCreator<nil>
+  toggleItemPrices = Wux:CreateActionCreator(ActionTypes.Notifications.TOGGLE_ITEM_PRICES),
 
---- Action creator for `ActionTypes.RESET_NOTIFICATION_BACKGROUND`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetNotificationBackground = Wux:CreateActionCreator(ActionTypes.RESET_NOTIFICATION_BACKGROUND)
+  --- Action creator for `ActionTypes.Notifications.TOGGLE_MONEY`.
+  --- @type WuxActionCreator<nil>
+  toggleMoney = Wux:CreateActionCreator(ActionTypes.Notifications.TOGGLE_MONEY),
+}
 
---- Action creator for `ActionTypes.RESET_OWNED_ITEM_COUNTS`.
---- @type WuxActionCreator<nil>
-ActionCreators.resetOwnedItemCounts = Wux:CreateActionCreator(ActionTypes.RESET_OWNED_ITEM_COUNTS)
+-- ============================================================================
+-- ActionCreators - Global - AnchorFrame
+-- ============================================================================
 
---- Action creator for `ActionTypes.SET_ANCHOR_ALIGNMENT`.
---- @type WuxActionCreator<AnchorAlignment>
-ActionCreators.setAnchorAlignment = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_ALIGNMENT)
+ActionCreators.AnchorFrame = {
+  --- Action creator for `ActionTypes.AnchorFrame.RESET_ALIGNMENT`.
+  --- @type WuxActionCreator<nil>
+  resetAlignment = Wux:CreateActionCreator(ActionTypes.AnchorFrame.RESET_ALIGNMENT),
 
---- Action creator for `ActionTypes.SET_ANCHOR_DIRECTION`.
---- @type WuxActionCreator<AnchorDirection>
-ActionCreators.setAnchorDirection = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_DIRECTION)
+  --- Action creator for `ActionTypes.AnchorFrame.RESET_DIRECTION`.
+  --- @type WuxActionCreator<nil>
+  resetDirection = Wux:CreateActionCreator(ActionTypes.AnchorFrame.RESET_DIRECTION),
 
---- Action creator for `ActionTypes.SET_ANCHOR_POINT`.
---- @type WuxActionCreator<PointState>
-ActionCreators.setAnchorPoint = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_POINT)
+  --- Action creator for `ActionTypes.AnchorFrame.RESET_POINT`.
+  --- @type WuxActionCreator<nil>
+  resetPoint = Wux:CreateActionCreator(ActionTypes.AnchorFrame.RESET_POINT),
 
---- Action creator for `ActionTypes.SET_MAIN_WINDOW_POINT`.
---- @type WuxActionCreator<PointState>
-ActionCreators.setMainWindowPoint = Wux:CreateActionCreator(ActionTypes.SET_MAIN_WINDOW_POINT)
+  --- Action creator for `ActionTypes.AnchorFrame.SET_ALIGNMENT`.
+  --- @type WuxActionCreator<AnchorAlignment>
+  setAlignment = Wux:CreateActionCreator(ActionTypes.AnchorFrame.SET_ALIGNMENT),
 
---- Action creator for `ActionTypes.SET_NOTIFICATION_BACKGROUND`.
---- @type WuxActionCreator<NotificationBackground>
-ActionCreators.setNotificationBackground = Wux:CreateActionCreator(ActionTypes.SET_NOTIFICATION_BACKGROUND)
+  --- Action creator for `ActionTypes.AnchorFrame.SET_DIRECTION`.
+  --- @type WuxActionCreator<AnchorDirection>
+  setDirection = Wux:CreateActionCreator(ActionTypes.AnchorFrame.SET_DIRECTION),
 
---- Action creator for `ActionTypes.TOGGLE_LOOT_PRICES`.
---- @type WuxActionCreator<nil>
-ActionCreators.toggleLootPrices = Wux:CreateActionCreator(ActionTypes.TOGGLE_LOOT_PRICES)
+  --- Action creator for `ActionTypes.AnchorFrame.SET_POINT`.
+  --- @type WuxActionCreator<PointState>
+  setPoint = Wux:CreateActionCreator(ActionTypes.AnchorFrame.SET_POINT),
+}
 
---- Action creator for `ActionTypes.TOGGLE_MONEY_NOTIFICATIONS`.
---- @type WuxActionCreator<nil>
-ActionCreators.toggleMoneyNotifications = Wux:CreateActionCreator(ActionTypes.TOGGLE_MONEY_NOTIFICATIONS)
+-- ============================================================================
+-- ActionCreators - Global - MainWindow
+-- ============================================================================
 
---- Action creator for `ActionTypes.TOGGLE_OWNED_ITEM_COUNTS`.
---- @type WuxActionCreator<nil>
-ActionCreators.toggleOwnedItemCounts = Wux:CreateActionCreator(ActionTypes.TOGGLE_OWNED_ITEM_COUNTS)
+ActionCreators.MainWindow = {
+  --- Action creator for `ActionTypes.MainWindow.RESET_POINT`.
+  --- @type WuxActionCreator<nil>
+  resetPoint = Wux:CreateActionCreator(ActionTypes.MainWindow.RESET_POINT),
+
+  --- Action creator for `ActionTypes.MainWindow.SET_POINT`.
+  --- @type WuxActionCreator<PointState>
+  setPoint = Wux:CreateActionCreator(ActionTypes.MainWindow.SET_POINT),
+}
+
+-- ============================================================================
+-- ActionCreators - Global - MinimapIcon
+-- ============================================================================
+
+ActionCreators.MinimapIcon = {
+  --- Action creator for `ActionTypes.MinimapIcon.PATCH`.
+  --- @type WuxActionCreator<MinimapIconState>
+  patch = Wux:CreateActionCreator(ActionTypes.MinimapIcon.PATCH),
+}

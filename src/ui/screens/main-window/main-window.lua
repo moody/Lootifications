@@ -99,9 +99,9 @@ Components.Root = ComponentFactory:Window({
   width = 425,
   height = 465,
   titleText = "", -- unused; MainWindow builds its own title-bar content below
-  getPoint = function() return StateManager:GetGlobalState().mainWindowPoint end,
-  setPoint = function(point) StateManager:Dispatch(ActionCreators.setMainWindowPoint(point)) end,
-  onResetPoint = function() StateManager:Dispatch(ActionCreators.resetMainWindowPoint()) end,
+  getPoint = function() return StateManager:GetGlobalState().mainWindow.point end,
+  setPoint = function(point) StateManager:Dispatch(ActionCreators.MainWindow.setPoint(point)) end,
+  onResetPoint = function() StateManager:Dispatch(ActionCreators.MainWindow.resetPoint()) end,
   refresh = function() Components.Root:Layout() end
 })
 

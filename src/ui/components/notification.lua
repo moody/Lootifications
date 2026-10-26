@@ -215,7 +215,7 @@ function ComponentFactory:Notification()
       refreshText(frame)
 
       -- Color the background and border before any animation starts, since the game reverts colors set while it plays.
-      local style = StateManager:GetGlobalState().notificationBackground
+      local style = StateManager:GetGlobalState().notifications.background
       local color = entry and HistoryLog:GetColor(entry)
 
       if style == DefaultStates.NOTIFICATION_BACKGROUNDS.NONE then

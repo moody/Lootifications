@@ -22,13 +22,13 @@ local AnchorFrame = Addon:GetModule("AnchorFrame")
 
 local Components = {}
 
---- The stacking direction and the pinned edge of each `anchorDirection`.
+--- The stacking direction and the pinned edge of each anchor direction.
 local DIRECTIONS = {
   [DefaultStates.ANCHOR_DIRECTIONS.DOWN] = { direction = "COLUMN", edge = "TOP" },
   [DefaultStates.ANCHOR_DIRECTIONS.UP] = { direction = "COLUMN_REVERSE", edge = "BOTTOM" }
 }
 
---- The alignment and the pinned side of each `anchorAlignment`.
+--- The alignment and the pinned side of each anchor alignment.
 local ALIGNMENTS = {
   [DefaultStates.ANCHOR_ALIGNMENTS.LEFT] = { align = "START", side = "LEFT" },
   [DefaultStates.ANCHOR_ALIGNMENTS.CENTER] = { align = "CENTER", side = "" },
@@ -54,8 +54,8 @@ local exampleSequence = 0
 --- Returns the point of the screen that the anchor is pinned at.
 --- @return FramePoint
 local function getPoint()
-  local state = StateManager:GetGlobalState()
-  return DIRECTIONS[state.anchorDirection].edge .. ALIGNMENTS[state.anchorAlignment].side
+  local state = StateManager:GetGlobalState().anchorFrame
+  return DIRECTIONS[state.direction].edge .. ALIGNMENTS[state.alignment].side
 end
 
 --- Pins the frame at the point.
@@ -86,7 +86,7 @@ local function pinInPlace(frame)
 
   local anchorPoint = { point = point, relativeTo = "UIParent", relativePoint = point, offsetX = x, offsetY = y }
   pinTo(frame, anchorPoint)
-  StateManager:Dispatch(ActionCreators.setAnchorPoint(anchorPoint))
+  StateManager:Dispatch(ActionCreators.AnchorFrame.setPoint(anchorPoint))
 end
 
 --- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
@@ -201,7 +201,7 @@ Components.LiveNotifications:WhenFrameReady(function(frame)
     if not Components.LiveNotifications:IsFull() then
       local entry = NotificationManager:Pop()
       if entry then
-        Components.LiveNotifications:Show(entry, StateManager:GetGlobalState().anchorDirection)
+        Components.LiveNotifications:Show(entry, StateManager:GetGlobalState().anchorFrame.direction)
       end
     end
   end):BindFrame(frame)
@@ -227,7 +227,7 @@ Components.ExampleNotifications:WhenFrameReady(function(frame)
 
     if exampleSequence < Components.ExampleNotifications.MAX_NOTIFICATIONS then
       exampleSequence = exampleSequence + 1
-      Components.ExampleNotifications:Show(entries[exampleSequence], StateManager:GetGlobalState().anchorDirection)
+      Components.ExampleNotifications:Show(entries[exampleSequence], StateManager:GetGlobalState().anchorFrame.direction)
     elseif Components.ExampleNotifications:IsShowing() then
       pause = 0
     else
@@ -286,14 +286,14 @@ function AnchorFrame:Reset()
   StateManager:Dispatch({
     type = Wux.ActionTypes.Batch,
     payload = {
-      ActionCreators.resetAnchorAlignment(),
-      ActionCreators.resetAnchorDirection(),
-      ActionCreators.resetAnchorPoint()
+      ActionCreators.AnchorFrame.resetAlignment(),
+      ActionCreators.AnchorFrame.resetDirection(),
+      ActionCreators.AnchorFrame.resetPoint()
     }
   })
 
   Components.Root:WhenFrameReady(function(frame)
-    pinTo(frame, StateManager:GetGlobalState().anchorPoint)
+    pinTo(frame, StateManager:GetGlobalState().anchorFrame.point)
   end)
 end
 
@@ -304,7 +304,7 @@ end
 -- Listen for `StoreInitialized` to pin the anchor to its saved position.
 EventManager:Once(E.StoreInitialized, function(Store)
   --- @cast Store WuxStore<LootificationsRootState>
-  local position = Store:GetState().global.anchorPoint
+  local position = Store:GetState().global.anchorFrame.point
 
   Components.Root:WhenFrameReady(function(frame)
     --- @cast frame AnchorFrameWidget
@@ -317,8 +317,8 @@ end)
 EventManager:On(E.StateUpdated, function(state)
   --- @cast state LootificationsRootState
   for _, screen in ipairs({ Components.LiveNotifications, Components.ExampleNotifications }) do
-    screen:SetDirection(DIRECTIONS[state.global.anchorDirection].direction)
-    screen:SetAlign(ALIGNMENTS[state.global.anchorAlignment].align)
+    screen:SetDirection(DIRECTIONS[state.global.anchorFrame.direction].direction)
+    screen:SetAlign(ALIGNMENTS[state.global.anchorFrame.alignment].align)
   end
 
   if isUnlocked then restartExamples() end
