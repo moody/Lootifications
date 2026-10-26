@@ -143,15 +143,15 @@ function MainWindowOptions:Initialize(container)
   })
 
   addOptionCard(container, {
-    label = L.LOOT_PRICES_TEXT,
-    description = L.LOOT_PRICES_DESCRIPTION,
+    label = L.ITEM_PRICES_TEXT,
+    description = L.ITEM_PRICES_DESCRIPTION,
     stateKey = "itemPrices",
     toggle = ActionCreators.Notifications.toggleItemPrices
   })
 
   addOptionCard(container, {
-    label = L.OWNED_ITEM_COUNTS_TEXT,
-    description = L.OWNED_ITEM_COUNTS_DESCRIPTION,
+    label = L.BAG_COUNTS_TEXT,
+    description = L.BAG_COUNTS_DESCRIPTION,
     stateKey = "bagCounts",
     toggle = ActionCreators.Notifications.toggleBagCounts
   })
