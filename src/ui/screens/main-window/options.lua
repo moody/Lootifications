@@ -2,6 +2,7 @@ local Addon = select(2, ...) ---@type Addon
 local ActionCreators = Addon:GetModule("ActionCreators")
 local AnchorFrame = Addon:GetModule("AnchorFrame")
 local Colors = Addon:GetModule("Colors")
+local Commands = Addon:GetModule("Commands")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local DefaultStates = Addon:GetModule("DefaultStates")
 local L = Addon:GetModule("Locale")
@@ -196,7 +197,7 @@ function MainWindowOptions:Initialize(container)
 
   addCard(container, {
     label = L.MINIMAP_ICON_TEXT,
-    description = L.MINIMAP_ICON_DESCRIPTION,
+    description = L.MINIMAP_ICON_DESCRIPTION:format(Colors.Gold(Commands.SLASH_COMMAND)),
     get = function() return not StateManager:GetGlobalState().minimapIcon.hide end,
     set = function(show) StateManager:Dispatch(ActionCreators.MinimapIcon.patch({ hide = not show })) end
   })

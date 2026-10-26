@@ -8,13 +8,15 @@ local MainWindow = Addon:GetModule("MainWindow")
 --- @class Commands
 local Commands = Addon:GetModule("Commands")
 
+Commands.SLASH_COMMAND = "/lootifications"
+
 -- ============================================================================
 -- Events
 -- ============================================================================
 
 -- Register the `/lootifications` slash command on login.
 EventManager:Once(E.Wow.PlayerLogin, function()
-  SLASH_LOOTIFICATIONS1 = "/lootifications"
+  SLASH_LOOTIFICATIONS1 = Commands.SLASH_COMMAND
   SLASH_LOOTIFICATIONS2 = "/lootif"
   SlashCmdList.LOOTIFICATIONS = function(msg)
     -- Split message into args.
@@ -36,7 +38,7 @@ end)
 --- @param suffix string
 --- @param description string
 local function printCommand(suffix, description)
-  local cmd = suffix ~= "" and ("/lootifications " .. suffix) or "/lootifications"
+  local cmd = suffix ~= "" and (Commands.SLASH_COMMAND .. " " .. suffix) or Commands.SLASH_COMMAND
   Addon:Print(Colors.Gold("  " .. cmd), Colors.Grey("-"), description)
 end
 
