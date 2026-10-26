@@ -13,21 +13,43 @@ local Wux = Addon.Wux
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 
 -- ============================================================================
+-- LuaCATS Annotations
+-- ============================================================================
+
+--- @class CardOptions : OptionCardOptions
+--- @field label string
+--- @field description string
+
+--- @class ToggleCardOptions
+--- @field label string
+--- @field description string
+--- @field stateKey "bagCounts" | "itemPrices" | "money" The notifications state that the card toggles.
+--- @field toggle WuxActionCreator<nil> Toggles the state.
+
+--- @class ChoiceCardOptions
+--- @field label string
+--- @field description string
+--- @field lineLabel string Label to the left of the chips.
+--- @field getValue fun(state: GlobalState): string Returns the value in the state that the chips choose.
+--- @field setValue WuxActionCreator<string> Sets the state.
+--- @field choices { value: string, text: string }[]
+--- @field afterSelect? fun() Called after a chip is selected.
+
+-- ============================================================================
 -- Local Functions
 -- ============================================================================
 
 --- Adds a card to the container, with a label and a description.
 --- @param container WaffleFlexComponent
---- @param options OptionCardOptions
---- @param labelText string
---- @param descriptionText string
+--- @param options CardOptions
 --- @return OptionCardComponent card
-local function addCard(container, options, labelText, descriptionText)
-  local card = container:AttachComponent(ComponentFactory:OptionCard(options)) --[[@as OptionCardComponent]]
+local function addCard(container, options)
+  --- @type OptionCardComponent
+  local card = container:AttachComponent(ComponentFactory:OptionCard(options))
 
-  card.Content:AttachComponent(ComponentFactory:Text({ text = labelText }))
+  card.Content:AttachComponent(ComponentFactory:Text({ text = options.label }))
   card.Content:AttachComponent(ComponentFactory:Text({
-    text = descriptionText,
+    text = options.description,
     fontObject = "GameFontNormalSmall",
     color = Colors.Grey
   }))
@@ -37,15 +59,14 @@ end
 
 --- Adds a card that toggles an option.
 --- @param container WaffleFlexComponent
---- @param labelText string
---- @param descriptionText string
---- @param stateKey "bagCounts" | "itemPrices" | "money" The notifications state that the card toggles.
---- @param toggle WuxActionCreator<nil> Toggles the state.
-local function addOptionCard(container, labelText, descriptionText, stateKey, toggle)
+--- @param options ToggleCardOptions
+local function addOptionCard(container, options)
   addCard(container, {
-    get = function() return StateManager:GetGlobalState().notifications[stateKey] end,
-    set = function() StateManager:Dispatch(toggle()) end
-  }, labelText, descriptionText)
+    label = options.label,
+    description = options.description,
+    get = function() return StateManager:GetGlobalState().notifications[options.stateKey] end,
+    set = function() StateManager:Dispatch(options.toggle()) end
+  })
 end
 
 --- Pins the anchor where it is, since its point depends on the direction and the alignment.
@@ -56,38 +77,32 @@ end
 --- Adds a card with a line of chips below a divider, where exactly one is checked: the one whose value is in the
 --- state. Clicking a chip selects its value, then calls `afterSelect`.
 --- @param container WaffleFlexComponent
---- @param labelText string
---- @param descriptionText string
---- @param lineLabelText string Label to the left of the chips.
---- @param getValue fun(state: GlobalState): string Returns the value in the state that the chips choose.
---- @param setValue WuxActionCreator<string> Sets the state.
---- @param choices { value: string, text: string }[]
---- @param afterSelect? fun()
-local function addChoiceCard(container, labelText, descriptionText, lineLabelText, getValue, setValue, choices,
-                             afterSelect)
+--- @param options ChoiceCardOptions
+local function addChoiceCard(container, options)
   local chips = {}
 
-  for _, choice in ipairs(choices) do
+  for _, choice in ipairs(options.choices) do
     chips[#chips + 1] = {
       text = choice.text,
-      get = function() return getValue(StateManager:GetGlobalState()) == choice.value end,
+      get = function() return options.getValue(StateManager:GetGlobalState()) == choice.value end,
       set = function(checked)
         if checked then
-          StateManager:Dispatch(setValue(choice.value))
-          if afterSelect then afterSelect() end
+          StateManager:Dispatch(options.setValue(choice.value))
+          if options.afterSelect then options.afterSelect() end
         end
       end
     }
   end
 
-  local card = addCard(container, {}, labelText, descriptionText)
+  local card = addCard(container, { label = options.label, description = options.description })
 
   local divider = card.Content:AttachComponent(ComponentFactory:Divider())
   divider:SetMarginTop(Widgets:Padding(0.25))
 
-  local box = card.Content:AttachComponent(ComponentFactory:SettingsBox()) --[[@as SettingsBoxComponent]]
+  --- @type SettingsBoxComponent
+  local box = card.Content:AttachComponent(ComponentFactory:SettingsBox())
   box:SetMarginTop(Widgets:Padding(0.25))
-  box:AddLine(lineLabelText):AttachComponent(ComponentFactory:CheckChipGroup({ chips = chips }))
+  box:AddLine(options.lineLabel):AttachComponent(ComponentFactory:CheckChipGroup({ chips = chips }))
 end
 
 --- Adds a divider with space around it to the container.
@@ -109,39 +124,81 @@ function MainWindowOptions:Initialize(container)
   container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
 
   addCard(container, {
+    label = L.MINIMAP_ICON_TEXT,
+    description = L.MINIMAP_ICON_DESCRIPTION,
     get = function() return not StateManager:GetGlobalState().minimapIcon.hide end,
     set = function(show) StateManager:Dispatch(ActionCreators.MinimapIcon.patch({ hide = not show })) end
-  }, L.MINIMAP_ICON_TEXT, L.MINIMAP_ICON_DESCRIPTION)
+  })
 
   addDivider(container)
 
   -- Content.
   container:AttachComponent(ComponentFactory:Text({ text = L.CONTENT, fontObject = "GameFontNormalLarge" }))
 
-  addOptionCard(container, L.MONEY, L.MONEY_NOTIFICATIONS_DESCRIPTION, "money", ActionCreators.Notifications.toggleMoney)
-  addOptionCard(container, L.LOOT_PRICES_TEXT, L.LOOT_PRICES_DESCRIPTION, "itemPrices", ActionCreators.Notifications.toggleItemPrices)
-  addOptionCard(container, L.OWNED_ITEM_COUNTS_TEXT, L.OWNED_ITEM_COUNTS_DESCRIPTION, "bagCounts", ActionCreators.Notifications.toggleBagCounts)
+  addOptionCard(container, {
+    label = L.MONEY,
+    description = L.MONEY_NOTIFICATIONS_DESCRIPTION,
+    stateKey = "money",
+    toggle = ActionCreators.Notifications.toggleMoney
+  })
+
+  addOptionCard(container, {
+    label = L.LOOT_PRICES_TEXT,
+    description = L.LOOT_PRICES_DESCRIPTION,
+    stateKey = "itemPrices",
+    toggle = ActionCreators.Notifications.toggleItemPrices
+  })
+
+  addOptionCard(container, {
+    label = L.OWNED_ITEM_COUNTS_TEXT,
+    description = L.OWNED_ITEM_COUNTS_DESCRIPTION,
+    stateKey = "bagCounts",
+    toggle = ActionCreators.Notifications.toggleBagCounts
+  })
 
   addDivider(container)
 
   -- Look & Feel.
   container:AttachComponent(ComponentFactory:Text({ text = L.LOOK_AND_FEEL, fontObject = "GameFontNormalLarge" }))
 
-  addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, function(state) return state.anchorFrame.direction end, ActionCreators.AnchorFrame.setDirection, {
-    { value = DefaultStates.ANCHOR_DIRECTIONS.DOWN, text = L.DOWN },
-    { value = DefaultStates.ANCHOR_DIRECTIONS.UP, text = L.UP }
-  }, pinAnchor)
+  addChoiceCard(container, {
+    label = L.DIRECTION_TEXT,
+    description = L.DIRECTION_DESCRIPTION,
+    lineLabel = L.GROW,
+    getValue = function(state) return state.anchorFrame.direction end,
+    setValue = ActionCreators.AnchorFrame.setDirection,
+    choices = {
+      { value = DefaultStates.ANCHOR_DIRECTIONS.DOWN, text = L.DOWN },
+      { value = DefaultStates.ANCHOR_DIRECTIONS.UP, text = L.UP }
+    },
+    afterSelect = pinAnchor
+  })
 
-  addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, function(state) return state.anchorFrame.alignment end, ActionCreators.AnchorFrame.setAlignment, {
-    { value = DefaultStates.ANCHOR_ALIGNMENTS.LEFT, text = L.LEFT },
-    { value = DefaultStates.ANCHOR_ALIGNMENTS.CENTER, text = L.CENTER },
-    { value = DefaultStates.ANCHOR_ALIGNMENTS.RIGHT, text = L.RIGHT }
-  }, pinAnchor)
+  addChoiceCard(container, {
+    label = L.ALIGNMENT_TEXT,
+    description = L.ALIGNMENT_DESCRIPTION,
+    lineLabel = L.JUSTIFY,
+    getValue = function(state) return state.anchorFrame.alignment end,
+    setValue = ActionCreators.AnchorFrame.setAlignment,
+    choices = {
+      { value = DefaultStates.ANCHOR_ALIGNMENTS.LEFT, text = L.LEFT },
+      { value = DefaultStates.ANCHOR_ALIGNMENTS.CENTER, text = L.CENTER },
+      { value = DefaultStates.ANCHOR_ALIGNMENTS.RIGHT, text = L.RIGHT }
+    },
+    afterSelect = pinAnchor
+  })
 
-  addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.STYLE, function(state) return state.notifications.background end, ActionCreators.Notifications.setBackground, {
-    { value = DefaultStates.NOTIFICATION_BACKGROUNDS.NONE, text = L.NONE },
-    { value = DefaultStates.NOTIFICATION_BACKGROUNDS.SUBTLE, text = L.SUBTLE },
-    { value = DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST, text = L.HIGH_CONTRAST }
+  addChoiceCard(container, {
+    label = L.BACKGROUND_TEXT,
+    description = L.BACKGROUND_DESCRIPTION,
+    lineLabel = L.STYLE,
+    getValue = function(state) return state.notifications.background end,
+    setValue = ActionCreators.Notifications.setBackground,
+    choices = {
+      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.NONE, text = L.NONE },
+      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.SUBTLE, text = L.SUBTLE },
+      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST, text = L.HIGH_CONTRAST }
+    }
   })
 
   addDivider(container)
