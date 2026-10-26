@@ -79,9 +79,9 @@ end
 -- ComponentFactory - Notification
 -- =============================================================================
 
---- Creates a line of text on a backdrop that shows a history entry. It slides and fades in, then fades out, and glides
---- to its new place when the others around it change. It is invisible, keeping its space, until `Notify()` is called
---- and once it has faded out.
+--- Creates a line of text on a backdrop that shows a history entry. It glides to its new place when the others around
+--- it change. It is invisible, keeping its space, until `Show()` is called. `Animate()` makes it slide and fade in, then
+--- fade out, after which it is invisible again.
 --- @return NotificationComponent root
 function ComponentFactory:Notification()
   local root
@@ -118,9 +118,12 @@ function ComponentFactory:Notification()
       content.fontString:SetTextColor(1, 1, 1)
       content.fontString:SetPoint("CENTER")
 
-      --- Entry that the notification shows. Set by `Notify()` and `SetEntry()`.
+      --- Entry that the notification shows. Set by `Show()` and `SetEntry()`.
       --- @type HistoryLogEntry?
       frame.entry = nil
+
+      --- Whether showing the frame plays the animation. Set by `Show()` and `Animate()`.
+      frame.isAnimated = false
 
       --- Fades the notification in, then out after the hold.
       content.animationGroup = content:CreateAnimationGroup()
@@ -139,14 +142,16 @@ function ComponentFactory:Notification()
       fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
       fadeOut:SetSmoothing("IN")
 
-      --- Drifts the content while it fades out. Its offset is set by `Notify()`.
+      --- Drifts the content while it fades out. Its offset is set by `Animate()`.
       frame.drift = content.animationGroup:CreateAnimation("Translation")
       frame.drift:SetDuration(Addon.NOTIFICATION_FADE_OUT)
       frame.drift:SetStartDelay(Addon.NOTIFICATION_HOLD)
       frame.drift:SetSmoothing("IN")
 
-      -- Showing the frame starts the animation, and the notification hides once it finishes.
-      frame:HookScript("OnShow", function() content.animationGroup:Play() end)
+      -- Showing an animated frame starts the animation, and the notification hides once it finishes.
+      frame:HookScript("OnShow", function()
+        if frame.isAnimated then content.animationGroup:Play() end
+      end)
       content.animationGroup:HookScript("OnFinished", function()
         frame:Hide()
         displace(frame, 0)
@@ -186,15 +191,15 @@ function ComponentFactory:Notification()
     end
   })
 
-  --- Shows the notification with the entry, and plays its animation.
+  --- Shows the entry at full opacity, until `Kill()` is called or the animation finishes.
   --- @param entry? HistoryLogEntry
-  --- @param direction? AnchorDirection The way the stack grows. Defaults to `DOWN`.
-  function root:Notify(entry, direction)
+  function root:Show(entry)
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
+      frame.isAnimated = false
       setEntry(frame, entry)
 
-      -- Color the background and border before the animation starts, since the game reverts colors set while it plays.
+      -- Color the background and border before any animation starts, since the game reverts colors set while it plays.
       local style = Addon:GetState().notificationBackground
       local color = entry and HistoryLog:GetColor(entry)
 
@@ -209,13 +214,23 @@ function ComponentFactory:Notification()
         frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
       end
 
-      local growth = direction == "UP" and 1 or -1
       frame.lastTop = nil
-      displace(frame, -growth * SLIDE_DISTANCE)
-      frame.drift:SetOffset(0, growth * DRIFT_DISTANCE)
+      displace(frame, 0)
     end)
 
     self:SetVisibility("VISIBLE")
+  end
+
+  --- Makes the notification slide and fade in when it shows, then fade out. Call it right after `Show()`.
+  --- @param direction? AnchorDirection The way the stack grows. Defaults to `DOWN`.
+  function root:Animate(direction)
+    self:WhenFrameReady(function(frame)
+      --- @cast frame NotificationWidget
+      local growth = direction == "UP" and 1 or -1
+      frame.isAnimated = true
+      displace(frame, -growth * SLIDE_DISTANCE)
+      frame.drift:SetOffset(0, growth * DRIFT_DISTANCE)
+    end)
   end
 
   --- Shows the entry in place of the one shown now.

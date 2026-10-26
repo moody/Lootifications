@@ -68,7 +68,8 @@ function ComponentFactory:NotificationStack()
     if freeNotification then
       sequence = sequence + 1
       freeNotification:SetOrder(-sequence)
-      freeNotification:Notify(entry, direction)
+      freeNotification:Show(entry)
+      freeNotification:Animate(direction)
     end
   end
 
@@ -78,6 +79,18 @@ function ComponentFactory:NotificationStack()
   function root:SetEntries(entries)
     for i, notification in ipairs(notifications) do
       if not notification:IsVisible() then notification:SetEntry(entries[i]) end
+    end
+  end
+
+  --- Replaces the notifications with the entry at each index, shown without animation until `Clear()` is called. Pass
+  --- the entries in the order `Show()` will receive them, so each is placed as it would be.
+  --- @param entries HistoryLogEntry[]
+  function root:ShowAll(entries)
+    self:Clear()
+
+    for i, notification in ipairs(notifications) do
+      notification:SetOrder(-i)
+      notification:Show(entries[i])
     end
   end
 

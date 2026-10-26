@@ -9,6 +9,7 @@ local ExampleNotifications = Addon:GetModule("ExampleNotifications")
 local L = Addon:GetModule("Locale")
 local NotificationManager = Addon:GetModule("NotificationManager")
 local TickerManager = Addon:GetModule("TickerManager")
+local Tooltip = Addon:GetModule("Tooltip")
 local Widgets = Addon:GetModule("Widgets")
 local Wux = Addon.Wux
 
@@ -34,6 +35,9 @@ local ALIGNMENTS = {
 
 --- Whether the anchor can be dragged.
 local isUnlocked = false
+
+--- Whether the anchor is being dragged. The example loop is paused meanwhile.
+local isDragging = false
 
 --- Counts the examples shown in the current loop. The first is the bottom slot.
 local exampleSequence = 0
@@ -138,7 +142,7 @@ Components.Root = Addon.Waffle:Flex({
     local frame = Widgets:Frame({
       name = ADDON_NAME .. "_AnchorFrame",
       clipChildren = false,
-      tooltipAnchor = "ANCHOR_CURSOR",
+      tooltipAnchor = "ANCHOR_CURSOR_RIGHT",
       onUpdateTooltip = function(_, tooltip)
         tooltip:SetText(ADDON_NAME)
         tooltip:AddLine(L.ANCHOR_TOOLTIP)
@@ -151,11 +155,20 @@ Components.Root = Addon.Waffle:Flex({
     frame:SetMovable(true)
     frame:SetClampedToScreen(true)
     frame:RegisterForDrag("LeftButton")
-    frame:SetScript("OnDragStart", frame.StartMoving)
 
-    -- Pin the frame where it was dropped.
+    -- Show the examples without animation while dragging, since an animated one would glide from where the anchor was.
+    frame:SetScript("OnDragStart", function(self)
+      isDragging = true
+      Tooltip:Hide()
+      Components.ExampleNotifications:ShowAll(getExampleEntries())
+      self:StartMoving()
+    end)
+
+    -- Pin the frame where it was dropped, and play the examples again.
     frame:SetScript("OnDragStop", function(self)
+      isDragging = false
       self:StopMovingOrSizing()
+      restartExamples()
       pinInPlace(self)
     end)
 
@@ -207,6 +220,8 @@ Components.ExampleNotifications:SetVisibility("GONE")
 Components.ExampleNotifications:WhenFrameReady(function(frame)
   local pause = 0
   TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
+    if isDragging then return end
+
     local entries = getExampleEntries()
     Components.ExampleNotifications:SetEntries(entries)
 
