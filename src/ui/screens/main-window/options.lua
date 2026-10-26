@@ -120,20 +120,8 @@ end
 --- Adds the options to the container.
 --- @param container WaffleFlexComponent
 function MainWindowOptions:Initialize(container)
-  -- General.
-  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
-
-  addCard(container, {
-    label = L.MINIMAP_ICON_TEXT,
-    description = L.MINIMAP_ICON_DESCRIPTION,
-    get = function() return not StateManager:GetGlobalState().minimapIcon.hide end,
-    set = function(show) StateManager:Dispatch(ActionCreators.MinimapIcon.patch({ hide = not show })) end
-  })
-
-  addDivider(container)
-
-  -- Content.
-  container:AttachComponent(ComponentFactory:Text({ text = L.CONTENT, fontObject = "GameFontNormalLarge" }))
+  -- Notifications.
+  container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = "GameFontNormalLarge" }))
 
   addOptionCard(container, {
     label = L.MONEY,
@@ -156,10 +144,23 @@ function MainWindowOptions:Initialize(container)
     toggle = ActionCreators.Notifications.toggleBagCounts
   })
 
+  addChoiceCard(container, {
+    label = L.BACKGROUND_TEXT,
+    description = L.BACKGROUND_DESCRIPTION,
+    lineLabel = L.STYLE,
+    getValue = function(state) return state.notifications.background end,
+    setValue = ActionCreators.Notifications.setBackground,
+    choices = {
+      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.NONE, text = L.NONE },
+      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.SUBTLE, text = L.SUBTLE },
+      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST, text = L.HIGH_CONTRAST }
+    }
+  })
+
   addDivider(container)
 
-  -- Look & Feel.
-  container:AttachComponent(ComponentFactory:Text({ text = L.LOOK_AND_FEEL, fontObject = "GameFontNormalLarge" }))
+  -- Anchor.
+  container:AttachComponent(ComponentFactory:Text({ text = L.ANCHOR, fontObject = "GameFontNormalLarge" }))
 
   addChoiceCard(container, {
     label = L.DIRECTION_TEXT,
@@ -188,17 +189,16 @@ function MainWindowOptions:Initialize(container)
     afterSelect = pinAnchor
   })
 
-  addChoiceCard(container, {
-    label = L.BACKGROUND_TEXT,
-    description = L.BACKGROUND_DESCRIPTION,
-    lineLabel = L.STYLE,
-    getValue = function(state) return state.notifications.background end,
-    setValue = ActionCreators.Notifications.setBackground,
-    choices = {
-      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.NONE, text = L.NONE },
-      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.SUBTLE, text = L.SUBTLE },
-      { value = DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST, text = L.HIGH_CONTRAST }
-    }
+  addDivider(container)
+
+  -- General.
+  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
+
+  addCard(container, {
+    label = L.MINIMAP_ICON_TEXT,
+    description = L.MINIMAP_ICON_DESCRIPTION,
+    get = function() return not StateManager:GetGlobalState().minimapIcon.hide end,
+    set = function(show) StateManager:Dispatch(ActionCreators.MinimapIcon.patch({ hide = not show })) end
   })
 
   addDivider(container)
