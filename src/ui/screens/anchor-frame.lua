@@ -33,6 +33,9 @@ local ALIGNMENTS = {
   RIGHT = { align = "END", side = "RIGHT" }
 }
 
+--- Seconds between notifications showing.
+local STAGGER_TIME = 0.15
+
 --- Whether the anchor can be dragged.
 local isUnlocked = false
 
@@ -107,9 +110,10 @@ end
 --- Returns the entries of the examples in the order they appear: the bottom slot first.
 --- @return HistoryLogEntry[]
 local function getExampleEntries()
+  local size = Components.ExampleNotifications.MAX_NOTIFICATIONS
   local entries = {}
-  for i = 1, Addon.MAX_NOTIFICATIONS do
-    entries[i] = ExampleNotifications:GetEntry(Addon.MAX_NOTIFICATIONS + 1 - i)
+  for i = 1, size do
+    entries[i] = ExampleNotifications:GetEntry(size + 1 - i)
   end
 
   return entries
@@ -197,7 +201,7 @@ Components.LiveNotifications = Components.Root:AttachComponent(ComponentFactory:
 
 -- Show a queued notification each stagger interval, while there is room for it.
 Components.LiveNotifications:WhenFrameReady(function(frame)
-  TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
+  TickerManager:NewTicker(STAGGER_TIME, function()
     if not Components.LiveNotifications:IsFull() then
       local entry = NotificationManager:Pop()
       if entry then
@@ -219,19 +223,19 @@ Components.ExampleNotifications:SetVisibility("GONE")
 -- Play the examples in a loop while shown, bottom slot first, with a pause between loops.
 Components.ExampleNotifications:WhenFrameReady(function(frame)
   local pause = 0
-  TickerManager:NewTicker(Addon.NOTIFICATION_STAGGER, function()
+  TickerManager:NewTicker(STAGGER_TIME, function()
     if isDragging then return end
 
     local entries = getExampleEntries()
     Components.ExampleNotifications:SetEntries(entries)
 
-    if exampleSequence < Addon.MAX_NOTIFICATIONS then
+    if exampleSequence < Components.ExampleNotifications.MAX_NOTIFICATIONS then
       exampleSequence = exampleSequence + 1
       Components.ExampleNotifications:Show(entries[exampleSequence], Addon:GetState().anchorDirection)
     elseif Components.ExampleNotifications:IsShowing() then
       pause = 0
     else
-      pause = pause + Addon.NOTIFICATION_STAGGER
+      pause = pause + STAGGER_TIME
       if pause >= 0.5 then -- Pause for 0.5 secs.
         pause = 0
         exampleSequence = 0

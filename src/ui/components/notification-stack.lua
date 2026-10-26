@@ -21,12 +21,15 @@ function ComponentFactory:NotificationStack()
   --- @class NotificationStackComponent : WaffleFlexComponent
   local root = Addon.Waffle:Flex({
     direction = "COLUMN",
-    gap = Addon.NOTIFICATION_SPACING,
+    gap = 6,
     width = "AUTO",
     height = "AUTO"
   })
 
-  for i = 1, Addon.MAX_NOTIFICATIONS do
+  --- The most notifications that the stack shows at once.
+  root.MAX_NOTIFICATIONS = 5
+
+  for i = 1, root.MAX_NOTIFICATIONS do
     notifications[i] = root:AttachComponent(ComponentFactory:Notification())
   end
 

@@ -16,8 +16,20 @@ local DRIFT_DISTANCE = 6
 --- How quickly a displaced content settles into place. Higher is quicker.
 local SETTLE_RATE = 16
 
+--- Opacity of the background and border with the `SUBTLE` style.
+local SUBTLE_ALPHA = 0.3
+
 --- Opacity of the background with the `HIGH_CONTRAST` style.
 local HIGH_CONTRAST_ALPHA = 0.95
+
+--- Seconds that a notification takes to fade in.
+local FADE_IN_TIME = 0.25
+
+--- Seconds that a notification takes to fade out.
+local FADE_OUT_TIME = 0.2
+
+--- Seconds between fading in and fading out.
+local HOLD_TIME = 3
 
 -- =============================================================================
 -- Local Functions
@@ -72,20 +84,20 @@ local function createAnimation(content)
   local fadeIn = group:CreateAnimation("Alpha")
   fadeIn:SetFromAlpha(0)
   fadeIn:SetToAlpha(1)
-  fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
+  fadeIn:SetDuration(FADE_IN_TIME)
   fadeIn:SetStartDelay(0)
   fadeIn:SetSmoothing("OUT")
 
   local fadeOut = group:CreateAnimation("Alpha")
   fadeOut:SetFromAlpha(1)
   fadeOut:SetToAlpha(0)
-  fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-  fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
+  fadeOut:SetDuration(FADE_OUT_TIME)
+  fadeOut:SetStartDelay(HOLD_TIME)
   fadeOut:SetSmoothing("IN")
 
   local drift = group:CreateAnimation("Translation")
-  drift:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-  drift:SetStartDelay(Addon.NOTIFICATION_HOLD)
+  drift:SetDuration(FADE_OUT_TIME)
+  drift:SetStartDelay(HOLD_TIME)
   drift:SetSmoothing("IN")
 
   return group, drift
@@ -211,8 +223,8 @@ function ComponentFactory:Notification()
         frame.content:SetBackdropColor(0, 0, 0, HIGH_CONTRAST_ALPHA)
         frame.content:SetBackdropBorderColor((color or Colors.Black):GetRGBA(1))
       else
-        frame.content:SetBackdropColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
-        frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
+        frame.content:SetBackdropColor(0, 0, 0, SUBTLE_ALPHA)
+        frame.content:SetBackdropBorderColor(0, 0, 0, SUBTLE_ALPHA)
       end
 
       resetGlide(frame)
