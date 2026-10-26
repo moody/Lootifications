@@ -22,7 +22,8 @@
 - Notifications use fixed values: at most 5 at a time (was 10 by default), 3 seconds before fading, 4 pixels apart, and 30% background opacity.
 - Notifications fade in more slowly and appear 0.15 seconds apart. They slide in toward the stack, the others glide into their new places instead of jumping, and each drifts a little as it fades out.
 - The notification anchor shows, with sample notifications that play in a loop, while the Settings tab is open, in place of the Toggle Anchor button. Drag it to move the notifications, and right-click it to reset its position.
-- Renamed the Money Notifications option to Money.
+- Renamed the Money Notifications option to Money, Loot Prices to Item Prices, and Owned Item Counts to Bag Counts.
+- The options are grouped into Notifications, Anchor, and General.
 
 ### Removed
 
