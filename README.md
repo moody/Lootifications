@@ -39,7 +39,7 @@ The anchor is where the notifications appear. While the `Settings` tab is open, 
 
 ### Log
 
-The `Log` tab, which the main window opens on, lists the items and money looted this session, newest first.
+The `Log` tab, which the main window starts on, lists the items and money looted this session, newest first.
 
 - Each item shows its icon, link, quantity, and how long ago it was looted, and hovering it shows its tooltip
 - A bar under the list shows the total number of items, counting each item in a stack, and the total money
