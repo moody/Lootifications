@@ -6,117 +6,129 @@ local Wux = Addon.Wux
 --- @class RootReducer
 local RootReducer = Addon:GetModule("RootReducer")
 
+--- @class LootificationsRootState
+--- @field version integer
+--- @field global GlobalState
+
 --- Builds the reducer of the whole state.
---- @return WuxReducer<LootificationsState, any>
+--- @return WuxReducer<LootificationsRootState, any>
 function RootReducer:Build()
-  local defaultState = DefaultStates.Root
+  local defaultState = DefaultStates.Global
 
   return Wux:CombineReducers({
-    -- Anchor alignment.
-    anchorAlignment = function(state, action)
-      state = Wux:Coalesce(state, defaultState.anchorAlignment)
-
-      if action.type == ActionTypes.SET_ANCHOR_ALIGNMENT then
-        state = action.payload
-      elseif action.type == ActionTypes.RESET_ANCHOR_ALIGNMENT then
-        state = defaultState.anchorAlignment
-      end
-
-      return DefaultStates.ANCHOR_ALIGNMENTS[state] and state or defaultState.anchorAlignment
+    -- Not dispatched; `version` is set by `Migrations:Migrate()` before store creation.
+    version = function(state)
+      return Wux:Coalesce(state, DefaultStates.CURRENT_VERSION)
     end,
 
-    -- Anchor direction.
-    anchorDirection = function(state, action)
-      state = Wux:Coalesce(state, defaultState.anchorDirection)
+    --- @type WuxReducer<GlobalState, any>
+    global = Wux:CombineReducers({
+      -- Anchor alignment.
+      anchorAlignment = function(state, action)
+        state = Wux:Coalesce(state, defaultState.anchorAlignment)
 
-      if action.type == ActionTypes.SET_ANCHOR_DIRECTION then
-        state = action.payload
-      elseif action.type == ActionTypes.RESET_ANCHOR_DIRECTION then
-        state = defaultState.anchorDirection
-      end
+        if action.type == ActionTypes.SET_ANCHOR_ALIGNMENT then
+          state = action.payload
+        elseif action.type == ActionTypes.RESET_ANCHOR_ALIGNMENT then
+          state = defaultState.anchorAlignment
+        end
 
-      return DefaultStates.ANCHOR_DIRECTIONS[state] and state or defaultState.anchorDirection
-    end,
+        return DefaultStates.ANCHOR_ALIGNMENTS[state] and state or defaultState.anchorAlignment
+      end,
 
-    -- Anchor point.
-    anchorPoint = function(state, action)
-      state = Wux:Coalesce(state, defaultState.anchorPoint)
+      -- Anchor direction.
+      anchorDirection = function(state, action)
+        state = Wux:Coalesce(state, defaultState.anchorDirection)
 
-      if action.type == ActionTypes.SET_ANCHOR_POINT then
-        state = action.payload
-      elseif action.type == ActionTypes.RESET_ANCHOR_POINT then
-        state = defaultState.anchorPoint
-      end
+        if action.type == ActionTypes.SET_ANCHOR_DIRECTION then
+          state = action.payload
+        elseif action.type == ActionTypes.RESET_ANCHOR_DIRECTION then
+          state = defaultState.anchorDirection
+        end
 
-      return type(state) == "table" and state or defaultState.anchorPoint
-    end,
+        return DefaultStates.ANCHOR_DIRECTIONS[state] and state or defaultState.anchorDirection
+      end,
 
-    -- Loot prices.
-    lootPrices = function(state, action)
-      state = Wux:Coalesce(state, defaultState.lootPrices)
+      -- Anchor point.
+      anchorPoint = function(state, action)
+        state = Wux:Coalesce(state, defaultState.anchorPoint)
 
-      if action.type == ActionTypes.TOGGLE_LOOT_PRICES then
-        state = not state
-      elseif action.type == ActionTypes.RESET_LOOT_PRICES then
-        state = defaultState.lootPrices
-      end
+        if action.type == ActionTypes.SET_ANCHOR_POINT then
+          state = action.payload
+        elseif action.type == ActionTypes.RESET_ANCHOR_POINT then
+          state = defaultState.anchorPoint
+        end
 
-      return state
-    end,
+        return type(state) == "table" and state or defaultState.anchorPoint
+      end,
 
-    -- Main window point.
-    mainWindowPoint = function(state, action)
-      state = Wux:Coalesce(state, defaultState.mainWindowPoint)
+      -- Loot prices.
+      lootPrices = function(state, action)
+        state = Wux:Coalesce(state, defaultState.lootPrices)
 
-      if action.type == ActionTypes.SET_MAIN_WINDOW_POINT then
-        state = action.payload
-      elseif action.type == ActionTypes.RESET_MAIN_WINDOW_POINT then
-        state = defaultState.mainWindowPoint
-      end
+        if action.type == ActionTypes.TOGGLE_LOOT_PRICES then
+          state = not state
+        elseif action.type == ActionTypes.RESET_LOOT_PRICES then
+          state = defaultState.lootPrices
+        end
 
-      return type(state) == "table" and state or defaultState.mainWindowPoint
-    end,
+        return state
+      end,
 
-    -- Minimap icon.
-    minimapIcon = Wux:CreatePatchReducer(ActionTypes.PATCH_MINIMAP_ICON, defaultState.minimapIcon),
+      -- Main window point.
+      mainWindowPoint = function(state, action)
+        state = Wux:Coalesce(state, defaultState.mainWindowPoint)
 
-    -- Money notifications.
-    moneyNotifications = function(state, action)
-      state = Wux:Coalesce(state, defaultState.moneyNotifications)
+        if action.type == ActionTypes.SET_MAIN_WINDOW_POINT then
+          state = action.payload
+        elseif action.type == ActionTypes.RESET_MAIN_WINDOW_POINT then
+          state = defaultState.mainWindowPoint
+        end
 
-      if action.type == ActionTypes.TOGGLE_MONEY_NOTIFICATIONS then
-        state = not state
-      elseif action.type == ActionTypes.RESET_MONEY_NOTIFICATIONS then
-        state = defaultState.moneyNotifications
-      end
+        return type(state) == "table" and state or defaultState.mainWindowPoint
+      end,
 
-      return state
-    end,
+      -- Minimap icon.
+      minimapIcon = Wux:CreatePatchReducer(ActionTypes.PATCH_MINIMAP_ICON, defaultState.minimapIcon),
 
-    -- Notification background.
-    notificationBackground = function(state, action)
-      state = Wux:Coalesce(state, defaultState.notificationBackground)
+      -- Money notifications.
+      moneyNotifications = function(state, action)
+        state = Wux:Coalesce(state, defaultState.moneyNotifications)
 
-      if action.type == ActionTypes.SET_NOTIFICATION_BACKGROUND then
-        state = action.payload
-      elseif action.type == ActionTypes.RESET_NOTIFICATION_BACKGROUND then
-        state = defaultState.notificationBackground
-      end
+        if action.type == ActionTypes.TOGGLE_MONEY_NOTIFICATIONS then
+          state = not state
+        elseif action.type == ActionTypes.RESET_MONEY_NOTIFICATIONS then
+          state = defaultState.moneyNotifications
+        end
 
-      return DefaultStates.NOTIFICATION_BACKGROUNDS[state] and state or defaultState.notificationBackground
-    end,
+        return state
+      end,
 
-    -- Owned item counts.
-    ownedItemCounts = function(state, action)
-      state = Wux:Coalesce(state, defaultState.ownedItemCounts)
+      -- Notification background.
+      notificationBackground = function(state, action)
+        state = Wux:Coalesce(state, defaultState.notificationBackground)
 
-      if action.type == ActionTypes.TOGGLE_OWNED_ITEM_COUNTS then
-        state = not state
-      elseif action.type == ActionTypes.RESET_OWNED_ITEM_COUNTS then
-        state = defaultState.ownedItemCounts
-      end
+        if action.type == ActionTypes.SET_NOTIFICATION_BACKGROUND then
+          state = action.payload
+        elseif action.type == ActionTypes.RESET_NOTIFICATION_BACKGROUND then
+          state = defaultState.notificationBackground
+        end
 
-      return state
-    end,
+        return DefaultStates.NOTIFICATION_BACKGROUNDS[state] and state or defaultState.notificationBackground
+      end,
+
+      -- Owned item counts.
+      ownedItemCounts = function(state, action)
+        state = Wux:Coalesce(state, defaultState.ownedItemCounts)
+
+        if action.type == ActionTypes.TOGGLE_OWNED_ITEM_COUNTS then
+          state = not state
+        elseif action.type == ActionTypes.RESET_OWNED_ITEM_COUNTS then
+          state = defaultState.ownedItemCounts
+        end
+
+        return state
+      end,
+    })
   })
 end

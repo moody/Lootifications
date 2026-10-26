@@ -9,7 +9,7 @@ local Middlewares = Addon:GetModule("Middlewares")
 -- ============================================================================
 
 --- Debug logger for each dispatched action.
---- @type WuxMiddleware<LootificationsState>
+--- @type WuxMiddleware<LootificationsRootState>
 local function debugMiddleware(store, next, action)
   print(" ")
   Addon:Debug(Colors.Grey(("-"):rep(60)))
@@ -25,7 +25,7 @@ end
 
 --- Builds the ordered list of middlewares for the store. Declaration order is
 --- execution order, the first middleware here runs first.
---- @return WuxMiddleware<LootificationsState>[]
+--- @return WuxMiddleware<LootificationsRootState>[]
 function Middlewares:Build()
   local middlewares = {}
   if Addon.IS_DEBUG then middlewares[#middlewares + 1] = debugMiddleware end

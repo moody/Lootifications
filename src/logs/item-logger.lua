@@ -5,6 +5,7 @@ local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local HistoryLog = Addon:GetModule("HistoryLog")
 local MessageBuilder = Addon:GetModule("MessageBuilder")
+local StateManager = Addon:GetModule("StateManager")
 
 --- Logs the items looted.
 --- @class ItemLogger : HistoryLogger
@@ -54,7 +55,7 @@ end
 --- @param ownedCount? integer Used instead of the number in the bags.
 --- @return string
 local function getCountText(link, ownedCount)
-  if Addon:GetState().ownedItemCounts then
+  if StateManager:GetGlobalState().ownedItemCounts then
     local itemCount = ownedCount or B.Items:GetBagCount(link)
     if itemCount > 0 then
       return PARENTHESES_FORMAT:format(itemCount)
@@ -69,7 +70,7 @@ end
 --- @param quantity integer
 --- @return string
 local function getPriceText(price, quantity)
-  if Addon:GetState().lootPrices and price and price > 0 then
+  if StateManager:GetGlobalState().lootPrices and price and price > 0 then
     return PARENTHESES_FORMAT:format(B.Money:GetCoinText(price * quantity))
   end
 

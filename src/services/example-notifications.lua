@@ -2,6 +2,7 @@ local Addon = select(2, ...) ---@type Addon
 local B = Addon:GetModule("Blizzard")
 local ItemLogger = Addon:GetModule("ItemLogger")
 local MoneyLogger = Addon:GetModule("MoneyLogger")
+local StateManager = Addon:GetModule("StateManager")
 
 --- Provides the entries of the example notifications, which use real items.
 --- @class ExampleNotifications
@@ -65,10 +66,10 @@ end
 --- @param slot integer
 --- @return HistoryLogEntry?
 function ExampleNotifications:GetEntry(slot)
-  local isMoneyOn = Addon:GetState().moneyNotifications
-  if isMoneyOn and slot == 1 then return MONEY_ENTRY end
+  local moneyEnabled = StateManager:GetGlobalState().moneyNotifications
+  if moneyEnabled and slot == 1 then return MONEY_ENTRY end
 
-  local index = isMoneyOn and slot - 1 or slot
+  local index = moneyEnabled and slot - 1 or slot
   local item = ITEMS[index]
   local entry = itemEntries[index]
 

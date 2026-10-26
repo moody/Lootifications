@@ -5,6 +5,7 @@ local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 local DefaultStates = Addon:GetModule("DefaultStates")
 local L = Addon:GetModule("Locale")
+local StateManager = Addon:GetModule("StateManager")
 local Widgets = Addon:GetModule("Widgets")
 local Wux = Addon.Wux
 
@@ -42,8 +43,8 @@ end
 --- @param toggle WuxActionCreator<nil> Toggles the state.
 local function addOptionCard(container, labelText, descriptionText, stateKey, toggle)
   addCard(container, {
-    get = function() return Addon:GetState()[stateKey] end,
-    set = function() Addon:GetStore():Dispatch(toggle()) end
+    get = function() return StateManager:GetGlobalState()[stateKey] end,
+    set = function() StateManager:Dispatch(toggle()) end
   }, labelText, descriptionText)
 end
 
@@ -69,10 +70,10 @@ local function addChoiceCard(container, labelText, descriptionText, lineLabelTex
   for _, choice in ipairs(choices) do
     chips[#chips + 1] = {
       text = choice.text,
-      get = function() return Addon:GetState()[stateKey] == choice.value end,
+      get = function() return StateManager:GetGlobalState()[stateKey] == choice.value end,
       set = function(checked)
         if checked then
-          Addon:GetStore():Dispatch(setValue(choice.value))
+          StateManager:Dispatch(setValue(choice.value))
           if afterSelect then afterSelect() end
         end
       end
@@ -108,8 +109,8 @@ function MainWindowOptions:Initialize(container)
   container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
 
   addCard(container, {
-    get = function() return not Addon:GetState().minimapIcon.hide end,
-    set = function(show) Addon:GetStore():Dispatch(ActionCreators.patchMinimapIcon({ hide = not show })) end
+    get = function() return not StateManager:GetGlobalState().minimapIcon.hide end,
+    set = function(show) StateManager:Dispatch(ActionCreators.patchMinimapIcon({ hide = not show })) end
   }, L.MINIMAP_ICON_TEXT, L.MINIMAP_ICON_DESCRIPTION)
 
   addDivider(container)
@@ -154,14 +155,14 @@ function MainWindowOptions:Initialize(container)
         labelText = L.RESET_TO_DEFAULTS,
         labelColor = Colors.Red,
         onClick = function()
-          Addon:GetStore():Dispatch({
+          StateManager:Dispatch({
             type = Wux.ActionTypes.Batch,
             payload = {
               ActionCreators.resetLootPrices(),
               ActionCreators.resetMoneyNotifications(),
               ActionCreators.resetNotificationBackground(),
               ActionCreators.resetOwnedItemCounts(),
-              ActionCreators.patchMinimapIcon({ hide = DefaultStates.Root.minimapIcon.hide })
+              ActionCreators.patchMinimapIcon({ hide = DefaultStates.Global.minimapIcon.hide })
             }
           })
           AnchorFrame:Reset()

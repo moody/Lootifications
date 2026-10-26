@@ -12,6 +12,7 @@ local ItemLogger = Addon:GetModule("ItemLogger")
 local L = Addon:GetModule("Locale")
 local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 local MoneyLogger = Addon:GetModule("MoneyLogger")
+local StateManager = Addon:GetModule("StateManager")
 local Widgets = Addon:GetModule("Widgets")
 
 --- @class MainWindow
@@ -98,9 +99,9 @@ Components.Root = ComponentFactory:Window({
   width = 425,
   height = 465,
   titleText = "", -- unused; MainWindow builds its own title-bar content below
-  getPoint = function() return Addon:GetState().mainWindowPoint end,
-  setPoint = function(point) Addon:GetStore():Dispatch(ActionCreators.setMainWindowPoint(point)) end,
-  onResetPoint = function() Addon:GetStore():Dispatch(ActionCreators.resetMainWindowPoint()) end,
+  getPoint = function() return StateManager:GetGlobalState().mainWindowPoint end,
+  setPoint = function(point) StateManager:Dispatch(ActionCreators.setMainWindowPoint(point)) end,
+  onResetPoint = function() StateManager:Dispatch(ActionCreators.resetMainWindowPoint()) end,
   refresh = function() Components.Root:Layout() end
 })
 

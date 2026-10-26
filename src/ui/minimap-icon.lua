@@ -5,6 +5,7 @@ local Colors = Addon:GetModule("Colors")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local L = Addon:GetModule("Locale")
+local StateManager = Addon:GetModule("StateManager")
 local LDB = Addon:GetLibrary("LibDataBroker-1.1")
 local LDBIcon = Addon:GetLibrary("LibDBIcon-1.0")
 local MainWindow = Addon:GetModule("MainWindow")
@@ -55,7 +56,7 @@ EventManager:Once(E.StoreInitialized, function()
   local patch = {}
 
   local savePatch = TickerManager:NewDebouncer(0.2, function()
-    Addon:GetStore():Dispatch(ActionCreators.patchMinimapIcon(patch))
+    StateManager:Dispatch(ActionCreators.patchMinimapIcon(patch))
     for key in pairs(patch) do patch[key] = nil end
   end)
 
@@ -63,7 +64,7 @@ EventManager:Once(E.StoreInitialized, function()
   -- patch of the state.
   local db = setmetatable({}, {
     __index = function(_, key)
-      return Addon:GetState().minimapIcon[key]
+      return StateManager:GetGlobalState().minimapIcon[key]
     end,
     __newindex = function(_, key, value)
       patch[key] = value

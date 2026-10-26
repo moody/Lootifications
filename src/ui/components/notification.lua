@@ -2,6 +2,7 @@ local Addon = select(2, ...) ---@type Addon
 local Colors = Addon:GetModule("Colors")
 local DefaultStates = Addon:GetModule("DefaultStates")
 local HistoryLog = Addon:GetModule("HistoryLog")
+local StateManager = Addon:GetModule("StateManager")
 local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
 
@@ -214,7 +215,7 @@ function ComponentFactory:Notification()
       refreshText(frame)
 
       -- Color the background and border before any animation starts, since the game reverts colors set while it plays.
-      local style = Addon:GetState().notificationBackground
+      local style = StateManager:GetGlobalState().notificationBackground
       local color = entry and HistoryLog:GetColor(entry)
 
       if style == DefaultStates.NOTIFICATION_BACKGROUNDS.NONE then

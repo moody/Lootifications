@@ -9,6 +9,7 @@ local EventManager = Addon:GetModule("EventManager")
 local ExampleNotifications = Addon:GetModule("ExampleNotifications")
 local L = Addon:GetModule("Locale")
 local NotificationManager = Addon:GetModule("NotificationManager")
+local StateManager = Addon:GetModule("StateManager")
 local TickerManager = Addon:GetModule("TickerManager")
 local Tooltip = Addon:GetModule("Tooltip")
 local Widgets = Addon:GetModule("Widgets")
@@ -53,7 +54,7 @@ local exampleSequence = 0
 --- Returns the point of the screen that the anchor is pinned at.
 --- @return FramePoint
 local function getPoint()
-  local state = Addon:GetState()
+  local state = StateManager:GetGlobalState()
   return DIRECTIONS[state.anchorDirection].edge .. ALIGNMENTS[state.anchorAlignment].side
 end
 
@@ -85,7 +86,7 @@ local function pinInPlace(frame)
 
   local anchorPoint = { point = point, relativeTo = "UIParent", relativePoint = point, offsetX = x, offsetY = y }
   pinTo(frame, anchorPoint)
-  Addon:GetStore():Dispatch(ActionCreators.setAnchorPoint(anchorPoint))
+  StateManager:Dispatch(ActionCreators.setAnchorPoint(anchorPoint))
 end
 
 --- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
@@ -200,7 +201,7 @@ Components.LiveNotifications:WhenFrameReady(function(frame)
     if not Components.LiveNotifications:IsFull() then
       local entry = NotificationManager:Pop()
       if entry then
-        Components.LiveNotifications:Show(entry, Addon:GetState().anchorDirection)
+        Components.LiveNotifications:Show(entry, StateManager:GetGlobalState().anchorDirection)
       end
     end
   end):BindFrame(frame)
@@ -226,7 +227,7 @@ Components.ExampleNotifications:WhenFrameReady(function(frame)
 
     if exampleSequence < Components.ExampleNotifications.MAX_NOTIFICATIONS then
       exampleSequence = exampleSequence + 1
-      Components.ExampleNotifications:Show(entries[exampleSequence], Addon:GetState().anchorDirection)
+      Components.ExampleNotifications:Show(entries[exampleSequence], StateManager:GetGlobalState().anchorDirection)
     elseif Components.ExampleNotifications:IsShowing() then
       pause = 0
     else
@@ -282,7 +283,7 @@ end
 
 --- Moves the anchor to its default position and resets its direction and alignment.
 function AnchorFrame:Reset()
-  Addon:GetStore():Dispatch({
+  StateManager:Dispatch({
     type = Wux.ActionTypes.Batch,
     payload = {
       ActionCreators.resetAnchorAlignment(),
@@ -292,7 +293,7 @@ function AnchorFrame:Reset()
   })
 
   Components.Root:WhenFrameReady(function(frame)
-    pinTo(frame, Addon:GetState().anchorPoint)
+    pinTo(frame, StateManager:GetGlobalState().anchorPoint)
   end)
 end
 
@@ -302,7 +303,8 @@ end
 
 -- Listen for `StoreInitialized` to pin the anchor to its saved position.
 EventManager:Once(E.StoreInitialized, function(Store)
-  local position = Store:GetState().anchorPoint
+  --- @cast Store WuxStore<LootificationsRootState>
+  local position = Store:GetState().global.anchorPoint
 
   Components.Root:WhenFrameReady(function(frame)
     --- @cast frame AnchorFrameWidget
@@ -313,9 +315,10 @@ end)
 
 -- Listen for `StateUpdated` to stack and align the notifications, and to restart the examples.
 EventManager:On(E.StateUpdated, function(state)
+  --- @cast state LootificationsRootState
   for _, screen in ipairs({ Components.LiveNotifications, Components.ExampleNotifications }) do
-    screen:SetDirection(DIRECTIONS[state.anchorDirection].direction)
-    screen:SetAlign(ALIGNMENTS[state.anchorAlignment].align)
+    screen:SetDirection(DIRECTIONS[state.global.anchorDirection].direction)
+    screen:SetAlign(ALIGNMENTS[state.global.anchorAlignment].align)
   end
 
   if isUnlocked then restartExamples() end

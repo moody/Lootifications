@@ -2,6 +2,7 @@ local Addon = select(2, ...) ---@type Addon
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local MoneyLogger = Addon:GetModule("MoneyLogger")
+local StateManager = Addon:GetModule("StateManager")
 
 --- Holds the notifications waiting to be shown, and queues one for each entry logged.
 --- @class NotificationManager
@@ -38,7 +39,7 @@ end
 
 -- Queue a notification for each entry logged, except money while its notifications are off.
 EventManager:On(E.HistoryLogged, function(entry)
-  if entry.logger ~= MoneyLogger or Addon:GetState().moneyNotifications then
+  if entry.logger ~= MoneyLogger or StateManager:GetGlobalState().moneyNotifications then
     NotificationManager:Notify(entry)
   end
 end)

@@ -3,6 +3,9 @@ local Addon = select(2, ...) ---@type Addon
 --- @class DefaultStates
 local DefaultStates = Addon:GetModule("DefaultStates")
 
+--- Bump whenever a state change requires a migration.
+DefaultStates.CURRENT_VERSION = 1
+
 --- A point of a frame, as `SetPoint()` takes it.
 --- @class PointState
 --- @field point FramePoint
@@ -24,8 +27,8 @@ DefaultStates.ANCHOR_DIRECTIONS = { DOWN = "DOWN", UP = "UP" }
 DefaultStates.NOTIFICATION_BACKGROUNDS = { NONE = "NONE", SUBTLE = "SUBTLE", HIGH_CONTRAST = "HIGH_CONTRAST" }
 
 --- The state that a fresh profile starts with.
---- @class LootificationsState
-DefaultStates.Root = {
+--- @class GlobalState
+DefaultStates.Global = {
   ------------------------------------------------------------
   -- General
   ------------------------------------------------------------
