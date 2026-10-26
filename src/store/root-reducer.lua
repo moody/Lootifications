@@ -64,6 +64,19 @@ function RootReducer:Build()
           return state
         end,
 
+        -- Text size.
+        textSize = function(state, action)
+          state = Wux:Coalesce(state, defaultState.notifications.textSize)
+
+          if action.type == ActionTypes.Notifications.SET_TEXT_SIZE then
+            state = action.payload
+          elseif action.type == ActionTypes.Notifications.RESET_TEXT_SIZE then
+            state = defaultState.notifications.textSize
+          end
+
+          return DefaultStates.NOTIFICATION_TEXT_SIZES[state] and state or defaultState.notifications.textSize
+        end,
+
         -- Notification background.
         background = function(state, action)
           state = Wux:Coalesce(state, defaultState.notifications.background)

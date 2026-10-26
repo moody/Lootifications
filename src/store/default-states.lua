@@ -26,6 +26,10 @@ DefaultStates.ANCHOR_DIRECTIONS = { DOWN = "DOWN", UP = "UP" }
 --- @enum NotificationBackground
 DefaultStates.NOTIFICATION_BACKGROUNDS = { NONE = "NONE", SUBTLE = "SUBTLE", HIGH_CONTRAST = "HIGH_CONTRAST" }
 
+--- The values that `notifications.textSize` accepts.
+--- @enum NotificationTextSize
+DefaultStates.NOTIFICATION_TEXT_SIZES = { SMALL = "SMALL", MEDIUM = "MEDIUM", LARGE = "LARGE", HUGE = "HUGE" }
+
 --- The state that a fresh profile starts with. Each key holds everything saved about one part of the addon.
 --- @class GlobalState
 DefaultStates.Global = {
@@ -40,6 +44,10 @@ DefaultStates.Global = {
 
     --- Whether item notifications include how many of the item are in the bags.
     bagCounts = false,
+
+    --- The size of the notification text.
+    --- @type NotificationTextSize
+    textSize = DefaultStates.NOTIFICATION_TEXT_SIZES.LARGE,
 
     --- The background and border style of each notification.
     --- @type NotificationBackground

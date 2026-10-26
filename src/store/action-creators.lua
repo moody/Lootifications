@@ -26,9 +26,17 @@ ActionCreators.Notifications = {
   --- @type WuxActionCreator<nil>
   resetMoney = Wux:CreateActionCreator(ActionTypes.Notifications.RESET_MONEY),
 
+  --- Action creator for `ActionTypes.Notifications.RESET_TEXT_SIZE`.
+  --- @type WuxActionCreator<nil>
+  resetTextSize = Wux:CreateActionCreator(ActionTypes.Notifications.RESET_TEXT_SIZE),
+
   --- Action creator for `ActionTypes.Notifications.SET_BACKGROUND`.
   --- @type WuxActionCreator<NotificationBackground>
   setBackground = Wux:CreateActionCreator(ActionTypes.Notifications.SET_BACKGROUND),
+
+  --- Action creator for `ActionTypes.Notifications.SET_TEXT_SIZE`.
+  --- @type WuxActionCreator<NotificationTextSize>
+  setTextSize = Wux:CreateActionCreator(ActionTypes.Notifications.SET_TEXT_SIZE),
 
   --- Action creator for `ActionTypes.Notifications.TOGGLE_BAG_COUNTS`.
   --- @type WuxActionCreator<nil>
