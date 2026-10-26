@@ -7,7 +7,7 @@ Lootifications is an addon for World of Warcraft that shows notifications for lo
 ## Features
 
 - Notifications for items and money, with the item's icon and quantity
-- Optional vendor price and owned count in item notifications
+- Optional vendor price and bag count in item notifications
 - Choose which way the notifications grow and how they line up, and drag them anywhere on the screen
 - A log of the items and money looted this session, with totals
 - A minimap icon and chat commands
@@ -17,11 +17,14 @@ Lootifications is an addon for World of Warcraft that shows notifications for lo
 The options are on the `Settings` tab of the main window. The window remembers where you move it, and Shift and right-click on it resets its position.
 
 - **Money** — Show a notification when money is looted or received
-- **Loot Prices** — Include the vendor price of items in loot notifications
-- **Owned Item Counts** — Include an owned item count in loot notifications
+- **Item Prices** — Include the vendor price of items in loot notifications
+- **Bag Counts** — Include how many of the item are in your bags in loot notifications
+- **Background** — The background and border of the notifications:
+  - `None`: no background or border
+  - `Subtle`: a faint background and border, both 30% opaque
+  - `High Contrast`: a 95% opaque background, and a solid border in the item's quality color, or the color of the largest coin for money
 - **Direction** — Grow down from the anchor's top or up from its bottom
 - **Alignment** — Line the notifications up to the left, center, or right
-- **Background** — The background and border of the notifications: none, subtle, or high contrast, which colors the border by item quality, or by the largest coin for money
 - **Minimap Icon** — Show an icon on the minimap
 
 `Reset to Defaults` resets every option and the anchor's position.
