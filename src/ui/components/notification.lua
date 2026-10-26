@@ -23,27 +23,6 @@ local HIGH_CONTRAST_ALPHA = 0.95
 -- Local Functions
 -- =============================================================================
 
---- Returns the text of the frame's entry, or an empty string if it has none.
---- @param frame NotificationWidget
---- @return string
-local function getText(frame)
-  return frame.entry and HistoryLog:GetText(frame.entry) or ""
-end
-
---- Shows the entry on the frame, and returns whether its text changed.
---- @param frame NotificationWidget
---- @param entry? HistoryLogEntry
---- @return boolean
-local function setEntry(frame, entry)
-  frame.entry = entry
-
-  local text = getText(frame)
-  if text == frame.content.fontString:GetText() then return false end
-
-  frame.content.fontString:SetText(text)
-  return true
-end
-
 --- Places the content `y` pixels above its place in the frame.
 --- @param frame NotificationWidget
 --- @param y number
@@ -75,6 +54,43 @@ local function displace(frame, y)
   frame:SetScript("OnUpdate", y ~= 0 and settle or nil)
 end
 
+--- Puts the content in its place, and forgets where the frame was at the last layout.
+--- @param frame NotificationWidget
+local function resetGlide(frame)
+  frame.lastTop = nil
+  displace(frame, 0)
+end
+
+--- Creates the animation group of the content, which fades it in, then out after the hold, and a drift in the group
+--- that moves it while it fades out. The caller sets the offset of the drift.
+--- @param content NotificationContentWidget
+--- @return AnimationGroup group
+--- @return Animation drift
+local function createAnimation(content)
+  local group = content:CreateAnimationGroup()
+
+  local fadeIn = group:CreateAnimation("Alpha")
+  fadeIn:SetFromAlpha(0)
+  fadeIn:SetToAlpha(1)
+  fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
+  fadeIn:SetStartDelay(0)
+  fadeIn:SetSmoothing("OUT")
+
+  local fadeOut = group:CreateAnimation("Alpha")
+  fadeOut:SetFromAlpha(1)
+  fadeOut:SetToAlpha(0)
+  fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
+  fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
+  fadeOut:SetSmoothing("IN")
+
+  local drift = group:CreateAnimation("Translation")
+  drift:SetDuration(Addon.NOTIFICATION_FADE_OUT)
+  drift:SetStartDelay(Addon.NOTIFICATION_HOLD)
+  drift:SetSmoothing("IN")
+
+  return group, drift
+end
+
 -- =============================================================================
 -- ComponentFactory - Notification
 -- =============================================================================
@@ -85,6 +101,16 @@ end
 --- @return NotificationComponent root
 function ComponentFactory:Notification()
   local root
+
+  --- Shows the text of the frame's entry, and resizes the notification if the text changed.
+  --- @param frame NotificationWidget
+  local function refreshText(frame)
+    local text = frame.entry and HistoryLog:GetText(frame.entry) or ""
+    if text ~= frame.content.fontString:GetText() then
+      frame.content.fontString:SetText(text)
+      root:MarkDirty()
+    end
+  end
 
   --- @class NotificationComponent : WaffleFlexComponent
   root = Addon.Waffle:Flex({
@@ -125,28 +151,9 @@ function ComponentFactory:Notification()
       --- Whether showing the frame plays the animation. Set by `Show()` and `Animate()`.
       frame.isAnimated = false
 
-      --- Fades the notification in, then out after the hold.
-      content.animationGroup = content:CreateAnimationGroup()
-
-      local fadeIn = content.animationGroup:CreateAnimation("Alpha")
-      fadeIn:SetFromAlpha(0)
-      fadeIn:SetToAlpha(1)
-      fadeIn:SetDuration(Addon.NOTIFICATION_FADE_IN)
-      fadeIn:SetStartDelay(0)
-      fadeIn:SetSmoothing("OUT")
-
-      local fadeOut = content.animationGroup:CreateAnimation("Alpha")
-      fadeOut:SetFromAlpha(1)
-      fadeOut:SetToAlpha(0)
-      fadeOut:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-      fadeOut:SetStartDelay(Addon.NOTIFICATION_HOLD)
-      fadeOut:SetSmoothing("IN")
-
-      --- Drifts the content while it fades out. Its offset is set by `Animate()`.
-      frame.drift = content.animationGroup:CreateAnimation("Translation")
-      frame.drift:SetDuration(Addon.NOTIFICATION_FADE_OUT)
-      frame.drift:SetStartDelay(Addon.NOTIFICATION_HOLD)
-      frame.drift:SetSmoothing("IN")
+      --- Fades the notification in, then out after the hold. The drift moves the content while it fades out, and its
+      --- offset is set by `Animate()`.
+      content.animationGroup, frame.drift = createAnimation(content)
 
       -- Showing an animated frame starts the animation, and the notification hides once it finishes.
       frame:HookScript("OnShow", function()
@@ -154,19 +161,12 @@ function ComponentFactory:Notification()
       end)
       content.animationGroup:HookScript("OnFinished", function()
         frame:Hide()
-        displace(frame, 0)
-        frame.lastTop = nil
+        resetGlide(frame)
         root:SetVisibility("INVISIBLE")
       end)
 
-      -- Re-read the text while shown, and resize the notification when it changes.
-      TickerManager:NewTicker(0.1, function()
-        local text = getText(frame)
-        if text ~= frame.content.fontString:GetText() then
-          frame.content.fontString:SetText(text)
-          root:MarkDirty()
-        end
-      end):BindFrame(frame)
+      -- Re-read the text while shown.
+      TickerManager:NewTicker(0.1, function() refreshText(frame) end):BindFrame(frame)
 
       return frame
     end,
@@ -197,7 +197,8 @@ function ComponentFactory:Notification()
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
       frame.isAnimated = false
-      setEntry(frame, entry)
+      frame.entry = entry
+      refreshText(frame)
 
       -- Color the background and border before any animation starts, since the game reverts colors set while it plays.
       local style = Addon:GetState().notificationBackground
@@ -214,8 +215,7 @@ function ComponentFactory:Notification()
         frame.content:SetBackdropBorderColor(0, 0, 0, Addon.NOTIFICATION_ALPHA)
       end
 
-      frame.lastTop = nil
-      displace(frame, 0)
+      resetGlide(frame)
     end)
 
     self:SetVisibility("VISIBLE")
@@ -237,7 +237,8 @@ function ComponentFactory:Notification()
   --- @param entry? HistoryLogEntry
   function root:SetEntry(entry)
     self:WhenFrameReady(function(frame)
-      if setEntry(frame, entry) then self:MarkDirty() end
+      frame.entry = entry
+      refreshText(frame)
     end)
   end
 
@@ -249,8 +250,7 @@ function ComponentFactory:Notification()
       --- @cast frame NotificationWidget
       frame.content.animationGroup:Stop()
       frame:Hide()
-      displace(frame, 0)
-      frame.lastTop = nil
+      resetGlide(frame)
     end)
 
     self:SetVisibility("INVISIBLE")
