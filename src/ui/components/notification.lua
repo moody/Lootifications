@@ -33,6 +33,14 @@ local FADE_OUT_TIME = 0.2
 --- Seconds between fading in and fading out.
 local HOLD_TIME = 3
 
+--- The font object of each text size.
+local FONT_OBJECTS = {
+  [DefaultStates.NOTIFICATION_TEXT_SIZES.SMALL] = "GameFontNormalSmall",
+  [DefaultStates.NOTIFICATION_TEXT_SIZES.MEDIUM] = "GameFontNormal",
+  [DefaultStates.NOTIFICATION_TEXT_SIZES.LARGE] = "GameFontNormalLarge",
+  [DefaultStates.NOTIFICATION_TEXT_SIZES.HUGE] = "GameFontNormalHuge"
+}
+
 -- =============================================================================
 -- Local Functions
 -- =============================================================================
@@ -116,9 +124,17 @@ end
 function ComponentFactory:Notification()
   local root
 
-  --- Shows the text of the frame's entry, and resizes the notification if the text changed.
+  --- Shows the text of the frame's entry in the font of the text size, and resizes the notification if either changed.
   --- @param frame NotificationWidget
   local function refreshText(frame)
+    local fontObject = FONT_OBJECTS[StateManager:GetGlobalState().notifications.textSize]
+    if fontObject ~= frame.fontObject then
+      frame.fontObject = fontObject
+      frame.content.fontString:SetFontObject(fontObject)
+      frame.content.fontString:SetTextColor(1, 1, 1)
+      root:MarkDirty()
+    end
+
     local text = frame.entry and HistoryLog:GetText(frame.entry) or ""
     if text ~= frame.content.fontString:GetText() then
       frame.content.fontString:SetText(text)
@@ -153,8 +169,12 @@ function ComponentFactory:Notification()
       content:SetPoint("BOTTOMRIGHT")
       frame.content = content
 
+      --- Font object of the text. Set when the text is refreshed.
+      --- @type string
+      frame.fontObject = FONT_OBJECTS[DefaultStates.Global.notifications.textSize]
+
       --- Text shown on the notification.
-      content.fontString = content:CreateFontString("$parent_FontString", "OVERLAY", "ErrorFont")
+      content.fontString = content:CreateFontString("$parent_FontString", "OVERLAY", frame.fontObject)
       content.fontString:SetTextColor(1, 1, 1)
       content.fontString:SetPoint("CENTER")
 

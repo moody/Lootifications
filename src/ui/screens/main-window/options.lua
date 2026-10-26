@@ -146,6 +146,20 @@ function MainWindowOptions:Initialize(container)
   })
 
   addChoiceCard(container, {
+    label = L.TEXT_SIZE_TEXT,
+    description = L.TEXT_SIZE_DESCRIPTION,
+    lineLabel = L.SIZE,
+    getValue = function(state) return state.notifications.textSize end,
+    setValue = ActionCreators.Notifications.setTextSize,
+    choices = {
+      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.SMALL, text = L.SMALL },
+      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.MEDIUM, text = L.MEDIUM },
+      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.LARGE, text = L.LARGE },
+      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.HUGE, text = L.HUGE }
+    }
+  })
+
+  addChoiceCard(container, {
     label = L.BACKGROUND_TEXT,
     description = L.BACKGROUND_DESCRIPTION,
     lineLabel = L.STYLE,
@@ -219,6 +233,7 @@ function MainWindowOptions:Initialize(container)
               ActionCreators.Notifications.resetBagCounts(),
               ActionCreators.Notifications.resetItemPrices(),
               ActionCreators.Notifications.resetMoney(),
+              ActionCreators.Notifications.resetTextSize(),
               ActionCreators.Notifications.resetBackground(),
               ActionCreators.MinimapIcon.patch({ hide = DefaultStates.Global.minimapIcon.hide })
             }
