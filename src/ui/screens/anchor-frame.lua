@@ -57,21 +57,14 @@ local function getPoint()
   return DIRECTIONS[state.anchorDirection].edge .. ALIGNMENTS[state.anchorAlignment].side
 end
 
---- Pins the frame at its point, offset by `x` and `y` from the screen's edge.
+--- Pins the frame at the point.
 --- @param frame AnchorFrameWidget
---- @param x number
---- @param y number
-local function pinTo(frame, x, y)
-  local point = getPoint()
-  frame:ClearAllPoints()
-  frame:SetPoint(point, UIParent, point, x, y)
-end
+--- @param point PointState
+local function pinTo(frame, point)
+  local relativeTo = point.relativeTo and _G[point.relativeTo] or UIParent
 
---- Pins the frame below the zone text.
---- @param frame AnchorFrameWidget
-local function pinToDefault(frame)
   frame:ClearAllPoints()
-  frame:SetPoint("TOP", SubZoneTextString, "BOTTOM", 0, -Widgets:Padding())
+  frame:SetPoint(point.point, relativeTo, point.relativePoint, point.offsetX, point.offsetY)
 end
 
 --- Pins the frame at its point, in the place it is now, and saves the offsets from the screen's edge at that point.
@@ -90,8 +83,9 @@ local function pinInPlace(frame)
     y = frame:GetTop() - UIParent:GetTop()
   end
 
-  pinTo(frame, x, y)
-  Addon:GetStore():Dispatch(ActionCreators.setAnchorPoint({ x = x, y = y }))
+  local anchorPoint = { point = point, relativeTo = "UIParent", relativePoint = point, offsetX = x, offsetY = y }
+  pinTo(frame, anchorPoint)
+  Addon:GetStore():Dispatch(ActionCreators.setAnchorPoint(anchorPoint))
 end
 
 --- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
@@ -297,7 +291,9 @@ function AnchorFrame:Reset()
     }
   })
 
-  Components.Root:WhenFrameReady(pinToDefault)
+  Components.Root:WhenFrameReady(function(frame)
+    pinTo(frame, Addon:GetState().anchorPoint)
+  end)
 end
 
 -- ============================================================================
@@ -311,12 +307,7 @@ EventManager:Once(E.StoreInitialized, function(Store)
   Components.Root:WhenFrameReady(function(frame)
     --- @cast frame AnchorFrameWidget
     refreshFrame(frame)
-
-    if type(position.x) == "number" and type(position.y) == "number" then
-      pinTo(frame, position.x, position.y)
-    else
-      pinToDefault(frame)
-    end
+    pinTo(frame, position)
   end)
 end)
 

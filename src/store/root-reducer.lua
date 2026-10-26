@@ -48,7 +48,7 @@ function RootReducer:Build()
         state = defaultState.anchorPoint
       end
 
-      return state
+      return type(state) == "table" and state or defaultState.anchorPoint
     end,
 
     -- Loot prices.

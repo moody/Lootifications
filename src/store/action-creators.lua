@@ -54,11 +54,11 @@ ActionCreators.setAnchorAlignment = Wux:CreateActionCreator(ActionTypes.SET_ANCH
 ActionCreators.setAnchorDirection = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_DIRECTION)
 
 --- Action creator for `ActionTypes.SET_ANCHOR_POINT`.
---- @type WuxActionCreator<{ x: number, y: number }>
+--- @type WuxActionCreator<PointState>
 ActionCreators.setAnchorPoint = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_POINT)
 
 --- Action creator for `ActionTypes.SET_MAIN_WINDOW_POINT`.
---- @type WuxActionCreator<table>
+--- @type WuxActionCreator<PointState>
 ActionCreators.setMainWindowPoint = Wux:CreateActionCreator(ActionTypes.SET_MAIN_WINDOW_POINT)
 
 --- Action creator for `ActionTypes.SET_NOTIFICATION_BACKGROUND`.
