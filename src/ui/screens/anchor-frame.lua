@@ -268,6 +268,7 @@ function AnchorFrame:Lock()
   if not isUnlocked then return end
   isUnlocked = false
 
+  NotificationManager:Clear()
   Components.ExampleNotifications:Clear()
   Components.ExampleNotifications:SetVisibility("GONE")
   Components.LiveNotifications:SetVisibility("VISIBLE")

@@ -1,6 +1,9 @@
 local Addon = select(2, ...) ---@type Addon
+local E = Addon:GetModule("Events")
+local EventManager = Addon:GetModule("EventManager")
+local MoneyLogger = Addon:GetModule("MoneyLogger")
 
---- Holds the notifications waiting to be shown.
+--- Holds the notifications waiting to be shown, and queues one for each entry logged.
 --- @class NotificationManager
 local NotificationManager = Addon:GetModule("NotificationManager")
 
@@ -28,3 +31,14 @@ end
 function NotificationManager:Clear()
   for k in pairs(queue) do queue[k] = nil end
 end
+
+-- ============================================================================
+-- Events
+-- ============================================================================
+
+-- Queue a notification for each entry logged, except money while its notifications are off.
+EventManager:On(E.HistoryLogged, function(entry)
+  if entry.logger ~= MoneyLogger or Addon:GetState().moneyNotifications then
+    NotificationManager:Notify(entry)
+  end
+end)

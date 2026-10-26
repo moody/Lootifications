@@ -93,9 +93,6 @@
   <Script file="src\ui\screens\main-window\options.lua"/>
   <Script file="src\ui\screens\main-window\main-window.lua"/>
 
-  <!-- UI Notifications -->
-  <Script file="src\ui\history-notifications.lua"/>
-
   <!-- UI Minimap -->
   <Script file="src\ui\minimap-icon.lua"/>
 
