@@ -1,5 +1,6 @@
 local Addon = select(2, ...) ---@type Addon
 local Colors = Addon:GetModule("Colors")
+local DefaultStates = Addon:GetModule("DefaultStates")
 local HistoryLog = Addon:GetModule("HistoryLog")
 local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
@@ -216,10 +217,10 @@ function ComponentFactory:Notification()
       local style = Addon:GetState().notificationBackground
       local color = entry and HistoryLog:GetColor(entry)
 
-      if style == "NONE" then
+      if style == DefaultStates.NOTIFICATION_BACKGROUNDS.NONE then
         frame.content:SetBackdropColor(0, 0, 0, 0)
         frame.content:SetBackdropBorderColor(0, 0, 0, 0)
-      elseif style == "HIGH_CONTRAST" then
+      elseif style == DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST then
         frame.content:SetBackdropColor(0, 0, 0, HIGH_CONTRAST_ALPHA)
         frame.content:SetBackdropBorderColor((color or Colors.Black):GetRGBA(1))
       else
@@ -238,7 +239,7 @@ function ComponentFactory:Notification()
   function root:Animate(direction)
     self:WhenFrameReady(function(frame)
       --- @cast frame NotificationWidget
-      local growth = direction == "UP" and 1 or -1
+      local growth = direction == DefaultStates.ANCHOR_DIRECTIONS.UP and 1 or -1
       frame.isAnimated = true
       displace(frame, -growth * SLIDE_DISTANCE)
       frame.drift:SetOffset(0, growth * DRIFT_DISTANCE)

@@ -3,6 +3,7 @@ local Addon = select(2, ...) ---@type Addon
 local ActionCreators = Addon:GetModule("ActionCreators")
 local Colors = Addon:GetModule("Colors")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
+local DefaultStates = Addon:GetModule("DefaultStates")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 local ExampleNotifications = Addon:GetModule("ExampleNotifications")
@@ -22,15 +23,15 @@ local Components = {}
 
 --- The stacking direction and the pinned edge of each `anchorDirection`.
 local DIRECTIONS = {
-  DOWN = { direction = "COLUMN", edge = "TOP" },
-  UP = { direction = "COLUMN_REVERSE", edge = "BOTTOM" }
+  [DefaultStates.ANCHOR_DIRECTIONS.DOWN] = { direction = "COLUMN", edge = "TOP" },
+  [DefaultStates.ANCHOR_DIRECTIONS.UP] = { direction = "COLUMN_REVERSE", edge = "BOTTOM" }
 }
 
 --- The alignment and the pinned side of each `anchorAlignment`.
 local ALIGNMENTS = {
-  LEFT = { align = "START", side = "LEFT" },
-  CENTER = { align = "CENTER", side = "" },
-  RIGHT = { align = "END", side = "RIGHT" }
+  [DefaultStates.ANCHOR_ALIGNMENTS.LEFT] = { align = "START", side = "LEFT" },
+  [DefaultStates.ANCHOR_ALIGNMENTS.CENTER] = { align = "CENTER", side = "" },
+  [DefaultStates.ANCHOR_ALIGNMENTS.RIGHT] = { align = "END", side = "RIGHT" }
 }
 
 --- Seconds between notifications showing.

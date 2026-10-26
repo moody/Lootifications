@@ -6,10 +6,6 @@ local Wux = Addon.Wux
 --- @class RootReducer
 local RootReducer = Addon:GetModule("RootReducer")
 
-local ANCHOR_ALIGNMENTS = { LEFT = true, CENTER = true, RIGHT = true }
-local ANCHOR_DIRECTIONS = { DOWN = true, UP = true }
-local NOTIFICATION_BACKGROUNDS = { NONE = true, SUBTLE = true, HIGH_CONTRAST = true }
-
 --- Builds the reducer of the whole state.
 --- @return WuxReducer<LootificationsState, any>
 function RootReducer:Build()
@@ -26,7 +22,7 @@ function RootReducer:Build()
         state = defaultState.anchorAlignment
       end
 
-      return ANCHOR_ALIGNMENTS[state] and state or defaultState.anchorAlignment
+      return DefaultStates.ANCHOR_ALIGNMENTS[state] and state or defaultState.anchorAlignment
     end,
 
     -- Anchor direction.
@@ -39,7 +35,7 @@ function RootReducer:Build()
         state = defaultState.anchorDirection
       end
 
-      return ANCHOR_DIRECTIONS[state] and state or defaultState.anchorDirection
+      return DefaultStates.ANCHOR_DIRECTIONS[state] and state or defaultState.anchorDirection
     end,
 
     -- Anchor point.
@@ -107,7 +103,7 @@ function RootReducer:Build()
         state = defaultState.notificationBackground
       end
 
-      return NOTIFICATION_BACKGROUNDS[state] and state or defaultState.notificationBackground
+      return DefaultStates.NOTIFICATION_BACKGROUNDS[state] and state or defaultState.notificationBackground
     end,
 
     -- Owned item counts.

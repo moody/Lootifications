@@ -127,20 +127,20 @@ function MainWindowOptions:Initialize(container)
   container:AttachComponent(ComponentFactory:Text({ text = L.LOOK_AND_FEEL, fontObject = "GameFontNormalLarge" }))
 
   addChoiceCard(container, L.DIRECTION_TEXT, L.DIRECTION_DESCRIPTION, L.GROW, "anchorDirection", ActionCreators.setAnchorDirection, {
-    { value = "DOWN", text = L.DOWN },
-    { value = "UP", text = L.UP }
+    { value = DefaultStates.ANCHOR_DIRECTIONS.DOWN, text = L.DOWN },
+    { value = DefaultStates.ANCHOR_DIRECTIONS.UP, text = L.UP }
   }, pinAnchor)
 
   addChoiceCard(container, L.ALIGNMENT_TEXT, L.ALIGNMENT_DESCRIPTION, L.JUSTIFY, "anchorAlignment", ActionCreators.setAnchorAlignment, {
-    { value = "LEFT", text = L.LEFT },
-    { value = "CENTER", text = L.CENTER },
-    { value = "RIGHT", text = L.RIGHT }
+    { value = DefaultStates.ANCHOR_ALIGNMENTS.LEFT, text = L.LEFT },
+    { value = DefaultStates.ANCHOR_ALIGNMENTS.CENTER, text = L.CENTER },
+    { value = DefaultStates.ANCHOR_ALIGNMENTS.RIGHT, text = L.RIGHT }
   }, pinAnchor)
 
   addChoiceCard(container, L.BACKGROUND_TEXT, L.BACKGROUND_DESCRIPTION, L.STYLE, "notificationBackground", ActionCreators.setNotificationBackground, {
-    { value = "NONE", text = L.NONE },
-    { value = "SUBTLE", text = L.SUBTLE },
-    { value = "HIGH_CONTRAST", text = L.HIGH_CONTRAST }
+    { value = DefaultStates.NOTIFICATION_BACKGROUNDS.NONE, text = L.NONE },
+    { value = DefaultStates.NOTIFICATION_BACKGROUNDS.SUBTLE, text = L.SUBTLE },
+    { value = DefaultStates.NOTIFICATION_BACKGROUNDS.HIGH_CONTRAST, text = L.HIGH_CONTRAST }
   })
 
   addDivider(container)

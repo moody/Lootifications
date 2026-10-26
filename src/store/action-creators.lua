@@ -6,27 +6,11 @@ local Wux = Addon.Wux
 local ActionCreators = Addon:GetModule("ActionCreators")
 
 -- ============================================================================
--- LuaCATS Annotations
--- ============================================================================
-
---- @alias AnchorAlignment "LEFT" | "CENTER" | "RIGHT"
---- @alias AnchorDirection "DOWN" | "UP"
---- @alias NotificationBackground "NONE" | "SUBTLE" | "HIGH_CONTRAST"
-
---- @class AnchorPointPayload
---- @field x number
---- @field y number
-
---- @class MinimapIconPayload
---- @field hide? boolean
---- @field minimapPos? number Position on the minimap, as an angle in degrees.
-
--- ============================================================================
 -- ActionCreators
 -- ============================================================================
 
 --- Action creator for `ActionTypes.PATCH_MINIMAP_ICON`.
---- @type WuxActionCreator<MinimapIconPayload>
+--- @type WuxActionCreator<MinimapIconState>
 ActionCreators.patchMinimapIcon = Wux:CreateActionCreator(ActionTypes.PATCH_MINIMAP_ICON)
 
 --- Action creator for `ActionTypes.RESET_ANCHOR_ALIGNMENT`.
@@ -70,7 +54,7 @@ ActionCreators.setAnchorAlignment = Wux:CreateActionCreator(ActionTypes.SET_ANCH
 ActionCreators.setAnchorDirection = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_DIRECTION)
 
 --- Action creator for `ActionTypes.SET_ANCHOR_POINT`.
---- @type WuxActionCreator<AnchorPointPayload>
+--- @type WuxActionCreator<{ x: number, y: number }>
 ActionCreators.setAnchorPoint = Wux:CreateActionCreator(ActionTypes.SET_ANCHOR_POINT)
 
 --- Action creator for `ActionTypes.SET_MAIN_WINDOW_POINT`.
