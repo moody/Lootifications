@@ -38,6 +38,9 @@ local ALIGNMENTS = {
 --- Seconds between notifications showing.
 local STAGGER_TIME = 0.15
 
+--- Pixels between notifications for each pixel of text size.
+local GAP_PER_TEXT_SIZE = 3 / 8
+
 --- Whether the anchor can be dragged.
 local isUnlocked = false
 
@@ -313,12 +316,15 @@ EventManager:Once(E.StoreInitialized, function(Store)
   end)
 end)
 
--- Listen for `StateUpdated` to stack and align the notifications, and to restart the examples.
+-- Listen for `StateUpdated` to stack, align, and space the notifications, and to restart the examples.
 EventManager:On(E.StateUpdated, function(state)
   --- @cast state LootificationsRootState
+  local gap = math.floor(state.global.notifications.textSize * GAP_PER_TEXT_SIZE + 0.5)
+
   for _, screen in ipairs({ Components.LiveNotifications, Components.ExampleNotifications }) do
     screen:SetDirection(DIRECTIONS[state.global.anchorFrame.direction].direction)
     screen:SetAlign(ALIGNMENTS[state.global.anchorFrame.alignment].align)
+    screen:SetGap(gap)
   end
 
   if isUnlocked then restartExamples() end

@@ -21,7 +21,6 @@ function ComponentFactory:NotificationStack()
   --- @class NotificationStackComponent : WaffleFlexComponent
   local root = Addon.Waffle:Flex({
     direction = "COLUMN",
-    gap = 6,
     width = "AUTO",
     height = "AUTO"
   })
