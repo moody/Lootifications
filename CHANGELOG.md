@@ -15,7 +15,7 @@
 - Added a Background option for the notifications: None, Subtle (as before), or High Contrast, which darkens the background and colors the border by item quality, or by the largest coin for money.
 - The options window remembers where it was moved. Shift and right-click on it resets its position.
 - Added the `/lootif` slash command as a short form of `/lootifications`.
-- Added `/lootifications help`, which lists the commands.
+- Added `/lootif help`, which lists the commands.
 
 ### Changed
 
