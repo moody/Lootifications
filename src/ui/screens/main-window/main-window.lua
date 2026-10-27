@@ -181,10 +181,35 @@ Components.ScreenArea = Components.Content:AddRow()
 -- Log Totals
 -- ============================================================================
 
+--- Adds a total to the row, as a value below its label, and returns the value.
+--- @param row WaffleFlexComponent
+--- @param label string
+--- @return TextComponent value
+local function addTotal(row, label)
+  local column = row:AddColumn({ height = "AUTO", gap = Widgets:Padding(0.5) })
+
+  column:AttachComponent(ComponentFactory:Text({
+    text = label,
+    fontObject = Widgets.CONTROL_FONT,
+    color = Colors.Grey,
+    justifyH = "CENTER",
+    wordWrap = false
+  }))
+
+  --- @type TextComponent
+  local value = column:AttachComponent(ComponentFactory:Text({
+    fontObject = "GameFontNormalMed2",
+    justifyH = "CENTER",
+    wordWrap = false
+  }))
+
+  return value
+end
+
 --- Shows the items and money looted this session in the totals of the log.
 local function refreshLogTotals()
-  Components.TotalItemsText:SetText(L.TOTAL_ITEMS:format(Colors.White(ItemLogger:GetTotal())))
-  Components.TotalMoneyText:SetText(L.TOTAL_MONEY:format(Colors.White(B.Money:GetCoinText(MoneyLogger:GetTotal()))))
+  Components.TotalItemsText:SetText(tostring(ItemLogger:GetTotal()))
+  Components.TotalMoneyText:SetText(B.Money:GetCoinText(MoneyLogger:GetTotal()))
 end
 
 EventManager:On(E.HistoryLogged, refreshLogTotals)
@@ -211,10 +236,11 @@ Controller:AddTab({
 
     Components.LogPanel:AddColumn({ padding = Widgets:Padding() }):AttachComponent(ComponentFactory:LogList())
 
-    -- Totals of the log, with a card-like fill and a line above it.
+    -- Totals of the log, with a card-like fill, a line above it, and a line between the two.
     local totals = Components.LogPanel:AddRow({
       height = "AUTO",
       padding = Widgets:Padding(),
+      gap = Widgets:Padding(),
 
       --- @param parent Frame
       frameFactory = function(parent)
@@ -230,12 +256,18 @@ Controller:AddTab({
         line:SetPoint("TOPRIGHT")
         line:SetColorTexture(Colors.Black:GetRGBA(1))
 
+        local divider = frame:CreateTexture("$parent_Divider", "ARTWORK")
+        divider:SetWidth(1)
+        divider:SetPoint("TOP", 0, -Widgets:Padding())
+        divider:SetPoint("BOTTOM", 0, Widgets:Padding())
+        divider:SetColorTexture(Colors.White:GetRGBA(0.08))
+
         return frame
       end
     })
 
-    Components.TotalItemsText = totals:AttachComponent(ComponentFactory:Text({ color = Colors.Grey, wordWrap = false })) --[[@as TextComponent]]
-    Components.TotalMoneyText = totals:AttachComponent(ComponentFactory:Text({ color = Colors.Grey, wordWrap = false, justifyH = "RIGHT" })) --[[@as TextComponent]]
+    Components.TotalItemsText = addTotal(totals, L.TOTAL_ITEMS)
+    Components.TotalMoneyText = addTotal(totals, L.TOTAL_MONEY)
     refreshLogTotals()
 
     -- Wipes the log. Disabled while it is empty.

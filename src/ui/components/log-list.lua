@@ -9,7 +9,7 @@ local Widgets = Addon:GetModule("Widgets")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
 
 --- Number of cards, which share the list's height. Older entries are reached by scrolling.
-local CARD_COUNT = 7
+local CARD_COUNT = 6
 
 -- =============================================================================
 -- ComponentFactory - LogList
@@ -22,7 +22,8 @@ function ComponentFactory:LogList()
   slider:Hide()
 
   --- Shown in the middle of the list while the log is empty.
-  local emptyText ---@type FontString?
+  --- @type FontString
+  local emptyText
 
   --- Number of entries the last refresh saw.
   local lastCount = 0
