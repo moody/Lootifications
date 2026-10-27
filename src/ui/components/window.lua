@@ -1,5 +1,6 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local TickerManager = Addon:GetModule("TickerManager")
 local Widgets = Addon:GetModule("Widgets")
@@ -93,7 +94,7 @@ function ComponentFactory:Window(options)
   root.TitleText = root.TitleRow:AddChild({
     --- @param parent Frame
     frameFactory = function(parent)
-      local fontString = parent:CreateFontString("$parent_TitleText", "ARTWORK", "GameFontNormalLarge")
+      local fontString = parent:CreateFontString("$parent_TitleText", "ARTWORK", B.FontObjects.Large:GetName())
       fontString:SetWordWrap(false)
       fontString:SetJustifyH("LEFT")
       fontString:SetText(options.titleText)

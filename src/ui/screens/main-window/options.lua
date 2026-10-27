@@ -1,6 +1,7 @@
 local Addon = select(2, ...) ---@type Addon
 local ActionCreators = Addon:GetModule("ActionCreators")
 local AnchorFrame = Addon:GetModule("AnchorFrame")
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local Commands = Addon:GetModule("Commands")
 local ComponentFactory = Addon:GetModule("ComponentFactory")
@@ -60,7 +61,7 @@ local function addCard(container, options)
   card.Content:AttachComponent(ComponentFactory:Text({ text = options.label }))
   card.Content:AttachComponent(ComponentFactory:Text({
     text = options.description,
-    fontObject = "GameFontNormalSmall",
+    fontObject = B.FontObjects.Small,
     color = Colors.Grey
   }))
 
@@ -153,7 +154,7 @@ end
 --- @param container WaffleFlexComponent
 function MainWindowOptions:Initialize(container)
   -- Notifications.
-  container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = "GameFontNormalLarge" }))
+  container:AttachComponent(ComponentFactory:Text({ text = L.NOTIFICATIONS, fontObject = B.FontObjects.Large }))
 
   addOptionCard(container, {
     label = L.MONEY,
@@ -203,7 +204,7 @@ function MainWindowOptions:Initialize(container)
   addDivider(container)
 
   -- Anchor.
-  container:AttachComponent(ComponentFactory:Text({ text = L.ANCHOR, fontObject = "GameFontNormalLarge" }))
+  container:AttachComponent(ComponentFactory:Text({ text = L.ANCHOR, fontObject = B.FontObjects.Large }))
 
   addChoiceCard(container, {
     label = L.DIRECTION_TEXT,
@@ -235,7 +236,7 @@ function MainWindowOptions:Initialize(container)
   addDivider(container)
 
   -- General.
-  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = "GameFontNormalLarge" }))
+  container:AttachComponent(ComponentFactory:Text({ text = L.GENERAL, fontObject = B.FontObjects.Large }))
 
   addCard(container, {
     label = L.MINIMAP_ICON_TEXT,

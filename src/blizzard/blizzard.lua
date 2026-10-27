@@ -48,6 +48,29 @@ B.Strings = {
 }
 
 -- =============================================================================
+-- Blizzard - Font Objects
+-- =============================================================================
+
+--- The game's own font objects, from smallest to largest.
+B.FontObjects = {
+  --- Small text, 10 pixels high on a Latin client.
+  --- @type Font
+  Small = getGlobal("GameFontNormalSmall"),
+
+  --- Default text, 12 pixels high on a Latin client.
+  --- @type Font
+  Normal = getGlobal("GameFontNormal"),
+
+  --- Medium text, 14 pixels high on a Latin client.
+  --- @type Font
+  Medium = getGlobal("GameFontNormalMed2"),
+
+  --- Large text, 16 pixels high on a Latin client.
+  --- @type Font
+  Large = getGlobal("GameFontNormalLarge"),
+}
+
+-- =============================================================================
 -- Blizzard - Items
 -- =============================================================================
 

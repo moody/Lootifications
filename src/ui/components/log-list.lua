@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local HistoryLog = Addon:GetModule("HistoryLog")
 local L = Addon:GetModule("Locale")
@@ -44,7 +45,7 @@ function ComponentFactory:LogList()
         slider:SetValue(slider:GetValue() - delta)
       end)
 
-      emptyText = frame:CreateFontString("$parent_EmptyText", "ARTWORK", "GameFontNormal")
+      emptyText = frame:CreateFontString("$parent_EmptyText", "ARTWORK", B.FontObjects.Normal:GetName())
       emptyText:SetPoint("CENTER")
       emptyText:SetTextColor(Colors.Grey:GetRGB())
       emptyText:SetText(L.NOTHING_LOOTED_YET)

@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 
 --- @class Widgets
@@ -36,7 +37,7 @@ function Widgets:Button(options)
   frame.background:SetAllPoints()
 
   -- Label text.
-  frame.label = frame:CreateFontString("$parent_Label", "ARTWORK", "GameFontNormal")
+  frame.label = frame:CreateFontString("$parent_Label", "ARTWORK", B.FontObjects.Normal:GetName())
   frame.label:SetText(options.labelText)
   frame.label:SetPoint("LEFT", frame, self:Padding(0.5), 0)
   frame.label:SetPoint("RIGHT", frame, -self:Padding(0.5), 0)

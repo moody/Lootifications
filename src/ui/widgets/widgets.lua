@@ -1,5 +1,6 @@
 local ADDON_NAME = ... ---@type string
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local E = Addon:GetModule("Events")
 local EventManager = Addon:GetModule("EventManager")
 
@@ -33,7 +34,7 @@ do -- Widget:Padding()
 end
 
 --- Font object for controls, such as a `CheckChip`, and the labels beside them.
-Widgets.CONTROL_FONT = "GameFontNormalSmall"
+Widgets.CONTROL_FONT = B.FontObjects.Small
 
 --- Space above and below a control's content. Controls are sized to their content.
 Widgets.CONTROL_PADDING = Widgets:Padding(0.75)

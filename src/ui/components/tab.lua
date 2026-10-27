@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local Widgets = Addon:GetModule("Widgets")
 
@@ -50,7 +51,7 @@ function ComponentFactory:Tab(options)
       local frame = Widgets:Frame({ parent = parent, frameType = "Button" })
       frame:SetBackdropBorderColor(0, 0, 0, 0)
 
-      frame.label = frame:CreateFontString("$parent_Label", "ARTWORK", "GameFontNormal")
+      frame.label = frame:CreateFontString("$parent_Label", "ARTWORK", B.FontObjects.Normal:GetName())
       frame.label:SetPoint("LEFT", Widgets:Padding(), 0)
       frame.label:SetPoint("RIGHT", -Widgets:Padding(), 0)
       frame.label:SetJustifyH("CENTER")

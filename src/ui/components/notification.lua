@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local DefaultStates = Addon:GetModule("DefaultStates")
 local HistoryLog = Addon:GetModule("HistoryLog")
@@ -124,7 +125,7 @@ function ComponentFactory:Notification()
       frame.textSize = textSize
 
       -- Typeface of the client's language.
-      local typeface, _, flags = GameFontNormal:GetFont()
+      local typeface, _, flags = B.FontObjects.Normal:GetFont()
       frame.content.fontString:SetFont(typeface, textSize, flags)
       root:MarkDirty()
     end
@@ -168,7 +169,7 @@ function ComponentFactory:Notification()
       frame.textSize = nil
 
       --- Text shown on the notification.
-      content.fontString = content:CreateFontString("$parent_FontString", "OVERLAY", "GameFontNormal")
+      content.fontString = content:CreateFontString("$parent_FontString", "OVERLAY", B.FontObjects.Normal:GetName())
       content.fontString:SetTextColor(1, 1, 1)
       content.fontString:SetPoint("CENTER")
 

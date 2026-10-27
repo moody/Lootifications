@@ -139,7 +139,7 @@ Components.TitleBarNameText:AddChild({
 Components.TitleBarNameText:AddChild({
   --- @param parent Frame
   frameFactory = function(parent)
-    local fontString = parent:CreateFontString("$parent_TitleText", "ARTWORK", "GameFontNormalLarge")
+    local fontString = parent:CreateFontString("$parent_TitleText", "ARTWORK", B.FontObjects.Large:GetName())
     fontString:SetJustifyH("LEFT")
     fontString:SetText(Colors.Purple(ADDON_NAME))
     return fontString
@@ -150,7 +150,7 @@ Components.TitleBarVersionText = Components.Root.TitleRow:AddRow({ justify = "CE
 Components.TitleBarVersionText:AddChild({
   --- @param parent Frame
   frameFactory = function(parent)
-    local fontString = parent:CreateFontString("$parent_VersionText", "ARTWORK", "GameFontNormalSmall")
+    local fontString = parent:CreateFontString("$parent_VersionText", "ARTWORK", B.FontObjects.Small:GetName())
     fontString:SetText(Colors.Grey(Addon.VERSION))
     return fontString
   end
@@ -198,7 +198,7 @@ local function addTotal(row, label)
 
   --- @type TextComponent
   local value = column:AttachComponent(ComponentFactory:Text({
-    fontObject = "GameFontNormalMed2",
+    fontObject = B.FontObjects.Medium,
     justifyH = "CENTER",
     wordWrap = false
   }))

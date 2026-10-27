@@ -1,4 +1,5 @@
 local Addon = select(2, ...) ---@type Addon
+local B = Addon:GetModule("Blizzard")
 local Colors = Addon:GetModule("Colors")
 local Tooltip = Addon:GetModule("Tooltip")
 
@@ -11,7 +12,7 @@ local ComponentFactory = Addon:GetModule("ComponentFactory")
 
 --- @class TextComponentOptions
 --- @field text? string Text to show. Defaults to an empty string.
---- @field fontObject? string Defaults to `GameFontNormal`.
+--- @field fontObject? Font Defaults to `B.FontObjects.Normal`.
 --- @field color? Color Defaults to `Colors.White`.
 --- @field justifyH? "LEFT" | "CENTER" | "RIGHT" Defaults to `LEFT`.
 --- @field justifyV? "TOP" | "MIDDLE" | "BOTTOM" Defaults to `MIDDLE`.
@@ -37,7 +38,7 @@ function ComponentFactory:Text(options)
 
     --- @param parent Frame
     frameFactory = function(parent)
-      fontString = parent:CreateFontString(nil, "ARTWORK", options.fontObject or "GameFontNormal")
+      fontString = parent:CreateFontString(nil, "ARTWORK", (options.fontObject or B.FontObjects.Normal):GetName())
       fontString:SetJustifyH(options.justifyH or "LEFT")
       fontString:SetJustifyV(options.justifyV or "MIDDLE")
       fontString:SetWordWrap(Addon:IfNil(options.wordWrap, true))

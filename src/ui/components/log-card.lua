@@ -142,7 +142,7 @@ function ComponentFactory:LogCard()
 
   -- Title.
   local title = lines:AttachComponent(ComponentFactory:Text({
-    fontObject = "GameFontNormalLarge",
+    fontObject = B.FontObjects.Large,
     wordWrap = false,
     truncationTooltip = false
   })) --[[@as TextComponent]]
@@ -152,7 +152,7 @@ function ComponentFactory:LogCard()
 
   -- Details.
   local detail = details:AttachComponent(ComponentFactory:Text({
-    fontObject = "GameFontNormalSmall",
+    fontObject = B.FontObjects.Small,
     color = Colors.Grey,
     wordWrap = false,
     truncationTooltip = false
@@ -160,7 +160,7 @@ function ComponentFactory:LogCard()
 
   -- Age.
   local age = details:AttachComponent(ComponentFactory:Text({
-    fontObject = "GameFontNormalSmall",
+    fontObject = B.FontObjects.Small,
     color = Colors.Grey,
     justifyH = "RIGHT",
     width = "AUTO"
