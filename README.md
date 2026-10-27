@@ -58,14 +58,14 @@ The `Minimap Icon` option hides it.
 
 ## Chat Commands
 
-`/lootif` can be used in place of `/lootifications`.
+`/lootifications` can be used in place of `/lootif`.
 
 ```bash
 # Toggle the main window.
-/lootifications
+/lootif
 
 # Display a list of commands.
-/lootifications help
+/lootif help
 ```
 
 ## Credit
