@@ -44,7 +44,7 @@ The `Log` tab, which the main window starts on, lists the items and money looted
 
 - Each item shows its icon, link, quantity, and how long ago it was looted, and hovering it shows its tooltip
 - A bar under the list shows the total number of items, counting each item in a stack, and the total money
-- `Clear Log` empties the list and the totals
+- `Clear Log` empties the list and the totals, and clears the notifications on screen or waiting
 - The log is not saved between sessions
 
 ![Log](/.github/images/Log.png?raw=true)
