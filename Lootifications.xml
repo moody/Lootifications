@@ -1,43 +1,104 @@
 <Ui>
-  <!-- Lib -->
-  <Script file="lib\wux.lua"/>
+  <!-- Libs -->
+  <Script file="libs\LibStub.lua"/>
+  <Script file="libs\CallbackHandler-1.0.lua"/>
+  <Script file="libs\LibDataBroker-1.1.lua"/>
+  <Script file="libs\LibDBIcon-1.0.lua"/>
+  <Script file="libs\Waffle.lua"/>
+  <Script file="libs\Wux.lua"/>
 
   <!-- Src -->
-  <Script file="src\_init.lua"/>
-  <Script file="src\locale.lua"/>
-  <Script file="src\colors.lua"/>
-  <Script file="src\message-builder.lua"/>
-  <Script file="src\tooltip.lua"/>
-  <Script file="src\ticker-manager.lua"/>
+  <Script file="src\addon.lua"/>
 
+  <!-- Locales -->
+  <Script file="src\locales\_enUS.lua"/>
+  <Script file="src\locales\deDE.lua"/>
+  <Script file="src\locales\esES.lua"/>
+  <Script file="src\locales\esMX.lua"/>
+  <Script file="src\locales\frFR.lua"/>
+  <Script file="src\locales\itIT.lua"/>
+  <Script file="src\locales\koKR.lua"/>
+  <Script file="src\locales\ptBR.lua"/>
+  <Script file="src\locales\ruRU.lua"/>
+  <Script file="src\locales\zhCN.lua"/>
+  <Script file="src\locales\zhTW.lua"/>
+
+  <!-- Events -->
   <Script file="src\events\events.lua"/>
   <Script file="src\events\event-manager.lua"/>
 
-  <Script file="src\store.lua"/>
-  <Script file="src\commands.lua"/>
+  <!-- Utils -->
+  <Script file="src\utils\colors.lua"/>
+  <Script file="src\utils\message-builder.lua"/>
+  <Script file="src\utils\ticker-manager.lua"/>
 
-  <Script file="src\loot-watcher.lua"/>
-  <Script file="src\money-watcher.lua"/>
-  <Script file="src\tester.lua"/>
+  <!-- Blizzard -->
+  <Script file="src\blizzard\blizzard.lua"/>
 
-  <Script file="src\ui\widgets\_init.lua"/>
-  <Script file="src\ui\widgets\button.lua"/>
-  <Script file="src\ui\widgets\frame.lua"/>
-  <Script file="src\ui\widgets\notification.lua"/>
-  <Script file="src\ui\widgets\scrollable-title-frame.lua"/>
-  <Script file="src\ui\widgets\slider.lua"/>
-  <Script file="src\ui\widgets\title-frame.lua"/>
-  <Script file="src\ui\widgets\window.lua"/>
+  <!-- Store -->
+  <Script file="src\store\action-types.lua"/>
+  <Script file="src\store\action-creators.lua"/>
+  <Script file="src\store\default-states.lua"/>
+  <Script file="src\store\middlewares.lua"/>
+  <Script file="src\store\root-reducer.lua"/>
+  <Script file="src\store\migrations.lua"/>
+  <Script file="src\store\state-reconciler.lua"/>
+  <Script file="src\store\state-manager.lua"/>
 
-  <Script file="src\ui\widgets\options\option-button.lua"/>
-  <Script file="src\ui\widgets\options\option-heading.lua"/>
-  <Script file="src\ui\widgets\options\option-slider.lua"/>
-  <Script file="src\ui\widgets\options\options-frame.lua"/>
+  <!-- Input -->
+  <Script file="src\input\commands.lua"/>
 
-  <Script file="src\ui\main-window\options.lua"/>
-  <Script file="src\ui\main-window\main-window.lua"/>
+  <!-- Logs -->
+  <Script file="src\logs\history-log.lua"/>
+  <Script file="src\logs\item-logger.lua"/>
+  <Script file="src\logs\money-logger.lua"/>
 
-  <Script file="src\ui\addon-compartment.lua"/>
-  <Script file="src\ui\anchor-frame.lua"/>
-  <Script file="src\ui\notification-manager.lua"/>
+  <!-- Services -->
+  <Script file="src\services\example-notifications.lua"/>
+  <Script file="src\services\notification-manager.lua"/>
+
+  <!-- UI -->
+  <Script file="src\ui\tooltip.lua"/>
+
+  <!-- UI Widgets -->
+  <Script file="src\ui\widgets\widgets.lua"/>
+
+  <!-- UI Widgets - Primitives -->
+  <Script file="src\ui\widgets\primitives\button.lua"/>
+  <Script file="src\ui\widgets\primitives\checkbox.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\frame-event-state.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\frame-events.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\events\enabled.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\events\focused.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\events\hovered.lua"/>
+  <Script file="src\ui\widgets\primitives\frame\frame.lua"/>
+  <Script file="src\ui\widgets\primitives\slider.lua"/>
+
+  <!-- UI Components -->
+  <Script file="src\ui\components\check-chip-group.lua"/>
+  <Script file="src\ui\components\check-chip.lua"/>
+  <Script file="src\ui\components\divider.lua"/>
+  <Script file="src\ui\components\icon-button.lua"/>
+  <Script file="src\ui\components\log-card.lua"/>
+  <Script file="src\ui\components\log-list.lua"/>
+  <Script file="src\ui\components\notification.lua"/>
+  <Script file="src\ui\components\notification-stack.lua"/>
+  <Script file="src\ui\components\option-card.lua"/>
+  <Script file="src\ui\components\scroll-panel.lua"/>
+  <Script file="src\ui\components\settings-box.lua"/>
+  <Script file="src\ui\components\tab.lua"/>
+  <Script file="src\ui\components\text.lua"/>
+  <Script file="src\ui\components\value-slider.lua"/>
+  <Script file="src\ui\components\window.lua"/>
+
+  <!-- UI Screens -->
+  <Script file="src\ui\screens\anchor-frame.lua"/>
+  <Script file="src\ui\screens\main-window\options.lua"/>
+  <Script file="src\ui\screens\main-window\main-window.lua"/>
+
+  <!-- UI Minimap -->
+  <Script file="src\ui\minimap-icon.lua"/>
+
+  <!-- UI Blizzard -->
+  <Script file="src\ui\blizzard\addon-compartment.lua"/>
 </Ui>

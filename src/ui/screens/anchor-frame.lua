@@ -1,0 +1,336 @@
+local ADDON_NAME = ... ---@type string
+local Addon = select(2, ...) ---@type Addon
+local ActionCreators = Addon:GetModule("ActionCreators")
+local Colors = Addon:GetModule("Colors")
+local ComponentFactory = Addon:GetModule("ComponentFactory")
+local DefaultStates = Addon:GetModule("DefaultStates")
+local E = Addon:GetModule("Events")
+local EventManager = Addon:GetModule("EventManager")
+local ExampleNotifications = Addon:GetModule("ExampleNotifications")
+local L = Addon:GetModule("Locale")
+local NotificationManager = Addon:GetModule("NotificationManager")
+local StateManager = Addon:GetModule("StateManager")
+local TickerManager = Addon:GetModule("TickerManager")
+local Tooltip = Addon:GetModule("Tooltip")
+local Widgets = Addon:GetModule("Widgets")
+local Wux = Addon.Wux
+
+--- Holds the notifications, stacked and aligned per the state and pinned at the matching point of the screen.
+--- While locked it shows the live notifications, and while unlocked it shows examples of them and can be dragged.
+--- @class AnchorFrame
+local AnchorFrame = Addon:GetModule("AnchorFrame")
+
+local Components = {}
+
+--- The stacking direction and the pinned edge of each anchor direction.
+local DIRECTIONS = {
+  [DefaultStates.ANCHOR_DIRECTIONS.DOWN] = { direction = "COLUMN", edge = "TOP" },
+  [DefaultStates.ANCHOR_DIRECTIONS.UP] = { direction = "COLUMN_REVERSE", edge = "BOTTOM" }
+}
+
+--- The alignment and the pinned side of each anchor alignment.
+local ALIGNMENTS = {
+  [DefaultStates.ANCHOR_ALIGNMENTS.LEFT] = { align = "START", side = "LEFT" },
+  [DefaultStates.ANCHOR_ALIGNMENTS.CENTER] = { align = "CENTER", side = "" },
+  [DefaultStates.ANCHOR_ALIGNMENTS.RIGHT] = { align = "END", side = "RIGHT" }
+}
+
+--- Seconds between notifications showing.
+local STAGGER_TIME = 0.15
+
+--- Pixels between notifications for each pixel of text size.
+local GAP_PER_TEXT_SIZE = 3 / 8
+
+--- Whether the anchor can be dragged.
+local isUnlocked = false
+
+--- Whether the anchor is being dragged. The example loop is paused meanwhile.
+local isDragging = false
+
+--- Counts the examples shown in the current loop. The first is the bottom slot.
+local exampleSequence = 0
+
+-- ============================================================================
+-- Local Functions
+-- ============================================================================
+
+--- Returns the point of the screen that the anchor is pinned at.
+--- @return FramePoint
+local function getPoint()
+  local state = StateManager:GetGlobalState().anchorFrame
+  return DIRECTIONS[state.direction].edge .. ALIGNMENTS[state.alignment].side
+end
+
+--- Pins the frame at the point.
+--- @param frame AnchorFrameWidget
+--- @param point PointState
+local function pinTo(frame, point)
+  local relativeTo = point.relativeTo and _G[point.relativeTo] or UIParent
+
+  frame:ClearAllPoints()
+  frame:SetPoint(point.point, relativeTo, point.relativePoint, point.offsetX, point.offsetY)
+end
+
+--- Pins the frame at its point, in the place it is now, and saves the offsets from the screen's edge at that point.
+--- @param frame AnchorFrameWidget
+local function pinInPlace(frame)
+  local point = getPoint()
+  local x = frame:GetCenter() - (UIParent:GetLeft() + UIParent:GetWidth() * 0.5)
+  if point:find("LEFT") then
+    x = frame:GetLeft() - UIParent:GetLeft()
+  elseif point:find("RIGHT") then
+    x = frame:GetRight() - UIParent:GetRight()
+  end
+
+  local y = frame:GetBottom() - UIParent:GetBottom()
+  if point:find("TOP") then
+    y = frame:GetTop() - UIParent:GetTop()
+  end
+
+  local anchorPoint = { point = point, relativeTo = "UIParent", relativePoint = point, offsetX = x, offsetY = y }
+  pinTo(frame, anchorPoint)
+  StateManager:Dispatch(ActionCreators.AnchorFrame.setPoint(anchorPoint))
+end
+
+--- Shows the frame as locked or unlocked: an unlocked frame has a background and a border, and takes the mouse.
+--- @param frame AnchorFrameWidget
+local function refreshFrame(frame)
+  if isUnlocked then
+    frame:SetBackdropColor(0.5, 0.5, 0.5, 0.1)
+    frame:SetBackdropBorderColor(Colors.Gold:GetRGBA())
+  else
+    frame:SetBackdropColor(0, 0, 0, 0)
+    frame:SetBackdropBorderColor(0, 0, 0, 0)
+  end
+
+  frame:EnableMouse(isUnlocked)
+end
+
+--- Returns the entries of the examples in the order they appear: the bottom slot first.
+--- @return HistoryLogEntry[]
+local function getExampleEntries()
+  local size = Components.ExampleNotifications.MAX_NOTIFICATIONS
+  local entries = {}
+  for i = 1, size do
+    entries[i] = ExampleNotifications:GetEntry(size + 1 - i)
+  end
+
+  return entries
+end
+
+--- Starts the examples over, hiding the ones that are showing.
+local function restartExamples()
+  Components.ExampleNotifications:Clear()
+  Components.ExampleNotifications:SetEntries(getExampleEntries())
+  exampleSequence = 0
+end
+
+-- ============================================================================
+-- Root Component
+-- ============================================================================
+
+--- @class AnchorFrameComponent : WaffleFlexComponent
+Components.Root = Addon.Waffle:Flex({
+  padding = Widgets:Padding(0.25),
+  width = "AUTO",
+  height = "AUTO",
+
+  --- @param parent Frame
+  defaultFrameFactory = function(parent)
+    return CreateFrame("Frame", nil, parent)
+  end,
+
+  frameFactory = function()
+    --- @class AnchorFrameWidget : FrameWidget
+    local frame = Widgets:Frame({
+      name = ADDON_NAME .. "_AnchorFrame",
+      clipChildren = false,
+      tooltipAnchor = "ANCHOR_CURSOR_RIGHT",
+      onUpdateTooltip = function(_, tooltip)
+        tooltip:SetText(ADDON_NAME)
+        tooltip:AddLine(L.ANCHOR_TOOLTIP)
+        tooltip:AddLine(" ")
+        tooltip:AddDoubleLine(Colors.Purple(L.RIGHT_CLICK), Colors.White(L.RESET_ANCHOR))
+      end
+    })
+    refreshFrame(frame)
+
+    frame:SetMovable(true)
+    frame:SetClampedToScreen(true)
+    frame:RegisterForDrag("LeftButton")
+
+    -- Show the examples without animation while dragging, since an animated one would glide from where the anchor was.
+    frame:SetScript("OnDragStart", function(self)
+      isDragging = true
+      Tooltip:Hide()
+      Components.ExampleNotifications:ShowAll(getExampleEntries())
+      self:StartMoving()
+    end)
+
+    -- Pin the frame where it was dropped, and play the examples again.
+    frame:SetScript("OnDragStop", function(self)
+      isDragging = false
+      self:StopMovingOrSizing()
+      restartExamples()
+      pinInPlace(self)
+    end)
+
+    frame:SetScript("OnMouseDown", function(_, button)
+      if button == "RightButton" then
+        AnchorFrame:Reset()
+      end
+    end)
+
+    return frame
+  end
+})
+
+-- Lay out the notifications.
+TickerManager:NewTicker(1 / 30, function()
+  Components.Root:Layout()
+end)
+
+-- ============================================================================
+-- Screen Components - LiveNotifications
+-- ============================================================================
+
+--- The screen shown while locked: the notifications that come from loot.
+--- @type NotificationStackComponent
+Components.LiveNotifications = Components.Root:AttachComponent(ComponentFactory:NotificationStack())
+
+-- Show a queued notification each stagger interval, while there is room for it.
+Components.LiveNotifications:WhenFrameReady(function(frame)
+  TickerManager:NewTicker(STAGGER_TIME, function()
+    if not Components.LiveNotifications:IsFull() then
+      local entry = NotificationManager:Pop()
+      if entry then
+        Components.LiveNotifications:Show(entry, StateManager:GetGlobalState().anchorFrame.direction)
+      end
+    end
+  end):BindFrame(frame)
+end)
+
+-- ============================================================================
+-- Screen Components - ExampleNotifications
+-- ============================================================================
+
+--- The screen shown while unlocked: examples of the notifications, played in a loop.
+--- @type NotificationStackComponent
+Components.ExampleNotifications = Components.Root:AttachComponent(ComponentFactory:NotificationStack())
+Components.ExampleNotifications:SetVisibility("GONE")
+
+-- Play the examples in a loop while shown, bottom slot first, with a pause between loops.
+Components.ExampleNotifications:WhenFrameReady(function(frame)
+  local pause = 0
+  TickerManager:NewTicker(STAGGER_TIME, function()
+    if isDragging then return end
+
+    local entries = getExampleEntries()
+    Components.ExampleNotifications:SetEntries(entries)
+
+    if exampleSequence < Components.ExampleNotifications.MAX_NOTIFICATIONS then
+      exampleSequence = exampleSequence + 1
+      Components.ExampleNotifications:Show(entries[exampleSequence], StateManager:GetGlobalState().anchorFrame.direction)
+    elseif Components.ExampleNotifications:IsShowing() then
+      pause = 0
+    else
+      pause = pause + STAGGER_TIME
+      if pause >= 0.5 then -- Pause for 0.5 secs.
+        pause = 0
+        exampleSequence = 0
+      end
+    end
+  end):BindFrame(frame)
+end)
+
+-- ============================================================================
+-- AnchorFrame
+-- ============================================================================
+
+--- Returns whether the anchor is unlocked.
+--- @return boolean
+function AnchorFrame:IsUnlocked()
+  return isUnlocked
+end
+
+--- Lets the anchor be dragged, and plays examples of the notifications in place of the live ones, which are dropped.
+function AnchorFrame:Unlock()
+  if isUnlocked then return end
+  isUnlocked = true
+
+  NotificationManager:Clear()
+  Components.LiveNotifications:Clear()
+  Components.LiveNotifications:SetVisibility("GONE")
+  Components.ExampleNotifications:SetVisibility("VISIBLE")
+  restartExamples()
+  Components.Root:WhenFrameReady(refreshFrame)
+end
+
+--- Stops the anchor from being dragged, and shows the live notifications again.
+function AnchorFrame:Lock()
+  if not isUnlocked then return end
+  isUnlocked = false
+
+  NotificationManager:Clear()
+  Components.ExampleNotifications:Clear()
+  Components.ExampleNotifications:SetVisibility("GONE")
+  Components.LiveNotifications:SetVisibility("VISIBLE")
+  Components.Root:WhenFrameReady(refreshFrame)
+end
+
+--- Pins the anchor at the point from its direction and alignment, where it is now. Call it after either changes,
+--- so that the notifications stay where they are.
+function AnchorFrame:Pin()
+  Components.Root:WhenFrameReady(pinInPlace)
+end
+
+--- Moves the anchor to its default position and resets its direction and alignment.
+function AnchorFrame:Reset()
+  StateManager:Dispatch({
+    type = Wux.ActionTypes.Batch,
+    payload = {
+      ActionCreators.AnchorFrame.resetAlignment(),
+      ActionCreators.AnchorFrame.resetDirection(),
+      ActionCreators.AnchorFrame.resetPoint()
+    }
+  })
+
+  Components.Root:WhenFrameReady(function(frame)
+    pinTo(frame, StateManager:GetGlobalState().anchorFrame.point)
+  end)
+end
+
+-- ============================================================================
+-- Events
+-- ============================================================================
+
+-- Listen for `StoreInitialized` to pin the anchor to its saved position.
+EventManager:Once(E.StoreInitialized, function(Store)
+  --- @cast Store WuxStore<LootificationsRootState>
+  local position = Store:GetState().global.anchorFrame.point
+
+  Components.Root:WhenFrameReady(function(frame)
+    --- @cast frame AnchorFrameWidget
+    refreshFrame(frame)
+    pinTo(frame, position)
+  end)
+end)
+
+-- Listen for `StateUpdated` to stack, align, and space the notifications, and to restart the examples.
+EventManager:On(E.StateUpdated, function(state)
+  --- @cast state LootificationsRootState
+  local gap = math.floor(state.global.notifications.textSize * GAP_PER_TEXT_SIZE + 0.5)
+
+  for _, screen in ipairs({ Components.LiveNotifications, Components.ExampleNotifications }) do
+    screen:SetDirection(DIRECTIONS[state.global.anchorFrame.direction].direction)
+    screen:SetAlign(ALIGNMENTS[state.global.anchorFrame.alignment].align)
+    screen:SetGap(gap)
+  end
+
+  if isUnlocked then restartExamples() end
+end)
+
+-- Clear any live notifications when the log is cleared.
+EventManager:On(E.HistoryCleared, function()
+  Components.LiveNotifications:Clear()
+end)

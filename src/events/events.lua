@@ -5,8 +5,8 @@ local E = Addon:GetModule("Events") ---@class Events
 -- Addon Events
 -- ============================================================================
 
-E.LootReceived = "Lootifications_LootReceived"
-E.MoneyReceived = "Lootifications_MoneyReceived"
+E.HistoryCleared = "Lootifications_HistoryCleared"
+E.HistoryLogged = "Lootifications_HistoryLogged"
 E.StateUpdated = "Lootifications_StateUpdate"
 E.StoreInitialized = "Lootifications_StoreInitialized"
 
