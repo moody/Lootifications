@@ -27,14 +27,23 @@ local MainWindowOptions = Addon:GetModule("MainWindowOptions")
 --- @field stateKey "bagCounts" | "itemPrices" | "money" The notifications state that the card toggles.
 --- @field toggle WuxActionCreator<nil> Toggles the state.
 
---- @class ChoiceCardOptions
+--- @class LineCardOptions
 --- @field label string
 --- @field description string
---- @field lineLabel string Label to the left of the chips.
+--- @field lineLabel string Label to the left of the control.
+
+--- @class ChoiceCardOptions : LineCardOptions
 --- @field getValue fun(state: GlobalState): string Returns the value in the state that the chips choose.
 --- @field setValue WuxActionCreator<string> Sets the state.
 --- @field choices { value: string, text: string }[]
 --- @field afterSelect? fun() Called after a chip is selected.
+
+--- @class SliderCardOptions : LineCardOptions
+--- @field minValue integer
+--- @field maxValue integer
+--- @field step integer Distance between the values the slider stops at.
+--- @field getValue fun(state: GlobalState): integer Returns the value in the state that the slider sets.
+--- @field setValue WuxActionCreator<integer> Sets the state.
 
 -- ============================================================================
 -- Local Functions
@@ -75,6 +84,36 @@ local function pinAnchor()
   AnchorFrame:Pin()
 end
 
+--- Adds a card with a labeled line below a divider, and returns the line for its control.
+--- @param container WaffleFlexComponent
+--- @param options LineCardOptions
+--- @return WaffleFlexComponent line
+local function addLineCard(container, options)
+  local card = addCard(container, { label = options.label, description = options.description })
+
+  local divider = card.Content:AttachComponent(ComponentFactory:Divider())
+  divider:SetMarginTop(Widgets:Padding(0.25))
+
+  --- @type SettingsBoxComponent
+  local box = card.Content:AttachComponent(ComponentFactory:SettingsBox())
+  box:SetMarginTop(Widgets:Padding(0.25))
+
+  return box:AddLine(options.lineLabel)
+end
+
+--- Adds a card with a slider below a divider, which sets the state while it is dragged.
+--- @param container WaffleFlexComponent
+--- @param options SliderCardOptions
+local function addSliderCard(container, options)
+  addLineCard(container, options):AttachComponent(ComponentFactory:ValueSlider({
+    minValue = options.minValue,
+    maxValue = options.maxValue,
+    step = options.step,
+    get = function() return options.getValue(StateManager:GetGlobalState()) end,
+    set = function(value) StateManager:Dispatch(options.setValue(value)) end
+  }))
+end
+
 --- Adds a card with a line of chips below a divider, where exactly one is checked: the one whose value is in the
 --- state. Clicking a chip selects its value, then calls `afterSelect`.
 --- @param container WaffleFlexComponent
@@ -95,15 +134,7 @@ local function addChoiceCard(container, options)
     }
   end
 
-  local card = addCard(container, { label = options.label, description = options.description })
-
-  local divider = card.Content:AttachComponent(ComponentFactory:Divider())
-  divider:SetMarginTop(Widgets:Padding(0.25))
-
-  --- @type SettingsBoxComponent
-  local box = card.Content:AttachComponent(ComponentFactory:SettingsBox())
-  box:SetMarginTop(Widgets:Padding(0.25))
-  box:AddLine(options.lineLabel):AttachComponent(ComponentFactory:CheckChipGroup({ chips = chips }))
+  addLineCard(container, options):AttachComponent(ComponentFactory:CheckChipGroup({ chips = chips }))
 end
 
 --- Adds a divider with space around it to the container.
@@ -145,18 +176,15 @@ function MainWindowOptions:Initialize(container)
     toggle = ActionCreators.Notifications.toggleBagCounts
   })
 
-  addChoiceCard(container, {
+  addSliderCard(container, {
     label = L.TEXT_SIZE_TEXT,
     description = L.TEXT_SIZE_DESCRIPTION,
     lineLabel = L.SIZE,
+    minValue = DefaultStates.NOTIFICATION_TEXT_SIZE.MIN,
+    maxValue = DefaultStates.NOTIFICATION_TEXT_SIZE.MAX,
+    step = DefaultStates.NOTIFICATION_TEXT_SIZE.STEP,
     getValue = function(state) return state.notifications.textSize end,
-    setValue = ActionCreators.Notifications.setTextSize,
-    choices = {
-      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.SMALL, text = L.SMALL },
-      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.MEDIUM, text = L.MEDIUM },
-      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.LARGE, text = L.LARGE },
-      { value = DefaultStates.NOTIFICATION_TEXT_SIZES.HUGE, text = L.HUGE }
-    }
+    setValue = ActionCreators.Notifications.setTextSize
   })
 
   addChoiceCard(container, {

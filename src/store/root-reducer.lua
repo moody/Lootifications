@@ -74,7 +74,8 @@ function RootReducer:Build()
             state = defaultState.notifications.textSize
           end
 
-          return DefaultStates.NOTIFICATION_TEXT_SIZES[state] and state or defaultState.notifications.textSize
+          local range = DefaultStates.NOTIFICATION_TEXT_SIZE
+          return math.min(math.max(state, range.MIN), range.MAX)
         end,
 
         -- Notification background.

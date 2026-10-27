@@ -88,6 +88,7 @@
   <Script file="src\ui\components\settings-box.lua"/>
   <Script file="src\ui\components\tab.lua"/>
   <Script file="src\ui\components\text.lua"/>
+  <Script file="src\ui\components\value-slider.lua"/>
   <Script file="src\ui\components\window.lua"/>
 
   <!-- UI Screens -->

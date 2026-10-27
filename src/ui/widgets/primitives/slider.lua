@@ -35,8 +35,10 @@ function Widgets:Slider(options)
 
   --- @class SliderWidget : FrameWidget, Slider
   local frame = self:Frame(options)
-  frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.5))
-  frame:SetBackdropBorderColor(Colors.DarkGrey:GetRGBA(0.5))
+  if options.backdrop ~= false then
+    frame:SetBackdropColor(Colors.DarkGrey:GetRGBA(0.5))
+    frame:SetBackdropBorderColor(Colors.DarkGrey:GetRGBA(0.5))
+  end
 
   frame:SetObeyStepOnDrag(true)
   frame:SetOrientation(options.orientation)

@@ -35,7 +35,7 @@ ActionCreators.Notifications = {
   setBackground = Wux:CreateActionCreator(ActionTypes.Notifications.SET_BACKGROUND),
 
   --- Action creator for `ActionTypes.Notifications.SET_TEXT_SIZE`.
-  --- @type WuxActionCreator<NotificationTextSize>
+  --- @type WuxActionCreator<number>
   setTextSize = Wux:CreateActionCreator(ActionTypes.Notifications.SET_TEXT_SIZE),
 
   --- Action creator for `ActionTypes.Notifications.TOGGLE_BAG_COUNTS`.

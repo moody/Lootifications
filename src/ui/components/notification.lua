@@ -33,14 +33,6 @@ local FADE_OUT_TIME = 0.2
 --- Seconds between fading in and fading out.
 local HOLD_TIME = 3
 
---- The font object of each text size.
-local FONT_OBJECTS = {
-  [DefaultStates.NOTIFICATION_TEXT_SIZES.SMALL] = "GameFontNormalSmall",
-  [DefaultStates.NOTIFICATION_TEXT_SIZES.MEDIUM] = "GameFontNormal",
-  [DefaultStates.NOTIFICATION_TEXT_SIZES.LARGE] = "GameFontNormalLarge",
-  [DefaultStates.NOTIFICATION_TEXT_SIZES.HUGE] = "GameFontNormalHuge"
-}
-
 -- =============================================================================
 -- Local Functions
 -- =============================================================================
@@ -124,14 +116,16 @@ end
 function ComponentFactory:Notification()
   local root
 
-  --- Shows the text of the frame's entry in the font of the text size, and resizes the notification if either changed.
+  --- Shows the text of the frame's entry at the text size, and resizes the notification if either changed.
   --- @param frame NotificationWidget
   local function refreshText(frame)
-    local fontObject = FONT_OBJECTS[StateManager:GetGlobalState().notifications.textSize]
-    if fontObject ~= frame.fontObject then
-      frame.fontObject = fontObject
-      frame.content.fontString:SetFontObject(fontObject)
-      frame.content.fontString:SetTextColor(1, 1, 1)
+    local textSize = StateManager:GetGlobalState().notifications.textSize
+    if textSize ~= frame.textSize then
+      frame.textSize = textSize
+
+      -- Typeface of the client's language.
+      local typeface, _, flags = GameFontNormal:GetFont()
+      frame.content.fontString:SetFont(typeface, textSize, flags)
       root:MarkDirty()
     end
 
@@ -169,12 +163,12 @@ function ComponentFactory:Notification()
       content:SetPoint("BOTTOMRIGHT")
       frame.content = content
 
-      --- Font object of the text. Set when the text is refreshed.
-      --- @type string
-      frame.fontObject = FONT_OBJECTS[DefaultStates.Global.notifications.textSize]
+      --- Text size last applied to the text, or `nil` before the first refresh.
+      --- @type number?
+      frame.textSize = nil
 
       --- Text shown on the notification.
-      content.fontString = content:CreateFontString("$parent_FontString", "OVERLAY", frame.fontObject)
+      content.fontString = content:CreateFontString("$parent_FontString", "OVERLAY", "GameFontNormal")
       content.fontString:SetTextColor(1, 1, 1)
       content.fontString:SetPoint("CENTER")
 
