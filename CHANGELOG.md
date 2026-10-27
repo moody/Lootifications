@@ -19,7 +19,7 @@
 
 ### Changed
 
-- Notifications show at most 5 at a time (was 10 by default) and are 6 pixels apart (was 4).
+- Notifications show at most 5 at a time (was 10 by default) and are spaced to fit the text size, 6 pixels apart at the default size (was 4).
 - Notifications fade in more slowly and appear 0.15 seconds apart. They slide in toward the stack, the others glide into their new places instead of jumping, and each drifts a little as it fades out.
 - The notification anchor shows, with sample notifications that play in a loop, while the Settings tab is open, in place of the Toggle Anchor button. Right-click on the anchor resets its position instead of hiding it.
 - Renamed the Money Notifications option to Money, Loot Prices to Item Prices, and Owned Item Counts to Bag Counts.
