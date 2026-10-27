@@ -19,6 +19,7 @@ The options are on the `Settings` tab of the main window. The window remembers w
 - **Money** — Show a notification when money is looted or received
 - **Item Prices** — Include the vendor price of items in loot notifications
 - **Bag Counts** — Include how many of the item are in your bags in loot notifications
+- **Text Size** — The size of the notification text: small, medium, large, or huge
 - **Background** — The background and border of the notifications:
   - `None`: no background or border
   - `Subtle`: a faint background and border, both 30% opaque
