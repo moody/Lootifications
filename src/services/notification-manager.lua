@@ -43,3 +43,8 @@ EventManager:On(E.HistoryLogged, function(entry)
     NotificationManager:Notify(entry)
   end
 end)
+
+-- Clear any queued notifications when the log is cleared.
+EventManager:On(E.HistoryCleared, function()
+  NotificationManager:Clear()
+end)

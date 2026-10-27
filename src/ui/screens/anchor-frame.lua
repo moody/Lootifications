@@ -329,3 +329,8 @@ EventManager:On(E.StateUpdated, function(state)
 
   if isUnlocked then restartExamples() end
 end)
+
+-- Clear any live notifications when the log is cleared.
+EventManager:On(E.HistoryCleared, function()
+  Components.LiveNotifications:Clear()
+end)
