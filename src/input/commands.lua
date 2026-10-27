@@ -8,16 +8,16 @@ local MainWindow = Addon:GetModule("MainWindow")
 --- @class Commands
 local Commands = Addon:GetModule("Commands")
 
-Commands.SLASH_COMMAND = "/lootifications"
+Commands.SLASH_COMMAND = "/lootif"
 
 -- ============================================================================
 -- Events
 -- ============================================================================
 
--- Register the `/lootifications` slash command on login.
+-- Register the `/lootif` slash command, and `/lootifications` as its long form, on login.
 EventManager:Once(E.Wow.PlayerLogin, function()
   SLASH_LOOTIFICATIONS1 = Commands.SLASH_COMMAND
-  SLASH_LOOTIFICATIONS2 = "/lootif"
+  SLASH_LOOTIFICATIONS2 = "/lootifications"
   SlashCmdList.LOOTIFICATIONS = function(msg)
     -- Split message into args.
     local args = {}
@@ -34,7 +34,7 @@ end)
 -- Local Functions
 -- ============================================================================
 
---- Prints a `/lootifications <suffix>` line followed by its description.
+--- Prints a `/lootif <suffix>` line followed by its description.
 --- @param suffix string
 --- @param description string
 local function printCommand(suffix, description)
