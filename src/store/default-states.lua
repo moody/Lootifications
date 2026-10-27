@@ -27,7 +27,7 @@ DefaultStates.ANCHOR_DIRECTIONS = { DOWN = "DOWN", UP = "UP" }
 DefaultStates.NOTIFICATION_BACKGROUNDS = { NONE = "NONE", SUBTLE = "SUBTLE", HIGH_CONTRAST = "HIGH_CONTRAST" }
 
 --- The range and step of `notifications.textSize`, in pixels.
-DefaultStates.NOTIFICATION_TEXT_SIZE = { MIN = 12, MAX = 32, STEP = 2 }
+DefaultStates.NOTIFICATION_TEXT_SIZE = { MIN = 8, MAX = 32, STEP = 2 }
 
 --- The state that a fresh profile starts with. Each key holds everything saved about one part of the addon.
 --- @class GlobalState
